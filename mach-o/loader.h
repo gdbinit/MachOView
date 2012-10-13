@@ -288,6 +288,13 @@ struct load_command {
 #define LC_VERSION_MIN_MACOSX 0x24   /* build for MacOSX min OS version */
 #define LC_VERSION_MIN_IPHONEOS 0x25 /* build for iPhoneOS min OS version */
 #define LC_FUNCTION_STARTS 0x26 /* compressed table of function start addresses */
+#define LC_DYLD_ENVIRONMENT 0x27 /* string for dyld to treat
+				    like environment variable */
+#define LC_MAIN (0x28|LC_REQ_DYLD) /* replacement for LC_UNIXTHREAD */
+#define LC_DATA_IN_CODE 0x29 /* table of non-instructions in __text */
+#define LC_SOURCE_VERSION 0x2A /* source version used to build binary */
+#define LC_DYLIB_CODE_SIGN_DRS 0x2B /* Code signing DRs copied from linked dylibs */
+
 
 /*
  * A variable length string in a load command is represented by an lc_str
@@ -737,9 +744,12 @@ struct prebound_dylib_command {
  * the name of the dynamic linker (LC_LOAD_DYLINKER).  And a dynamic linker
  * contains a dylinker_command to identify the dynamic linker (LC_ID_DYLINKER).
  * A file can have at most one of these.
+ * This struct is also used for the LC_DYLD_ENVIRONMENT load command and
+ * contains string for dyld to treat like environment variable.
  */
 struct dylinker_command {
-	uint32_t	cmd;		/* LC_ID_DYLINKER or LC_LOAD_DYLINKER */
+	uint32_t	cmd;		/* LC_ID_DYLINKER, LC_LOAD_DYLINKER or
+					   LC_DYLD_ENVIRONMENT */
 	uint32_t	cmdsize;	/* includes pathname string */
 	union lc_str    name;		/* dynamic linker's path name */
 };
@@ -1144,7 +1154,8 @@ struct rpath_command {
  */
 struct linkedit_data_command {
     uint32_t	cmd;		/* LC_CODE_SIGNATURE, LC_SEGMENT_SPLIT_INFO,
-                                   or LC_FUNCTION_STARTS */
+                                   LC_FUNCTION_STARTS, LC_DATA_IN_CODE,
+				   or LC_DYLIB_CODE_SIGN_DRS */
     uint32_t	cmdsize;	/* sizeof(struct linkedit_data_command) */
     uint32_t	dataoff;	/* file offset of data in __LINKEDIT segment */
     uint32_t	datasize;	/* file size of data in __LINKEDIT segment  */
@@ -1172,7 +1183,7 @@ struct version_min_command {
 				   LC_VERSION_MIN_IPHONEOS  */
     uint32_t	cmdsize;	/* sizeof(struct min_version_command) */
     uint32_t	version;	/* X.Y.Z is encoded in nibbles xxxx.yy.zz */
-    uint32_t	reserved;	/* zero */
+    uint32_t	sdk;		/* X.Y.Z is encoded in nibbles xxxx.yy.zz */
 };
 
 /*
@@ -1260,14 +1271,19 @@ struct dyld_info_command {
      * Nodes for a symbol start with a uleb128 that is the length of
      * the exported symbol information for the string so far.
      * If there is no exported symbol, the node starts with a zero byte. 
-     * If there is exported info, it follows the length.  First is
-     * a uleb128 containing flags.  Normally, it is followed by a
-     * uleb128 encoded offset which is location of the content named
+     * If there is exported info, it follows the length.  
+	 *
+	 * First is a uleb128 containing flags. Normally, it is followed by
+     * a uleb128 encoded offset which is location of the content named
      * by the symbol from the mach_header for the image.  If the flags
      * is EXPORT_SYMBOL_FLAGS_REEXPORT, then following the flags is
      * a uleb128 encoded library ordinal, then a zero terminated
      * UTF8 string.  If the string is zero length, then the symbol
      * is re-export from the specified dylib with the same name.
+	 * If the flags is EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER, then following
+	 * the flags is two uleb128s: the stub offset and the resolver offset.
+	 * The stub is used by non-lazy pointers.  The resolver is used
+	 * by lazy pointers and must be called to get the actual address to use.
      *
      * After the optional exported symbol information is a byte of
      * how many edges (0-255) that this node has leaving it, 
@@ -1382,6 +1398,51 @@ struct fvmfile_command {
 	union lc_str	name;		/* files pathname */
 	uint32_t	header_addr;	/* files virtual address */
 };
+
+
+/*
+ * The entry_point_command is a replacement for thread_command.
+ * It is used for main executables to specify the location (file offset)
+ * of main().  If -stack_size was used at link time, the stacksize
+ * field will contain the stack size need for the main thread.
+ */
+struct entry_point_command {
+    uint32_t  cmd;	/* LC_MAIN only used in MH_EXECUTE filetypes */
+    uint32_t  cmdsize;	/* 24 */
+    uint64_t  entryoff;	/* file (__TEXT) offset of main() */
+    uint64_t  stacksize;/* if not zero, initial stack size */
+};
+
+
+/*
+ * The source_version_command is an optional load command containing
+ * the version of the sources used to build the binary.
+ */
+struct source_version_command {
+    uint32_t  cmd;	/* LC_SOURCE_VERSION */
+    uint32_t  cmdsize;	/* 16 */
+    uint64_t  version;	/* A.B.C.D.E packed as a24.b10.c10.d10.e10 */
+};
+
+
+/*
+ * The LC_DATA_IN_CODE load commands uses a linkedit_data_command 
+ * to point to an array of data_in_code_entry entries. Each entry
+ * describes a range of data in a code section.  This load command
+ * is only used in final linked images.
+ */
+struct data_in_code_entry {
+    uint32_t	offset;  /* from mach_header to start of data range*/
+    uint16_t	length;  /* number of bytes in data range */
+    uint16_t	kind;    /* a DICE_KIND_* value  */
+};
+#define DICE_KIND_DATA              0x0001  /* L$start$data$...  label */
+#define DICE_KIND_JUMP_TABLE8       0x0002  /* L$start$jt8$...   label */
+#define DICE_KIND_JUMP_TABLE16      0x0003  /* L$start$jt16$...  label */
+#define DICE_KIND_JUMP_TABLE32      0x0004  /* L$start$jt32$...  label */
+#define DICE_KIND_ABS_JUMP_TABLE32  0x0005  /* L$start$jta32$... label */
+
+
 
 /*
  * Sections of type S_THREAD_LOCAL_VARIABLES contain an array 
