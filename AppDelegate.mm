@@ -27,7 +27,7 @@ int64_t nrow_loaded; // number of loaded rows
 //----------------------------------------------------------------------------
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
-  return YES;
+  return NO;
 }
 
 //----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ int64_t nrow_loaded; // number of loaded rows
 
   NSFileManager * fileManager = [NSFileManager defaultManager];
   NSString * tempDir = [MVDocument temporaryDirectory];
-  
+
   __autoreleasing NSError * error;
   
   // remove previously forgotten temporary files
