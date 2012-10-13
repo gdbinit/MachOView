@@ -61,6 +61,11 @@ using namespace std;
     case LC_VERSION_MIN_MACOSX:   return @"LC_VERSION_MIN_MACOSX";
     case LC_VERSION_MIN_IPHONEOS: return @"LC_VERSION_MIN_IPHONEOS";
     case LC_FUNCTION_STARTS:      return @"LC_FUNCTION_STARTS";
+    case LC_DYLD_ENVIRONMENT:     return @"LC_DYLD_ENVIRONMENT";
+    case LC_MAIN:                 return @"LC_MAIN";
+    case LC_DATA_IN_CODE:         return @"LC_DATA_IN_CODE";
+    case LC_SOURCE_VERSION:       return @"LC_SOURCE_VERSION";
+    case LC_DYLIB_CODE_SIGN_DRS:  return @"LC_DYLIB_CODE_SIGN_DRS";
   }
 }
 
@@ -1797,8 +1802,108 @@ using namespace std;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Reserved"
-                         :[NSString stringWithFormat:@"%u", version_min_command->reserved]];
+                         :[NSString stringWithFormat:@"%u", version_min_command->sdk]];
   return node;
+}
+
+//-----------------------------------------------------------------------------
+- (MVNode *)createLCMainNode:(MVNode *)parent
+                     caption:(NSString *)caption
+                    location:(uint32_t)location
+          entrypoint_command:(struct entry_point_command const *)entry_point_command
+{
+    MVNodeSaver nodeSaver;
+    MVNode * node = [parent insertChildWithDetails:caption location:location length:entry_point_command->cmdsize saver:nodeSaver];
+    
+    NSRange range = NSMakeRange(location,0);
+    NSString * lastReadHex;
+    
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Command"
+                           :[self getNameForCommand:entry_point_command->cmd]];
+    
+    [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+    
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Command Size"
+                           :[NSString stringWithFormat:@"%u", entry_point_command->cmdsize]];
+    
+    [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+     MVUnderlineAttributeName,@"YES",nil];
+    
+    [self read_uint64:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Entry Offset"
+                           :[NSString stringWithFormat:@"%qu", entry_point_command->entryoff]];
+
+    [self read_uint64:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Stacksize"
+                           :[NSString stringWithFormat:@"%qu", entry_point_command->stacksize]];
+    
+    return node;
+}
+
+
+//-----------------------------------------------------------------------------
+- (MVNode *)createLCSourceVersionNode:(MVNode *)parent
+                              caption:(NSString *)caption
+                             location:(uint32_t)location
+               source_version_command:(struct source_version_command const *)source_version_command
+{
+    MVNodeSaver nodeSaver;
+    MVNode * node = [parent insertChildWithDetails:caption location:location length:source_version_command->cmdsize saver:nodeSaver];
+    
+    NSRange range = NSMakeRange(location,0);
+    NSString * lastReadHex;
+    
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Command"
+                           :[self getNameForCommand:source_version_command->cmd]];
+    
+    [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+    
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Command Size"
+                           :[NSString stringWithFormat:@"%u", source_version_command->cmdsize]];
+    
+    [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+     MVUnderlineAttributeName,@"YES",nil];
+    
+    // ripped from otool source code
+    uint64_t a, b, c, d, e;
+    NSString *version;
+	a = (source_version_command->version >> 40) & 0xffffff;
+	b = (source_version_command->version >> 30) & 0x3ff;
+	c = (source_version_command->version >> 20) & 0x3ff;
+	d = (source_version_command->version >> 10) & 0x3ff;
+	e = source_version_command->version & 0x3ff;
+	if(e != 0)
+        version = [NSString stringWithFormat:@"%llu.%llu.%llu.%llu.%llu\n", a, b, c, d, e];
+	else if(d != 0)
+        version = [NSString stringWithFormat:@"%llu.%llu.%llu.%llu\n", a, b, c, d];
+	else if(c != 0)
+        version = [NSString stringWithFormat:@"%llu.%llu.%llu\n", a, b, c];
+	else
+        version = [NSString stringWithFormat:@"%llu.%llu\n", a, b];
+
+    [self read_uint64:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Version"
+                           :version];
+
+    return node;
 }
 
 //-----------------------------------------------------------------------------
@@ -1930,6 +2035,7 @@ using namespace std;
       
     case LC_ID_DYLINKER:
     case LC_LOAD_DYLINKER:
+    case LC_DYLD_ENVIRONMENT:
     {
       MATCH_STRUCT(dylinker_command,location)
       node = [self createLCDylinkerNode:parent 
@@ -1991,6 +2097,8 @@ using namespace std;
     case LC_CODE_SIGNATURE:
     case LC_SEGMENT_SPLIT_INFO:
     case LC_FUNCTION_STARTS:
+    case LC_DATA_IN_CODE:
+    case LC_DYLIB_CODE_SIGN_DRS:
     {
       MATCH_STRUCT(linkedit_data_command,location)
       node = [self createLCLinkeditDataNode:parent 
@@ -2091,8 +2199,23 @@ using namespace std;
                       version_min_command:version_min_command];
       
     } break;
-      
-    default: 
+    case LC_MAIN:
+    {
+        MATCH_STRUCT(entry_point_command, location)
+        node = [self createLCMainNode:parent
+                              caption:caption
+                             location:location
+                   entrypoint_command:entry_point_command];
+    } break;
+    case LC_SOURCE_VERSION:
+    {
+        MATCH_STRUCT(source_version_command, location);
+        node = [self createLCSourceVersionNode:parent
+                                       caption:caption
+                                      location:location
+                        source_version_command:source_version_command];
+    } break;
+    default:
       [self createDataNode:parent 
                    caption:[NSString stringWithFormat:@"%@ (unsupported)", caption]
                   location:location
