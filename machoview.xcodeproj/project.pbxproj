@@ -28,11 +28,11 @@
 		3CE90D8811F6017B00543402 /* LoadCommands.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CE90D8711F6017B00543402 /* LoadCommands.mm */; };
 		3CE90DB611F60B6900543402 /* LinkEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CE90DB511F60B6900543402 /* LinkEdit.mm */; };
 		3CE90DEF11F60D5A00543402 /* Exceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CE90DEE11F60D5A00543402 /* Exceptions.mm */; };
-		3CE90DFD11F6107600543402 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 3CE90DFC11F6107600543402 /* README */; };
 		3CF22E92144C8FC600380071 /* ObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF22E91144C8FC600380071 /* ObjC.mm */; };
 		3CF9779E11C77A23004CD74C /* DataController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF9779D11C77A23004CD74C /* DataController.mm */; };
 		3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF978C511C7B34C004CD74C /* DataSources.mm */; };
 		3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF97F0E11C91F93004CD74C /* MachOLayout.mm */; };
+		7B919499162A1DAA0072A2B9 /* README.orig in Resources */ = {isa = PBXBuildFile; fileRef = 7B919498162A1DAA0072A2B9 /* README.orig */; };
 		8D11072D0486CEB800E47090 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
@@ -101,7 +101,6 @@
 		3CE90DB511F60B6900543402 /* LinkEdit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LinkEdit.mm; sourceTree = "<group>"; };
 		3CE90DED11F60D4F00543402 /* Exceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exceptions.h; sourceTree = "<group>"; };
 		3CE90DEE11F60D5A00543402 /* Exceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Exceptions.mm; sourceTree = "<group>"; };
-		3CE90DFC11F6107600543402 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		3CF22E90144C8FC600380071 /* ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
 		3CF22E91144C8FC600380071 /* ObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjC.mm; sourceTree = "<group>"; };
 		3CF9779C11C77A23004CD74C /* DataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataController.h; sourceTree = "<group>"; };
@@ -110,6 +109,8 @@
 		3CF978C511C7B34C004CD74C /* DataSources.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataSources.mm; sourceTree = "<group>"; };
 		3CF97F0D11C91F93004CD74C /* MachOLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MachOLayout.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3CF97F0E11C91F93004CD74C /* MachOLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = MachOLayout.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		7B919491162A1D1A0072A2B9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		7B919498162A1DAA0072A2B9 /* README.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.orig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,7 +196,8 @@
 		29B97314FDCFA39411CA2CEA /* Mach-O Browser */ = {
 			isa = PBXGroup;
 			children = (
-				3CE90DFC11F6107600543402 /* README */,
+				7B919491162A1D1A0072A2B9 /* README */,
+				7B919498162A1DAA0072A2B9 /* README.orig */,
 				3C30845A11FDAF6F008A270F /* createdmg */,
 				080E96DDFE201D6D7F000001 /* machoview */,
 				3C78CB26139EE44B006C9591 /* mach-o */,
@@ -328,7 +330,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CE90DFD11F6107600543402 /* README in Resources */,
 				3C0F958411F6589D0070A2FE /* InfoPlist.strings in Resources */,
 				3C0F958511F6589D0070A2FE /* Layout.xib in Resources */,
 				3C0F958611F6589D0070A2FE /* MainMenu.xib in Resources */,
@@ -336,6 +337,7 @@
 				3C0F958A11F658BF0070A2FE /* redApple.icns in Resources */,
 				3C3EC88F13B66E8900ECCDB2 /* Preferences.xib in Resources */,
 				3C1163F113D5B88D007B4A6E /* stop.png in Resources */,
+				7B919499162A1DAA0072A2B9 /* README.orig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
