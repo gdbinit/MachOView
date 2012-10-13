@@ -905,7 +905,9 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     case CPU_SUBTYPE_ARM_V5TEJ:   return @"ARM_V5TEJ";
     case CPU_SUBTYPE_ARM_XSCALE:  return @"ARM_XSCALE";
     case CPU_SUBTYPE_ARM_V7:      return @"ARM_V7";
-      
+    case CPU_SUBTYPE_ARM_V7F:     return @"ARM_V7F";
+    case CPU_SUBTYPE_ARM_V7K:     return @"ARM_V7K";
+    case CPU_SUBTYPE_ARM_V7S:     return @"ARM_V7S";
   }
 }
 

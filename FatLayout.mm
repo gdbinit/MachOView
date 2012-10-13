@@ -109,7 +109,10 @@ using namespace std;
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6 ? @"CPU_SUBTYPE_ARM_V6" : 
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V5TEJ ? @"CPU_SUBTYPE_ARM_V5TEJ" : 
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_XSCALE ? @"CPU_SUBTYPE_ARM_XSCALE" : 
-                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7 ? @"CPU_SUBTYPE_ARM_V7" : @"???") :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7 ? @"CPU_SUBTYPE_ARM_V7" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F ? @"CPU_SUBTYPE_ARM_V7F" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S ? @"CPU_SUBTYPE_ARM_V7S" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K ? @"CPU_SUBTYPE_ARM_V7K" : @"???") :
                             fat_arch.cputype == CPU_TYPE_X86 ?
                             ((fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_ALL ? @"CPU_SUBTYPE_X86_ALL" : @"???") :
                             fat_arch.cputype == CPU_TYPE_X86_64 ?

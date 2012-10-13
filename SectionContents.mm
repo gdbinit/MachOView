@@ -597,7 +597,10 @@ static AsmFootPrint const fastStubHelperHelperARM =
   
   if (mach_header->cputype == CPU_TYPE_ARM && 
       (mach_header->cpusubtype == CPU_SUBTYPE_ARM_V6 ||
-       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7))
+       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7 ||
+       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7F ||
+       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7K ||
+       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7S))
   for(uint32_t i = 0; i < ot_nsymbols; ++i)
   {
     uint8_t n_type;
