@@ -1,0 +1,71 @@
+
+Hungry Apple icons by Nicholas Boyd (http://loafninja.deviantart.com)
+
+todo:
+- code sections parsing on demand
+
+ver 2.3.8345
+- Transition to ARC (but targeting OS X 10.6 for compatibility)
+- FAT binary layout in details
+- LC_ENCRYPTION_INFO,LC_PREBIND_CKSUM,LC_RPATH,LC_FUNCTION_STARTS
+- twolevel swapping for smaller memory usage and better GUI response 
+- Better ObjectiveC 2 section parsing
+
+ver 2.2.6500
+- objC sections
+- crash fix for concurrent treeView update
+- crash fix for disassembler (could read beyond file data)
+- relocs/bindings stored in a shadow NSData for faster access
+- improved exception records parser
+
+ver 2.1.5290
+- mainly bugfixes (relocInfoInfo, static libraries)
+- stop button for cancelling background tasks
+- exception safe symbol/section namelookup
+- disassembler updated to cctools-806
+
+ver 2.0.5000 
+- ARM support
+- symbolic disassembling of text sections (based on otool)
+- split segment info in details
+- fast symbol stubs in details
+- improved RAW/RVA switch
+- typelist is fixed in LSDAs
+
+ver 1.3.4090
+- some new file types, section types
+- minor fixes
+- indirect symbols showed between squared brackets
+
+ver 1.3.4045
+- static libraries (binary archives)
+- dyld info parsing in details
+- base SDK and deploy target detection
+- fix indirect symbol issues in compressed Mach-O files
+- fix treeLock stability (now belongs to dataController not to the layout)
+- display multiply symbols for the same address
+
+ver 1.3.3047
+- swapfile based processing to avoid memory overhead for extremely big binaries
+  (note: Ctrl+click toggles swap file usage on the selected node for faster access) 
+- two-level namespaces in details
+- export dylibs (e.g.: libSystem.B.dylib)
+- safer symbol/section table access
+
+ver 1.2.2632 
+- some command binary representation (dyld info, routines, two-level namespace)
+- better grouping and ordering of parsed content
+- 64bit exception data and relocation fixes
+- more stable name unmangling in tooltips
+
+ver 1.2.2200
+- tooltip with unmangled name for all the mangled symbol
+- better section parsing
+- common symbol table for better search (types distinguished by coloured background)
+
+ver 1.2.1842:
+- coloured background for special items:
+	local/absolute indirect symbol
+	scattered relocation
+- edit and save function
+- RVA/RWA offset uses segments' properties for calculation

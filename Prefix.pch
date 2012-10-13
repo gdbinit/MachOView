@@ -1,0 +1,26 @@
+//
+// Prefix header for all source files of the 'Mach-O Browser' target in the 'Mach-O Browser' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
+
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+
+#include <mach-o/arch.h>
+#include <mach-o/loader.h>
+#include <mach-o/fat.h>
+#include <mach-o/nlist.h>
+#include <mach-o/reloc.h>
+#include <mach-o/x86_64/reloc.h>
+#include <mach-o/arm/reloc.h>
+#include <mach-o/ranlib.h>
+#include <mach-o/compact_unwind_encoding.h>
+#include <mach-o/swap.h>
+
+#include <libkern/OSAtomic.h>
+#include <cxxabi.h>

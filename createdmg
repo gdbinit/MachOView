@@ -1,0 +1,7 @@
+#!/bin/bash
+# Create DMG Installer
+buildPlist="build/Release/MachOView.app/Contents/Info.plist"
+CFBuildNumber=$(/usr/libexec/PlistBuddy -c "Print CFBuildNumber" $buildPlist)
+CFBundleShortVersionString=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $buildPlist)
+cp -f README build/Release
+hdiutil create -fs HFS+ -volname "MachOView" -srcfolder build/Release "MachOView "$CFBundleShortVersionString.$CFBuildNumber".dmg"
