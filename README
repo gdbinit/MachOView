@@ -1,5 +1,8 @@
 A fork from MachOView to update and fix some bugs, mostly Mountain Lion & iOS 6 related.
+Also some small changes to the original behaviour.
+
 Original MachOView by psaghelyi at http://sourceforge.net/projects/machoview/.
+Thanks to psaghelyi for his great work :-)
 
 Enjoy,
 fG!
