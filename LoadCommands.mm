@@ -1875,7 +1875,7 @@ using namespace std;
     }
         
     [node.details appendRow:[NSString stringWithFormat:@"%.8x", 0]
-                           :@"0"
+                           :[NSString stringWithFormat:@"0x%qx", text_vmaddr + entry_point_command->entryoff]
                            :@"Entry Point"
                            :[NSString stringWithFormat:@"0x%qx", text_vmaddr + entry_point_command->entryoff]];
 
