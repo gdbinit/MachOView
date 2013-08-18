@@ -125,14 +125,30 @@ using namespace std;
         break;
         
       case REBASE_OPCODE_SET_TYPE_IMM:
-        type = immediate;
-        
-        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
-                               :lastReadHex
-                               :@"REBASE_OPCODE_SET_TYPE_IMM"
-                               :[NSString stringWithFormat:@"type (%i)", type]];
-        break;
-        
+        {
+            type = immediate;
+            NSString *typeString = [NSString alloc];
+            switch (type)
+            {
+                case REBASE_TYPE_POINTER:
+                    typeString = [typeString initWithString:@"REBASE_TYPE_POINTER"];
+                    break;
+                case REBASE_TYPE_TEXT_ABSOLUTE32:
+                    typeString  = [typeString initWithString:@"REBASE_TYPE_TEXT_ABSOLUTE32"];
+                    break;
+                case REBASE_TYPE_TEXT_PCREL32:
+                    typeString = [typeString initWithString:@"REBASE_TYPE_TEXT_PCREL32"];
+                    break;
+                default:
+                    typeString = [typeString initWithString:@"Unknown"];
+            }
+            
+            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                   :lastReadHex
+                                   :@"REBASE_OPCODE_SET_TYPE_IMM"
+                                   :[NSString stringWithFormat:@"type (%i, %@)", type, typeString]];
+            break;
+        }
       case REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB: 
       {
         uint32_t segmentIndex = immediate;
