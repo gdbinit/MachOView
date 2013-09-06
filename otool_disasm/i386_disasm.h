@@ -33,6 +33,7 @@
 #import <mach-o/nlist.h>
 #import <stuff/bool.h>
 #include "stuff/symbol.h"
+#include "llvm-c/Disassembler.h"
 
 extern uint32_t i386_disassemble(
     char *sect,
@@ -56,4 +57,13 @@ extern uint32_t i386_disassemble(
     uint32_t ncmds,
     uint32_t sizeofcmds,
     enum bool verbose,
-    enum bool llvm_mc);
+    enum bool llvm_mc,
+    LLVMDisasmContextRef i386_dc,
+    LLVMDisasmContextRef x86_64_dc,
+    char *object_addr,
+    uint32_t object_size);
+
+extern LLVMDisasmContextRef create_i386_llvm_disassembler(void);
+extern void delete_i386_llvm_disassembler(LLVMDisasmContextRef dc);
+extern LLVMDisasmContextRef create_x86_64_llvm_disassembler(void);
+extern void delete_x86_64_llvm_disassembler(LLVMDisasmContextRef dc);

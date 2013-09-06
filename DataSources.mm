@@ -14,7 +14,7 @@
 NSString * const MVScannerErrorMessage  = @"NSScanner error";
 
 //============================================================================
-@implementation DataSourceTree
+@implementation MVDataSourceTree
 
 #pragma mark NSOutlineView must-have delegates
 
@@ -77,7 +77,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
 
 
 //============================================================================
-@implementation DataSourceDetails
+@implementation MVDataSourceDetails
 
 #pragma mark NSTableView must-have delegates
 

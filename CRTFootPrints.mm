@@ -1259,6 +1259,9 @@ static AsmFootPrint const SDK106Target104X86v2 =
              asmFootPrint:(const AsmFootPrint)footprint 
                 lineCount:(NSUInteger)lineCount
 {
+  if (!dataController) // dataController is weak
+    return false;
+  
   uint8_t const * data = ((uint8_t *)[dataController.fileData bytes]) + offset;
   
   for (NSUInteger i = 0; i < lineCount; ++i)
@@ -1284,6 +1287,9 @@ static AsmFootPrint const SDK106Target104X86v2 =
 //------------------------------------------------------------------------------
 - (void) determineRuntimeVersion
 {
+  if (!dataController) // dataController is weak
+    return;
+
   if (entryPoint == 0)
   {
     return; // not an executable, no entry point, or cannot detect

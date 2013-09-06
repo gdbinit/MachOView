@@ -87,7 +87,7 @@ struct MVNodeSaver;
 {
   NSMutableArray *      rows;         // array of MVRow * (host of all the rows)
   NSMutableArray *      displayRows;  // array of MVRow * (rows filtered by search criteria)
-  MVArchiver *          __unsafe_unretained archiver;
+  MVArchiver *          __weak archiver;
   FILE *                swapFile;
   NSLock *              tableLock;
 }
@@ -113,7 +113,7 @@ struct MVNodeSaver;
 @interface MVNode : NSObject <MVSerializing>
 {
   NSString *            caption;
-  MVNode *              __unsafe_unretained parent;
+  MVNode *              __weak parent;
   NSMutableArray *      children;
   NSRange               dataRange;
   MVTable *             details;
@@ -122,7 +122,7 @@ struct MVNodeSaver;
 }
 
 @property (nonatomic)                   NSString *            caption;
-@property (nonatomic,unsafe_unretained) MVNode *              parent;
+@property (nonatomic,weak)      MVNode *              parent;
 @property (nonatomic)                   NSRange               dataRange;
 @property (nonatomic)                   MVTable *             details;
 @property (nonatomic)                   NSMutableDictionary * userInfo;
@@ -150,7 +150,7 @@ struct MVNodeSaver;
   NSMutableData *       realData;         // patched content by relocs and bindings
   NSMutableArray *      layouts;
   MVNode *              rootNode;
-  MVNode *              __unsafe_unretained selectedNode;
+  MVNode *              __weak selectedNode;
   NSLock *              treeLock;         // semaphore for the node tree
 }
 
@@ -159,7 +159,7 @@ struct MVNodeSaver;
 @property (nonatomic)                   NSMutableData * realData;
 @property (nonatomic,readonly)          NSArray *       layouts;
 @property (nonatomic,readonly)          MVNode *        rootNode;
-@property (nonatomic,unsafe_unretained) MVNode *        selectedNode;
+@property (nonatomic,weak)              MVNode *        selectedNode;
 @property (nonatomic,readonly)          NSLock *        treeLock;
 
 -(NSString *)           getMachine:(cpu_type_t)cputype;

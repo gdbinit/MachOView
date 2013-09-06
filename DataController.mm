@@ -156,7 +156,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   for(;;) 
   {
     char c = fgetc(pFile);
-    if (c) 
+    if (!feof(pFile) && c)
       s += c;
     else
       break;

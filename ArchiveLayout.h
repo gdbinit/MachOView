@@ -12,12 +12,12 @@
 {
   NSString *    name;
   uint32_t      length;
-  MVLayout *    __unsafe_unretained layout;
+  MVLayout *    __weak layout;
 }
 
 @property (nonatomic)                   NSString *  name;
 @property (nonatomic)                   uint32_t    length;
-@property (nonatomic,unsafe_unretained) MVLayout *  layout;
+@property (nonatomic,weak)  MVLayout *  layout;
 
 @end
 

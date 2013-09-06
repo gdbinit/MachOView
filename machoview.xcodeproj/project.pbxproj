@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		256AC3DA0F4B6AC300CF3369 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.mm */; };
+		256AC3DA0F4B6AC300CF3369 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppController.mm */; };
+		3C0ADEB0169CD42600DA428E /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3CE90DFC11F6107600543402 /* README */; };
 		3C0F958411F6589D0070A2FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F957E11F6589D0070A2FE /* InfoPlist.strings */; };
 		3C0F958511F6589D0070A2FE /* Layout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F958011F6589D0070A2FE /* Layout.xib */; };
 		3C0F958611F6589D0070A2FE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F958211F6589D0070A2FE /* MainMenu.xib */; };
@@ -16,6 +17,8 @@
 		3C1163F113D5B88D007B4A6E /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C1163F013D5B88D007B4A6E /* stop.png */; };
 		3C34A82B14892FF1005B53F6 /* FatLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C34A82A14892FF1005B53F6 /* FatLayout.mm */; };
 		3C3EC88F13B66E8900ECCDB2 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C3EC88D13B66E8900ECCDB2 /* Preferences.xib */; };
+		3C46C7D91687C6ED00212190 /* PreferenceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C46C7D81687C6ED00212190 /* PreferenceController.mm */; };
+		3C46C84B1687DEE600212190 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3C46C8491687DEE600212190 /* Credits.rtf */; };
 		3C61A87C1240B0B400BDF3D0 /* SectionContents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C61A87B1240B0B400BDF3D0 /* SectionContents.mm */; };
 		3C73525A11DE122900DF1950 /* Document.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C73525911DE122900DF1950 /* Document.mm */; };
 		3CB9D3F8139FC96D003D8D33 /* libdisasm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB9D3F7139FC96D003D8D33 /* libdisasm.a */; };
@@ -32,17 +35,17 @@
 		3CF9779E11C77A23004CD74C /* DataController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF9779D11C77A23004CD74C /* DataController.mm */; };
 		3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF978C511C7B34C004CD74C /* DataSources.mm */; };
 		3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF97F0E11C91F93004CD74C /* MachOLayout.mm */; };
-		7B919499162A1DAA0072A2B9 /* README.orig in Resources */ = {isa = PBXBuildFile; fileRef = 7B919498162A1DAA0072A2B9 /* README.orig */; };
 		8D11072D0486CEB800E47090 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		3CACF74A11CBCC69006BCD3F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 16;
 			files = (
+				3C0ADEB0169CD42600DA428E /* README in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,8 +53,8 @@
 
 /* Begin PBXFileReference section */
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		256AC3D80F4B6AC300CF3369 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		256AC3D90F4B6AC300CF3369 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		256AC3D80F4B6AC300CF3369 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
+		256AC3D90F4B6AC300CF3369 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
 		256AC3F00F4B6AF500CF3369 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -66,6 +69,9 @@
 		3C34A82914892FF1005B53F6 /* FatLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatLayout.h; sourceTree = "<group>"; };
 		3C34A82A14892FF1005B53F6 /* FatLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FatLayout.mm; sourceTree = "<group>"; };
 		3C3EC88E13B66E8900ECCDB2 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
+		3C46C7D71687C5CB00212190 /* PreferenceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
+		3C46C7D81687C6ED00212190 /* PreferenceController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceController.mm; sourceTree = "<group>"; };
+		3C46C84A1687DEE600212190 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		3C61A87B1240B0B400BDF3D0 /* SectionContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SectionContents.mm; sourceTree = "<group>"; };
 		3C61A87D1240B0C100BDF3D0 /* SectionContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SectionContents.h; sourceTree = "<group>"; };
 		3C73525811DE122900DF1950 /* Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
@@ -101,6 +107,7 @@
 		3CE90DB511F60B6900543402 /* LinkEdit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LinkEdit.mm; sourceTree = "<group>"; };
 		3CE90DED11F60D4F00543402 /* Exceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exceptions.h; sourceTree = "<group>"; };
 		3CE90DEE11F60D5A00543402 /* Exceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Exceptions.mm; sourceTree = "<group>"; };
+		3CE90DFC11F6107600543402 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		3CF22E90144C8FC600380071 /* ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjC.h; sourceTree = "<group>"; };
 		3CF22E91144C8FC600380071 /* ObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjC.mm; sourceTree = "<group>"; };
 		3CF9779C11C77A23004CD74C /* DataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataController.h; sourceTree = "<group>"; };
@@ -109,8 +116,6 @@
 		3CF978C511C7B34C004CD74C /* DataSources.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataSources.mm; sourceTree = "<group>"; };
 		3CF97F0D11C91F93004CD74C /* MachOLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MachOLayout.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3CF97F0E11C91F93004CD74C /* MachOLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = MachOLayout.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		7B919491162A1D1A0072A2B9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		7B919498162A1DAA0072A2B9 /* README.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.orig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,8 +135,10 @@
 			isa = PBXGroup;
 			children = (
 				3C871CB1141AC7C100288512 /* Common.h */,
-				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
-				256AC3D90F4B6AC300CF3369 /* AppDelegate.mm */,
+				256AC3D80F4B6AC300CF3369 /* AppController.h */,
+				256AC3D90F4B6AC300CF3369 /* AppController.mm */,
+				3C46C7D71687C5CB00212190 /* PreferenceController.h */,
+				3C46C7D81687C6ED00212190 /* PreferenceController.mm */,
 				3C73525811DE122900DF1950 /* Document.h */,
 				3C73525911DE122900DF1950 /* Document.mm */,
 				3CF978C411C7B34C004CD74C /* DataSources.h */,
@@ -196,8 +203,7 @@
 		29B97314FDCFA39411CA2CEA /* Mach-O Browser */ = {
 			isa = PBXGroup;
 			children = (
-				7B919491162A1D1A0072A2B9 /* README */,
-				7B919498162A1DAA0072A2B9 /* README.orig */,
+				3CE90DFC11F6107600543402 /* README */,
 				3C30845A11FDAF6F008A270F /* createdmg */,
 				080E96DDFE201D6D7F000001 /* machoview */,
 				3C78CB26139EE44B006C9591 /* mach-o */,
@@ -221,6 +227,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3C46C8491687DEE600212190 /* Credits.rtf */,
 				3CCB9FDF11F6DC2000F57CAA /* Info.plist */,
 				3C0F958811F658BF0070A2FE /* redApple.icns */,
 				3C0F958711F658BF0070A2FE /* greenApple.icns */,
@@ -304,7 +311,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "machoview" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -337,7 +344,7 @@
 				3C0F958A11F658BF0070A2FE /* redApple.icns in Resources */,
 				3C3EC88F13B66E8900ECCDB2 /* Preferences.xib in Resources */,
 				3C1163F113D5B88D007B4A6E /* stop.png in Resources */,
-				7B919499162A1DAA0072A2B9 /* README.orig in Resources */,
+				3C46C84B1687DEE600212190 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +363,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n# Auto Increment Version Script\nbuildPlist=\"Info.plist\"\nCFBuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBuildNumber\" $buildPlist)\nCFBuildNumber=$(($CFBuildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBuildNumber $CFBuildNumber\" $buildPlist\nCFBuildDate=$(date)\n/usr/libexec/PlistBuddy -c \"Set :CFBuildDate $CFBuildDate\" $buildPlist";
+			shellScript = "#!/bin/bash\n# Auto Increment Version Script\nbuildPlist=\"Info.plist\"\nCFBundleShortVersionString=$(/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" $buildPlist)\nCFBuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBuildNumber\" $buildPlist)\nCFBuildNumber=$(($CFBuildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBuildNumber $CFBuildNumber\" $buildPlist\nCFBuildDate=$(date)\n/usr/libexec/PlistBuddy -c \"Set :CFBuildDate $CFBuildDate\" $buildPlist\n# set Bundle version\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CFBuildNumber\" $buildPlist\necho \"New build: $CFBundleShortVersionString (build: $CFBuildNumber) $CFBuildDate\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -366,7 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.mm in Sources */,
-				256AC3DA0F4B6AC300CF3369 /* AppDelegate.mm in Sources */,
+				256AC3DA0F4B6AC300CF3369 /* AppController.mm in Sources */,
 				3CF9779E11C77A23004CD74C /* DataController.mm in Sources */,
 				3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */,
 				3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */,
@@ -382,6 +389,7 @@
 				3CE7199F1333A4EF0005C4DA /* Layout.mm in Sources */,
 				3CF22E92144C8FC600380071 /* ObjC.mm in Sources */,
 				3C34A82B14892FF1005B53F6 /* FatLayout.mm in Sources */,
+				3C46C7D91687C6ED00212190 /* PreferenceController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,6 +428,14 @@
 			name = Preferences.xib;
 			sourceTree = "<group>";
 		};
+		3C46C8491687DEE600212190 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3C46C84A1687DEE600212190 /* English */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -434,24 +450,23 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GENERATE_PROFILING_CODE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
+				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
@@ -468,28 +483,27 @@
 				CURRENT_PROJECT_VERSION = "";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = NS_BLOCK_ASSERTIONS;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				GENERATE_PROFILING_CODE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
+				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
@@ -500,6 +514,7 @@
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -511,7 +526,7 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -524,6 +539,7 @@
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -533,7 +549,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;

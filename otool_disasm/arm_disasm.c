@@ -39,24 +39,6 @@
 #include "ofile_print.h"
 #include "arm_disasm.h"
 
-#ifdef HACKED_LLVM_DISASSEMBLER_INTERFACE
-/*
- * This is the HACKED llvm-mc disassembler interface for otool(1).
- */
-typedef int (* RelocExprInfoFunc)(unsigned Opcode,
-				  uint64_t Pc, const char **s, int *variant);
-
-extern
-int
-OtoolDisassembleInput(
-const char *ProgName,
-uint8_t *Bytes,
-uint64_t BytesSize,
-uint64_t Pc,
-RelocExprInfoFunc getRelocExprInfo,
-const char *arch_name);
-#endif /* HACKED_LLVM_DISASSEMBLER_INTERFACE */
-
 /* Used by otool(1) to stay or switch out of thumb mode */
 enum bool in_thumb = FALSE;
 
@@ -217,7 +199,7 @@ void *TagBuf)
 
 	op_info = (struct LLVMOpInfo1 *)TagBuf;
 	value = op_info->Value;
-	/* make sure all feilds returned are zero if we don't set them */
+	/* make sure all fields returned are zero if we don't set them */
 	memset(op_info, '\0', sizeof(struct LLVMOpInfo1));
 	op_info->Value = value;
 
@@ -417,6 +399,9 @@ void *TagBuf)
 	    op_info->Value = offset;
 	    return(1);
 	}
+
+	if(reloc_found == FALSE)
+	    return(0);
 
 	op_info->AddSymbol.Present = 1;
 	op_info->Value = offset;
@@ -902,52 +887,6 @@ LLVMDisasmContextRef dc)
 	    (dc);
 }
 
-#ifdef HACKED_LLVM_DISASSEMBLER_INTERFACE
-// These are defined in lib/Target/ARM/ARMGenInstrNames.inc
-#define ARM__tBLXi_r9	2252  /* ARM::tBLXi_r9 */
-
-// This is called by the HACKED llvm-mc disassembler.  If it finds relocation
-// information for the Pc it sets SymbolName and variant then returns 1, else
-// it returns 0.
-static
-int
-getRelocExprInfo(
-unsigned Opcode,
-uint64_t Pc,
-const char **SymbolName,
-int *variant)
-{
-    int32_t i;
-    struct relocation_info *relocs = dis_info.relocs;
-    uint32_t nrelocs = dis_info.nrelocs;
-    struct nlist *symbols = dis_info.symbols;
-    uint32_t nsymbols = dis_info.nsymbols;
-    char *strings = dis_info.strings;
-    uint32_t strings_size = dis_info.strings_size;
-    bfd_vma r_address = Pc - dis_info.sect_addr;
-
-    if(Opcode != ARM__tBLXi_r9)
-	return(0);
-
-    *variant = 0;
-    if(dis_info.verbose){
-	for(i = 0; i < nrelocs; i++){
-	    if(relocs[i].r_address == r_address && relocs[i].r_extern){
- 		unsigned int r_symbolnum = relocs[i].r_symbolnum;
-		if(r_symbolnum < nsymbols){
-		    uint32_t n_strx = symbols[r_symbolnum].n_un.n_strx;
-		    if(n_strx < strings_size){
-			*SymbolName = strings + n_strx;
-			return(1);
-		    }
-		}
-	    }
-	}
-    }
-    return(0);
-}
-#endif /* HACKED_LLVM_DISASSEMBLER_INTERFACE */
-
 /* HACKS to avoid pulling in FSF binutils bfd/bfd-in2.h */
 #define bfd_mach_arm_XScale    10
 #define bfd_mach_arm_iWMMXt    12
@@ -1262,6 +1201,14 @@ static const struct opcode32 coprocessor_opcodes[] =
   {FPU_VFP_EXT_V1xD, 0x0c800b00, 0x0f900f00, "fstmia%0?xd%c\t%16-19r%21'!, %z3"},
   {FPU_VFP_EXT_V1xD, 0x0c900a00, 0x0f900f00, "fldmias%c\t%16-19r%21'!, %y3"},
   {FPU_VFP_EXT_V1xD, 0x0c900b00, 0x0f900f00, "fldmia%0?xd%c\t%16-19r%21'!, %z3"},
+  {FPU_VFP_EXT_V1, 0x0ea00a00, 0x0fb00f50, "vfma%c.f32\t%y1, %y2, %y0"},
+  {FPU_VFP_EXT_V1, 0x0ea00a40, 0x0fb00f50, "vfms%c.f32\t%y1, %y2, %y0"},
+  {FPU_VFP_EXT_V1, 0x0ea00b00, 0x0fb00f50, "vfma%c.f64\t%z1, %z2, %z0"},
+  {FPU_VFP_EXT_V1, 0x0ea00b40, 0x0fb00f50, "vfms%c.f64\t%z1, %z2, %z0"},
+  {FPU_VFP_EXT_V1, 0x0e900a40, 0x0fb00f50, "vfnma%c.f32\t%y1, %y2, %y0"},
+  {FPU_VFP_EXT_V1, 0x0e900a00, 0x0fb00f50, "vfnms%c.f32\t%y1, %y2, %y0"},
+  {FPU_VFP_EXT_V1, 0x0e900b40, 0x0fb00f50, "vfnma%c.f64\t%z1, %z2, %z0"},
+  {FPU_VFP_EXT_V1, 0x0e900b00, 0x0fb00f50, "vfnms%c.f64\t%z1, %z2, %z0"},
 
   /* Cirrus coprocessor instructions.  */
   {ARM_CEXT_MAVERICK, 0x0d100400, 0x0f500f00, "cfldrs%c\tmvf%12-15d, %A"},
@@ -1465,6 +1412,8 @@ static const struct opcode32 neon_opcodes[] =
   {FPU_NEON_EXT_V1, 0xf3300110, 0xffb00f10, "vbif%c\t%12-15,22R, %16-19,7R, %0-3,5R"},
   {FPU_NEON_EXT_V1, 0xf2000d00, 0xffa00f10, "vadd%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
   {FPU_NEON_EXT_V1, 0xf2000d10, 0xffa00f10, "vmla%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
+  {FPU_NEON_EXT_V1, 0xf2000c10, 0xffa00f10, "vfma%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
+  {FPU_NEON_EXT_V1, 0xf2200c10, 0xffa00f10, "vfms%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
   {FPU_NEON_EXT_V1, 0xf2000e00, 0xffa00f10, "vceq%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
   {FPU_NEON_EXT_V1, 0xf2000f00, 0xffa00f10, "vmax%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
   {FPU_NEON_EXT_V1, 0xf2000f10, 0xffa00f10, "vrecps%c.f%20U0\t%12-15,22R, %16-19,7R, %0-3,5R"},
@@ -4973,10 +4922,10 @@ print_insn (bfd_vma pc, struct disassemble_info *info, bfd_boolean little)
       /* Print the raw data, too. */
       if(!Xflag)
         {
-          if(Qflag || qflag)
+          if(qflag)
 	    info->fprintf_func (info->stream, "\t");
 	  info->fprintf_func (info->stream, "%08x", (unsigned int) given);
-          if(!Qflag && !qflag)
+          if(!qflag)
 	    info->fprintf_func (info->stream, "\t");
         }
     }
@@ -5015,11 +4964,11 @@ print_insn (bfd_vma pc, struct disassemble_info *info, bfd_boolean little)
 	      /* Print the raw data, too. */
 	      if(!Xflag)
 		{
-		  if(Qflag || qflag)
+		  if(qflag)
 		    info->fprintf_func (info->stream, "\t");
 	          info->fprintf_func (info->stream, "%08x",
 				      (unsigned int) given);
-		  if(!Qflag && !qflag)
+		  if(!qflag)
 		    info->fprintf_func (info->stream, "\t");
 		}
 	      printer = print_insn_thumb32;
@@ -5031,11 +4980,11 @@ print_insn (bfd_vma pc, struct disassemble_info *info, bfd_boolean little)
 	    /* Print the raw data, too. */
 	    if(!Xflag)
 	      {
-		if(Qflag || qflag)
+		if(qflag)
 		  info->fprintf_func (info->stream, "\t");
 	        info->fprintf_func (info->stream, "    %04x",
 				    (unsigned int)given);
-		if(!Qflag && !qflag)
+		if(!qflag)
 		  info->fprintf_func (info->stream, "\t");
 	      }
 	   }
@@ -5083,14 +5032,6 @@ print_insn (bfd_vma pc, struct disassemble_info *info, bfd_boolean little)
 	  info->fprintf_func (info->stream, "\tinvalid instruction encoding");
       }
     }
-#ifdef HACKED_LLVM_DISASSEMBLER_INTERFACE
-  else if (Qflag) /* HACKED interface */
-    {
-      if(OtoolDisassembleInput(progname, (uint8_t *)info->sect, size, pc,
-			        getRelocExprInfo, llvm_arch_name) != 0)
-	info->fprintf_func (info->stream, "\tinvalid instruction encoding");
-    }
-#endif /* HACKED_LLVM_DISASSEMBLER_INTERFACE */
   else
     printer (pc, info, given);
 
@@ -5320,7 +5261,7 @@ enum bool pool)
 	       (r_type == ARM_RELOC_SECTDIFF ||
 		r_type == ARM_RELOC_LOCAL_SECTDIFF)){
 		if(!Xflag){
-		    if(Qflag || qflag)
+		    if(qflag)
 			fprintf(stream, "\t");
 		    fprintf(stream, "%08x\t", value);
 		}
@@ -5543,6 +5484,74 @@ enum bool pool)
 	return(TRUE);
 }
 
+/*
+ * Print the section contents pointed to by sect as data .long, .short or .byte
+ * depending on its kind.
+ */
+static
+uint32_t
+print_data_in_code(
+char *sect,
+uint32_t sect_left,
+uint32_t dice_left,
+uint16_t kind)
+{
+    uint32_t value, left, size;
+
+	left = dice_left;
+	if(left > sect_left)
+	    left = sect_left;
+	switch(kind){
+	default:
+	case DICE_KIND_DATA:
+	    if(left >= 4){
+		value = sect[3] << 24 |
+			sect[2] << 16 |
+			sect[1] << 8 |
+			sect[0];
+		printf("%08x\t.long %u\t@ ", value, value);
+		size = 4;
+	    }
+	    else if(left >= 2){
+		value = sect[1] << 8 |
+			sect[0];
+		printf("    %04x\t.short %u\t@ ", value, value);
+		size = 2;
+	    }
+	    else {
+		value = sect[0];
+		printf("      %02x\t.byte %u\t@ ", value & 0xff, value & 0xff);
+		size = 1;
+	    }
+	    if(kind == DICE_KIND_DATA)
+		printf("KIND_DATA \n");
+	    else
+		printf("kind = %u\n", kind);
+	    return(size);
+	case DICE_KIND_JUMP_TABLE8:
+	    value = sect[0];
+	    printf("      %02x\t.byte %3u\t@ KIND_JUMP_TABLE8\n", value,value);
+	    return(1);
+	case DICE_KIND_JUMP_TABLE16:
+	    value = sect[1] << 8 |
+		    sect[0];
+	    printf("    %04x\t.short %5u\t@ KIND_JUMP_TABLE16\n", value & 0xffff ,value & 0xffff );
+	    return(2);
+	case DICE_KIND_JUMP_TABLE32:
+	case DICE_KIND_ABS_JUMP_TABLE32:
+	    value = sect[3] << 24 |
+		    sect[2] << 16 |
+		    sect[1] << 8 |
+		    sect[0];
+	    printf("%08x\t.long %u\t@ ", value, value);
+	    if(kind == DICE_KIND_JUMP_TABLE32)
+		printf("KIND_JUMP_TABLE32\n");
+	    else
+		printf("KIND_ABS_JUMP_TABLE32\n");
+	    return(4);
+	}
+}
+
 /* Stubbed out for now */
   /* Function called to determine if there is a symbol at the given ADDR.
      If there is, the function returns 1, otherwise it returns 0.
@@ -5633,9 +5642,11 @@ enum bool verbose,
 LLVMDisasmContextRef arm_dc,
 LLVMDisasmContextRef thumb_dc,
 char *object_addr,
-uint32_t object_size)
+uint32_t object_size,
+struct data_in_code_entry *dices,
+uint32_t ndices)
 {
-    uint32_t bytes_consumed, pool_value;
+    uint32_t bytes_consumed, pool_value, i, offset;
 
 	dis_info.fprintf_func = (fprintf_ftype)fprintf;
   	dis_info.stream = stdout;
@@ -5693,6 +5704,32 @@ uint32_t object_size)
 			 sect[0];
 	    if(print_immediate_func(addr, pool_value, &dis_info, TRUE) == TRUE)
 		return(4);
+	}
+
+	/*
+	 * See if this address is has a data in code entry and if so print.
+	 */
+	if(ndices){
+            /* TODO in final linked imagess, offset is from the base address */
+            /* TODO in final linked imagess, offset is from first section address */
+            if(nrelocs == 0) /* TODO better test for final linked image */
+                offset = addr; 
+            else
+                offset = addr - sect_addr; 
+            for(i = 0; i < ndices; i++){
+                if(offset >= dices[i].offset &&
+		   offset < dices[i].offset + dices[i].length){
+		   bytes_consumed = print_data_in_code(sect, left,
+				     dices[i].offset + dices[i].length - offset,
+                                     dices[i].kind);
+		   if ((dices[i].kind == DICE_KIND_JUMP_TABLE8) && 
+		       (offset == (dices[i].offset + dices[i].length - 1)) &&
+		       (dices[i].length & 1)) {
+		     ++bytes_consumed;
+		   }
+		   return(bytes_consumed);
+                }
+            }
 	}
 
 	bytes_consumed = print_insn_little_arm(addr, &dis_info);

@@ -42,7 +42,7 @@ typedef std::map<uint64_t,uint64_t>                             ExceptionFrameMa
   
   RelocMap                relocMap;         // section relocations
   SegmentInfoMap          segmentInfo;      // segment info lookup table by offset
-  SectionInfoMap          insertChild;      // section info lookup table by address
+  SectionInfoMap          sectionInfo;      // section info lookup table by address
   ExceptionFrameMap       lsdaInfo;         // LSDA info lookup table by address
   
   NSMutableDictionary *   symbolNames;      // symbol names by address

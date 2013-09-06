@@ -31,6 +31,7 @@
     dataController = dc;
     rootNode = node;
     imageOffset = node.dataRange.location;
+    imageSize = node.dataRange.length;
     backgroundThread = [[NSThread alloc] initWithTarget:self selector:@selector(doBackgroundTasks) object:nil];
     
     NSString * swapPath = NSSTRING(tempnam(CSTRING([MVDocument temporaryDirectory]),

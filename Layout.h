@@ -19,13 +19,14 @@ struct obj const * obj = (struct obj const *)((uint8_t *)[dataController.realDat
 @interface MVLayout : NSObject 
 {
   MVNode *              rootNode;
-  MVDataController *    __unsafe_unretained dataController;
-  uint32_t              imageOffset;      // absolute physical offset in binary
+  MVDataController *    __weak dataController;
+  uint32_t              imageOffset;  // absolute physical offset of the image in binary
+  uint32_t              imageSize;    // size of the image corresponds to this layout
   NSThread *            backgroundThread;
   MVArchiver *          archiver;
 }
 
-@property(nonatomic,unsafe_unretained,readonly) MVDataController * dataController;
+@property(nonatomic,weak,readonly)  MVDataController * dataController;
 @property(nonatomic,readonly) NSThread * backgroundThread;
 @property(nonatomic,readonly) MVArchiver * archiver;
 

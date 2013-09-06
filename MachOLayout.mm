@@ -192,8 +192,8 @@ using namespace std;
 {
   NSParameterAssert([self is64bit] == NO);
   
-  SectionInfoMap::const_iterator sectIter = insertChild.upper_bound(rva);
-  if (sectIter == insertChild.begin())
+  SectionInfoMap::const_iterator sectIter = sectionInfo.upper_bound(rva);
+  if (sectIter == sectionInfo.begin())
   {
     [NSException raise:@"RVAToFileOffset"
                 format:@"no section found at address 0x%X", rva];
@@ -210,8 +210,8 @@ using namespace std;
 {
   NSParameterAssert([self is64bit] == YES);
   
-  SectionInfoMap::const_iterator sectIter = insertChild.upper_bound(rva64);
-  if (sectIter == insertChild.begin())
+  SectionInfoMap::const_iterator sectIter = sectionInfo.upper_bound(rva64);
+  if (sectIter == sectionInfo.begin())
   {
     [NSException raise:@"RVA64ToFileOffset"
                 format:@"no section found at address 0x%qX", rva64];
@@ -322,8 +322,8 @@ _hex2int(char const * a, uint32_t len)
 - (NSDictionary *)sectionInfoForRVA:(uint32_t)rva
 {
   NSParameterAssert([self is64bit] == NO);
-  SectionInfoMap::iterator iter = insertChild.upper_bound(rva);
-  if (iter == insertChild.begin())
+  SectionInfoMap::iterator iter = sectionInfo.upper_bound(rva);
+  if (iter == sectionInfo.begin())
   {
     NSLog(@"warning: no section info found for address 0x%.8X",rva);
     return nil;
@@ -335,8 +335,8 @@ _hex2int(char const * a, uint32_t len)
 - (NSDictionary *)sectionInfoForRVA64:(uint64_t)rva64
 {
   NSParameterAssert([self is64bit] == YES);
-  SectionInfoMap::iterator iter = insertChild.upper_bound(rva64);
-  if (iter == insertChild.begin())
+  SectionInfoMap::iterator iter = sectionInfo.upper_bound(rva64);
+  if (iter == sectionInfo.begin())
   {
     NSLog(@"warning: no section info found for address 0x%.16qX",rva64);
     return nil;

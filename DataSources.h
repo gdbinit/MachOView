@@ -8,14 +8,10 @@
 
 extern NSString * const MVScannerErrorMessage;
 
-@interface DataSourceTree : NSObject
-{
-}
+@interface MVDataSourceTree : NSObject;
 @end
 
 
-@interface DataSourceDetails : NSObject
-{
-}
+@interface MVDataSourceDetails : NSObject;
 @end
 
