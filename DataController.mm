@@ -559,7 +559,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   if (filter == nil || [filter length] == 0)
   {
     // copy everything (copy by elems because want to exclude later added rows)
-    displayRows = [NSArray arrayWithArray:rows];
+    displayRows = [NSMutableArray arrayWithArray:rows];
     
     /*
     displayRows = [[NSMutableArray alloc] init];
