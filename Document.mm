@@ -10,7 +10,7 @@
 #import "Document.h"
 #import "DataController.h"
 #import "Layout.h"
-
+#include <unistd.h>
 
 //============================================================================
 @implementation MVOutlineView
@@ -314,7 +314,7 @@ enum ViewType
   NSProcessInfo * procInfo = [NSProcessInfo processInfo];
   NSBundle * mainBundle = [NSBundle mainBundle];
   
-  NSString * swapDir = [NSString stringWithFormat:@"%@%@_%@", 
+  NSString * swapDir = [NSString stringWithFormat:@"%@%@_%@.XXXXXXXXXXX",
                         NSTemporaryDirectory(),
                         [procInfo processName],
                         [mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
@@ -520,14 +520,23 @@ enum ViewType
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
   // create a temporary copy for patching
-  NSString * tmpFilePath = NSSTRING(tempnam(CSTRING([MVDocument temporaryDirectory]), NULL));
-  NSURL * tmpURL = [NSURL fileURLWithPath:tmpFilePath];
-  
-  [[NSFileManager defaultManager] copyItemAtURL:absoluteURL 
+  const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
+  char *tmpFilePath = (char*)malloc(strlen(tmp)+1);
+  strcpy(tmpFilePath, tmp);
+  if ( mktemp(tmpFilePath) == NULL)
+  {
+      NSLog(@"mktemp failed!");
+      return NO;
+  }
+
+  NSURL * tmpURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:tmpFilePath]];
+  free(tmpFilePath);
+
+  [[NSFileManager defaultManager] copyItemAtURL:absoluteURL
                                           toURL:tmpURL
                                           error:outError];
   if (*outError) return NO;
-  
+
   // open the copied binary for patching
   dataController.realData = [NSMutableData dataWithContentsOfURL:tmpURL
                                                          options:NSDataReadingMappedAlways 
