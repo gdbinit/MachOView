@@ -985,7 +985,6 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   
   [layouts addObject:layout];
   uint32_t totalFatHeadersSize = sizeof(struct fat_header) + sizeof(struct fat_arch) * fat_header->nfat_arch;
-  NSAlert *alert = [NSAlert new];
   
   for (uint32_t nimg = 0; nimg < fat_header->nfat_arch; ++nimg)
   {
@@ -998,44 +997,47 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
      * XXXfG: needs additional checks here
      */
     uint8_t triggerAlert = 0;
-    /* be suspicious of a fat header that is longer than one page */
-    if (totalFatHeadersSize > 4096)
-    {
-      [alert setInformativeText:@"Total fat header bigger than 4096 bytes, not normal."];
-      triggerAlert++;
-    }
-    /* the same, offset can't be located in the fat page */
-    else if (fat_arch.offset < 4096)
-    {
-      [alert setInformativeText:@"Fat arch offset pointing to offset lower than 4096."];
-      triggerAlert++;
-    }
+    NSString *informativeText;
     /* offset points outside the binary */
-    else if (fat_arch.offset > [fileData length])
+    if (fat_arch.offset > [fileData length])
     {
-      [alert setInformativeText:@"Fat arch offset bigger than binary size!"];
+      informativeText = [NSString stringWithFormat:@"Fat arch number %d offset bigger than binary size!", nimg];
       triggerAlert++;
     }
     /* size bigger than binary itself */
     else if (fat_arch.size > [fileData length])
     {
-      [alert setInformativeText:@"Fat arch size bigger than binary size!"];
+      informativeText = [NSString stringWithFormat:@"Fat arch number %d size bigger than binary size!", nimg];
       triggerAlert++;
     }
     /* increase of nfat_arch without modifying/adding any data */
     else if (fat_arch.size == 0 || fat_arch.offset == 0)
     {
-      [alert setInformativeText:@"Fat arch size or offset equal to 0!"];
+      informativeText = [NSString stringWithFormat:@"Fat arch number %d size or offset equal to 0!", nimg];
       triggerAlert++;
     }
+    /* be suspicious of a fat header that is longer than one page */
+    else if (totalFatHeadersSize > 4096)
+    {
+      informativeText = [NSString stringWithFormat:@"Total fat header size bigger than 4096 bytes, not normal."];
+      triggerAlert++;
+    }
+    /* the same, offset can't be located in the fat page */
+    else if (fat_arch.offset < 4096)
+    {
+      informativeText = [NSString stringWithFormat:@"Fat arch number %d offset pointing to offset lower than 4096.", nimg];
+      triggerAlert++;
+    }
+    /* show alert and skip bogus fat arch */
     if (triggerAlert)
     {
-        [alert addButtonWithTitle:@"OK!"];
-        [alert setMessageText:@"Malformed Fat Header"];
-        [alert setInformativeText:@"The number of binaries configured at nfat_arch appears to be bogus!"];
-        [alert setAlertStyle:NSCriticalAlertStyle];
-        [alert runModal];
-        continue;
+      NSAlert *alert = [NSAlert new];
+      [alert setInformativeText:informativeText];
+      [alert addButtonWithTitle:@"OK!"];
+      [alert setMessageText:@"Malformed Fat Header"];
+      [alert setAlertStyle:NSCriticalAlertStyle];
+      [alert runModal];
+      continue;
     }
     
     if (*(uint64_t*)((uint8_t *)[fileData bytes] + fat_arch.offset) == *(uint64_t*)"!<arch>\n")
