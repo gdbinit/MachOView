@@ -990,7 +990,13 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     struct fat_arch fat_arch;
     [fileData getBytes:&fat_arch range:NSMakeRange(sizeof(struct fat_header) + nimg * sizeof(struct fat_arch), sizeof(struct fat_arch))];
     swap_fat_arch(&fat_arch, 1, NX_LittleEndian);
-    
+    /* 
+     * try to validate the fat_arch structure
+     * XXXfG: needs additional checks here
+     */
+    if (fat_arch.size == 0)
+        continue;
+      
     if (*(uint64_t*)((uint8_t *)[fileData bytes] + fat_arch.offset) == *(uint64_t*)"!<arch>\n")
     {
       MVNode * archNode = [node insertChild:nil location:fat_arch.offset length:fat_arch.size];
