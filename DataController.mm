@@ -984,6 +984,9 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
   
   [layouts addObject:layout];
+  uint32_t totalFatHeadersSize = sizeof(struct fat_header) + sizeof(struct fat_arch) * fat_header->nfat_arch;
+  NSAlert *alert = [NSAlert new];
+  
   for (uint32_t nimg = 0; nimg < fat_header->nfat_arch; ++nimg)
   {
     // need to make copy for byte swapping
@@ -994,9 +997,47 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
      * try to validate the fat_arch structure
      * XXXfG: needs additional checks here
      */
-    if (fat_arch.size == 0)
+    uint8_t triggerAlert = 0;
+    /* be suspicious of a fat header that is longer than one page */
+    if (totalFatHeadersSize > 4096)
+    {
+      [alert setInformativeText:@"Total fat header bigger than 4096 bytes, not normal."];
+      triggerAlert++;
+    }
+    /* the same, offset can't be located in the fat page */
+    else if (fat_arch.offset < 4096)
+    {
+      [alert setInformativeText:@"Fat arch offset pointing to offset lower than 4096."];
+      triggerAlert++;
+    }
+    /* offset points outside the binary */
+    else if (fat_arch.offset > [fileData length])
+    {
+      [alert setInformativeText:@"Fat arch offset bigger than binary size!"];
+      triggerAlert++;
+    }
+    /* size bigger than binary itself */
+    else if (fat_arch.size > [fileData length])
+    {
+      [alert setInformativeText:@"Fat arch size bigger than binary size!"];
+      triggerAlert++;
+    }
+    /* increase of nfat_arch without modifying/adding any data */
+    else if (fat_arch.size == 0 || fat_arch.offset == 0)
+    {
+      [alert setInformativeText:@"Fat arch size or offset equal to 0!"];
+      triggerAlert++;
+    }
+    if (triggerAlert)
+    {
+        [alert addButtonWithTitle:@"OK!"];
+        [alert setMessageText:@"Malformed Fat Header"];
+        [alert setInformativeText:@"The number of binaries configured at nfat_arch appears to be bogus!"];
+        [alert setAlertStyle:NSCriticalAlertStyle];
+        [alert runModal];
         continue;
-      
+    }
+    
     if (*(uint64_t*)((uint8_t *)[fileData bytes] + fat_arch.offset) == *(uint64_t*)"!<arch>\n")
     {
       MVNode * archNode = [node insertChild:nil location:fat_arch.offset length:fat_arch.size];
