@@ -1,8 +1,23 @@
+ __    __     ______     ______     __  __     ______     __   __   __     ______     __     __    
+/\ "-./  \   /\  __ \   /\  ___\   /\ \_\ \   /\  __ \   /\ \ / /  /\ \   /\  ___\   /\ \  _ \ \   
+\ \ \-./\ \  \ \  __ \  \ \ \____  \ \  __ \  \ \ \/\ \  \ \ \'/   \ \ \  \ \  __\   \ \ \/ ".\ \  
+ \ \_\ \ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\  \ \_____\  \ \__|    \ \_\  \ \_____\  \ \__/".~\_\ 
+  \/_/  \/_/   \/_/\/_/   \/_____/   \/_/\/_/   \/_____/   \/_/      \/_/   \/_____/   \/_/   \/_/ 
+                                                                                                   
+
 A fork from MachOView to update and fix some bugs, mostly Mountain Lion & iOS 6 related.
 Also some small changes to the original behaviour.
 
 Original MachOView by psaghelyi at http://sourceforge.net/projects/machoview/.
 Thanks to psaghelyi for his great work :-)
+
+Latest versions use LLVM disassembler and are Lion+ only.
+You will need to download the Clang package from http://opensource.apple.com, from Developer Tools.
+Unpack it, go to src folder and run configure (you might need to install cmake, from brew or macports).
+Now modify the XCode Project settings. Go to Search Paths, and add the path to clang/src/include folder to
+the User Header Search Paths.
+
+Try to compile and hopefully it should work. Not sure if this is the best way to achieve it, it works.
 
 Enjoy,
 fG!
