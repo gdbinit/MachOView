@@ -34,9 +34,17 @@
     imageSize = node.dataRange.length;
     backgroundThread = [[NSThread alloc] initWithTarget:self selector:@selector(doBackgroundTasks) object:nil];
     
-    NSString * swapPath = NSSTRING(tempnam(CSTRING([MVDocument temporaryDirectory]),
-                                           CSTRING([[[dataController fileName] lastPathComponent] stringByAppendingString:@"."])));
-
+    const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
+    char *swapFilePath = (char*)malloc(strlen(tmp)+1);
+    strcpy(swapFilePath, tmp);
+    if ( mktemp(swapFilePath) == NULL)
+    {
+      NSLog(@"mktemp failed!");
+      return NO;
+    }
+      
+    NSString *swapPath = [NSString stringWithFormat:@"%s.%@", swapFilePath, [[dataController fileName] lastPathComponent]];
+    free(swapFilePath);
     archiver = [MVArchiver archiverWithPath:swapPath];
   }
   return self;
