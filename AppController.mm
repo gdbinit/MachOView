@@ -68,6 +68,12 @@ int64_t nrow_loaded; // number of loaded rows
 }
 
 //----------------------------------------------------------------------------
+/* menu item action to attach to a process and read its mach-o header */
+- (IBAction)attach:(id)sender
+{
+}
+
+//----------------------------------------------------------------------------
 - (IBAction)openDocument:(id)sender
 {
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
