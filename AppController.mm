@@ -196,11 +196,19 @@ int64_t nrow_loaded; // number of loaded rows
   nrow_total = nrow_loaded = 0;
   [NSThread detachNewThreadSelector:@selector(printStat) toTarget:self withObject:nil];
 #endif 
-  
-  // if there is no document yet, then pop up an open file dialogue  
-  if ([[[NSDocumentController sharedDocumentController] documents] count] == 0)
+
+  /* default is to not open a file dialogue */
+  if ([[NSUserDefaults standardUserDefaults] objectForKey:@"OpenAtLaunch"] != nil)
   {
-    [self openDocument:nil];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"OpenAtLaunch"] == YES)
+    {
+      // if there is no document yet, then pop up an open file dialogue
+      // XXX: irrelevant check, no?
+      if ([[[NSDocumentController sharedDocumentController] documents] count] == 0)
+      {
+        [self openDocument:nil];
+      }
+    }
   }
 }
 

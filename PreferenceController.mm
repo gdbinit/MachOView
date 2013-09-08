@@ -23,5 +23,10 @@
   qflag = ([useLLVMDisassembler state] == NSOnState);
 }
 
+- (IBAction)toggleOpenAtLaunch:(id)sender
+{
+  // nothing to do here?
+}
+
 @end
 
