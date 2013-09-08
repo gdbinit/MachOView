@@ -11,6 +11,7 @@
 #import "DataController.h"
 #import "Document.h"
 #import "PreferenceController.h"
+#import "Attach.h"
 
 // counters for statistics
 int64_t nrow_total;  // number of rows (loaded and empty)
@@ -68,9 +69,97 @@ int64_t nrow_loaded; // number of loaded rows
 }
 
 //----------------------------------------------------------------------------
-/* menu item action to attach to a process and read its mach-o header */
+/* 
+ * menu item action to attach to a process and read its mach-o header
+ */
 - (IBAction)attach:(id)sender
 {
+  NSAlert *alert = [NSAlert alertWithMessageText:@"Insert PID to attach to:"
+                                   defaultButton:@"Attach"
+                                 alternateButton:@"Cancel"
+                                     otherButton:nil
+                       informativeTextWithFormat:@""];
+  
+  NSTextField *input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+  [input setStringValue:@""];
+  [alert setAccessoryView:input];
+  NSInteger button = [alert runModal];
+  if (button == NSAlertDefaultReturn)
+  {
+    [input validateEditing];
+    pid_t targetPid = [input intValue];
+    NSLog(@"Attach to process %d", targetPid);
+    mach_vm_address_t mainAddress = 0;
+    if (find_main_binary(targetPid, &mainAddress))
+    {
+      NSLog(@"Failed to find main binary address!");
+      return;
+    }
+    uint64_t aslr_slide = 0;
+    uint64_t imagesize = 0;
+    if ( (imagesize = get_image_size(mainAddress, targetPid, &aslr_slide)) == 0 )
+    {
+      NSLog(@"[ERROR] Got image file size equal to 0!");
+      return;
+    }
+    /* allocate the buffer to contain the memory dump */
+    uint8_t *readbuffer = (uint8_t*)malloc(imagesize);
+    if (readbuffer == NULL)
+    {
+      NSLog(@"Can't allocate mem for dumping target!");
+      return;
+    }
+    /* and finally read the sections and dump their contents to the buffer */
+    if (dump_binary(mainAddress, targetPid, readbuffer, aslr_slide))
+    {
+      NSLog(@"Main binary memory dump failed!");
+      free(readbuffer);
+      return;
+    }
+    /* dump buffer contents to temporary file to use the NSDocument model */
+    const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
+    char *dumpFilePath = (char*)malloc(strlen(tmp)+1);
+    if (dumpFilePath == NULL)
+    {
+      NSLog(@"Can't allocate mem for temp filename path!");
+      free(readbuffer);
+      return;
+    }
+    strcpy(dumpFilePath, tmp);
+    int outputFile = 0;
+    if ( (outputFile = mkstemp(dumpFilePath)) == -1 )
+    {
+      NSLog(@"mkstemp failed!");
+      free(dumpFilePath);
+      free(readbuffer);
+      return;
+    }
+    
+    if (write(outputFile, readbuffer, imagesize) == -1)
+    {
+      NSLog(@"[ERROR] Write error at %s occurred!\n", dumpFilePath);
+      free(dumpFilePath);
+      free(readbuffer);
+      return;
+    }
+    NSLog(@"\n[OK] Full binary dumped to %s!\n\n", dumpFilePath);
+    close(outputFile);
+    
+    [self application:NSApp openFile:[NSString stringWithCString:dumpFilePath encoding:NSUTF8StringEncoding]];
+    /* remove temporary dump file, not required anymore */
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:[NSString stringWithCString:dumpFilePath encoding:NSUTF8StringEncoding] error:NULL];
+    free(dumpFilePath);
+    free(readbuffer);
+  }
+  else if (button == NSAlertAlternateReturn)
+  {
+    /* nothing to do here */
+  }
+  else
+  {
+    NSAssert1(NO, @"Invalid input dialog button %ld", button);
+  }
 }
 
 //----------------------------------------------------------------------------

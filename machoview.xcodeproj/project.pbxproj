@@ -35,6 +35,7 @@
 		3CF9779E11C77A23004CD74C /* DataController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF9779D11C77A23004CD74C /* DataController.mm */; };
 		3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF978C511C7B34C004CD74C /* DataSources.mm */; };
 		3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF97F0E11C91F93004CD74C /* MachOLayout.mm */; };
+		7B111E4717DC33F8008ED484 /* Attach.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B111E4617DC33F8008ED484 /* Attach.mm */; };
 		8D11072D0486CEB800E47090 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
@@ -116,6 +117,8 @@
 		3CF978C511C7B34C004CD74C /* DataSources.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataSources.mm; sourceTree = "<group>"; };
 		3CF97F0D11C91F93004CD74C /* MachOLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MachOLayout.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3CF97F0E11C91F93004CD74C /* MachOLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = MachOLayout.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		7B111E4617DC33F8008ED484 /* Attach.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Attach.mm; sourceTree = "<group>"; };
+		7B111E4817DC3401008ED484 /* Attach.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Attach.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +172,8 @@
 				3CE90D1711F5F82200543402 /* ReadWrite.mm */,
 				3CCC228B129EE70C0083DAE2 /* CRTFootPrints.h */,
 				3CCC228C129EE70C0083DAE2 /* CRTFootPrints.mm */,
+				7B111E4817DC3401008ED484 /* Attach.h */,
+				7B111E4617DC33F8008ED484 /* Attach.mm */,
 			);
 			name = machoview;
 			sourceTree = "<group>";
@@ -382,6 +387,7 @@
 				3CE90D8811F6017B00543402 /* LoadCommands.mm in Sources */,
 				3CE90DB611F60B6900543402 /* LinkEdit.mm in Sources */,
 				3CE90DEF11F60D5A00543402 /* Exceptions.mm in Sources */,
+				7B111E4717DC33F8008ED484 /* Attach.mm in Sources */,
 				3C61A87C1240B0B400BDF3D0 /* SectionContents.mm in Sources */,
 				3CD037C21248F66C00DCFC68 /* DyldInfo.mm in Sources */,
 				3CCC228D129EE70C0083DAE2 /* CRTFootPrints.mm in Sources */,
@@ -468,10 +474,16 @@
 					"-D__STDC_FORMAT_MACROS",
 					"-D__STDC_LIMIT_MACROS",
 				);
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					Info.plist,
+				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include";
+				SDKROOT = macosx10.8;
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include ADD_PATH_TO_LLVM_SOURCE_INCLUDES";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
@@ -509,11 +521,17 @@
 					"-D__STDC_FORMAT_MACROS",
 					"-D__STDC_LIMIT_MACROS",
 				);
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					Info.plist,
+				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.8;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include ADD_PATH_TO_LLVM_SOURCE_INCLUDES";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
