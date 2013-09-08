@@ -19,5 +19,15 @@ the User Header Search Paths.
 
 Try to compile and hopefully it should work. Not sure if this is the best way to achieve it, it works.
 
+Now features the attach option to analyse headers of a running process.
+To use this feature you will need to codesign the binary.
+Follow this LLDB guide to create the certificate and then codesign MachOView binary.
+https://llvm.org/svn/llvm-project/lldb/trunk/docs/code-signing.txt
+The necessary entitlements are already added to Info.plist.
+
+Be warned that this allows MachOView to have task_for_pid() privs under current under and control
+every process from user running it.
+The whole Mach-O parsing code needs to be reviewed and made more robust.
+
 Enjoy,
 fG!
