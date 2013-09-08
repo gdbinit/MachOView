@@ -37,9 +37,10 @@
     const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
     char *swapFilePath = (char*)malloc(strlen(tmp)+1);
     strcpy(swapFilePath, tmp);
-    if ( mktemp(swapFilePath) == NULL)
+    if (mktemp(swapFilePath) == NULL)
     {
       NSLog(@"mktemp failed!");
+      free(swapFilePath);
       return NO;
     }
       

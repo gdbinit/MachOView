@@ -523,10 +523,11 @@ enum ViewType
   const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
   char *tmpFilePath = (char*)malloc(strlen(tmp)+1);
   strcpy(tmpFilePath, tmp);
-  if ( mktemp(tmpFilePath) == NULL)
+  if (mktemp(tmpFilePath) == NULL)
   {
-      NSLog(@"mktemp failed!");
-      return NO;
+    NSLog(@"mktemp failed!");
+    free(tmpFilePath);
+    return NO;
   }
 
   NSURL * tmpURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:tmpFilePath]];
