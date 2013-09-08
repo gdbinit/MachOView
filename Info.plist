@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBuildDate</key>
-	<string>Sat Sep  7 01:04:54 WEST 2013</string>
+	<string>Sun Sep  8 22:04:08 WEST 2013</string>
 	<key>CFBuildNumber</key>
-	<string>8512</string>
+	<string>8641</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -44,7 +44,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8512</string>
+	<string>8641</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersion</key>
@@ -53,5 +53,10 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SecTaskAccess</key>
+	<array>
+		<string>allowed</string>
+		<string>debug</string>
+	</array>
 </dict>
 </plist>
