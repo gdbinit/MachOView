@@ -884,12 +884,13 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
   switch (cputype)
   {
-    default:                  return @"???"; 
-    case CPU_TYPE_X86:        return @"X86";
-    case CPU_TYPE_POWERPC:    return @"PPC";
-    case CPU_TYPE_X86_64:     return @"X86_64";
-    case CPU_TYPE_POWERPC64:  return @"PPC64";
-    case CPU_TYPE_ARM:        return @"ARM";  
+    default:                            return @"???";
+    case CPU_TYPE_X86:                  return @"X86";
+    case CPU_TYPE_POWERPC:              return @"PPC";
+    case CPU_TYPE_X86_64:               return @"X86_64";
+    case CPU_TYPE_POWERPC64:            return @"PPC64";
+    case CPU_TYPE_ARM:                  return @"ARM";
+    case CPU_TYPE_ARM | CPU_ARCH_ABI64: return @"ARM64";
   }
 }
 
@@ -916,7 +917,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
   return ([machine isEqualToString:@"X86"] == YES ||
           [machine isEqualToString:@"X86_64"] == YES ||
-          [machine isEqualToString:@"ARM"] == YES);
+          [machine isEqualToString:@"ARM"] == YES ||
+          [machine isEqualToString:@"ARM64"] == YES);
 }
 
 //----------------------------------------------------------------------------
