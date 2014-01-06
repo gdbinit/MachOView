@@ -55,7 +55,8 @@ using namespace std;
     case LC_REEXPORT_DYLIB:       return @"LC_REEXPORT_DYLIB";      
     case LC_LAZY_LOAD_DYLIB:      return @"LC_LAZY_LOAD_DYLIB";     
     case LC_ENCRYPTION_INFO:      return @"LC_ENCRYPTION_INFO";     
-    case LC_DYLD_INFO:            return @"LC_DYLD_INFO";           
+    case LC_ENCRYPTION_INFO_64:   return @"LC_ENCRYPTION_INFO_64";
+    case LC_DYLD_INFO:            return @"LC_DYLD_INFO";
     case LC_DYLD_INFO_ONLY:       return @"LC_DYLD_INFO_ONLY";      
     case LC_LOAD_UPWARD_DYLIB:    return @"LC_LOAD_UPWARD_DYLIB";
     case LC_VERSION_MIN_MACOSX:   return @"LC_VERSION_MIN_MACOSX";
@@ -1669,7 +1670,7 @@ using namespace std;
 - (MVNode *)createLCEncryptionInfoNode:(MVNode *)parent
                                caption:(NSString *)caption
                               location:(uint32_t)location
-               encryption_info_command:(struct encryption_info_command const *)encryption_info_command
+               encryption_info_command:(struct encryption_info_command_64 const *)encryption_info_command
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:encryption_info_command->cmdsize saver:nodeSaver]; 
@@ -1711,6 +1712,15 @@ using namespace std;
                          :lastReadHex
                          :@"Crypt ID"
                          :[NSString stringWithFormat:@"%u", encryption_info_command->cryptid]];
+  
+  if ([self is64bit] == YES)
+  {
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Pad"
+                           :[NSString stringWithFormat:@"%u", encryption_info_command->pad]];
+  }
   return node;
 }
 
@@ -2140,12 +2150,13 @@ using namespace std;
     } break;   
 
     case LC_ENCRYPTION_INFO:
+    case LC_ENCRYPTION_INFO_64:
     {
-      MATCH_STRUCT(encryption_info_command, location)
+      MATCH_STRUCT(encryption_info_command_64, location)
       node = [self createLCEncryptionInfoNode:parent
                                       caption:caption
                                      location:location
-                      encryption_info_command:encryption_info_command];
+                      encryption_info_command:encryption_info_command_64];
     } break;
       
     case LC_RPATH:
