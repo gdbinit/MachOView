@@ -50,8 +50,7 @@ using namespace std;
 - (BOOL)is64bit
 {
   MATCH_STRUCT(mach_header,imageOffset);
-  return (mach_header->cputype == CPU_TYPE_X86_64 ||
-          mach_header->cputype == CPU_TYPE_POWERPC64);
+  return ((mach_header->cputype & CPU_ARCH_ABI64) == CPU_ARCH_ABI64);
 }
 
 //-----------------------------------------------------------------------------

@@ -884,12 +884,13 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
   switch (cputype)
   {
-    default:                  return @"???"; 
-    case CPU_TYPE_X86:        return @"X86";
-    case CPU_TYPE_POWERPC:    return @"PPC";
-    case CPU_TYPE_X86_64:     return @"X86_64";
-    case CPU_TYPE_POWERPC64:  return @"PPC64";
-    case CPU_TYPE_ARM:        return @"ARM";  
+    default:                            return @"???";
+    case CPU_TYPE_X86:                  return @"X86";
+    case CPU_TYPE_POWERPC:              return @"PPC";
+    case CPU_TYPE_X86_64:               return @"X86_64";
+    case CPU_TYPE_POWERPC64:            return @"PPC64";
+    case CPU_TYPE_ARM:                  return @"ARM";
+    case CPU_TYPE_ARM | CPU_ARCH_ABI64: return @"ARM64";
   }
 }
 
@@ -916,7 +917,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
   return ([machine isEqualToString:@"X86"] == YES ||
           [machine isEqualToString:@"X86_64"] == YES ||
-          [machine isEqualToString:@"ARM"] == YES);
+          [machine isEqualToString:@"ARM"] == YES ||
+          [machine isEqualToString:@"ARM64"] == YES);
 }
 
 //----------------------------------------------------------------------------
@@ -1050,9 +1052,10 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
       // need to make copy for byte swapping
       struct mach_header mach_header;
       [fileData getBytes:&mach_header range:NSMakeRange(fat_arch.offset, sizeof(struct mach_header))];
-      // XXX: workaround because NXGetArchInfoFromCpuType() doesn't know CPU_SUBTYPE_ARM_V7S and returns
-      //      invalid data leading to a crash on byteorder access
+      // XXX: workaround because NXGetArchInfoFromCpuType() doesn't know neither CPU_SUBTYPE_ARM_V7S nor
+      //      CPU_TYPE_ARM | CPU_ARCH_ABI64 and returns invalid data leading to a crash on byteorder access
       if (fat_arch.cpusubtype == CPU_SUBTYPE_ARM_V7S) fat_arch.cpusubtype = CPU_SUBTYPE_ARM_V7K;
+      if (fat_arch.cputype == (CPU_TYPE_ARM | CPU_ARCH_ABI64)) fat_arch.cputype = CPU_TYPE_ARM;
       enum NXByteOrder byteorder = NXGetArchInfoFromCpuType(fat_arch.cputype,fat_arch.cpusubtype)->byteorder;
       if (byteorder == NX_BigEndian)
       {
