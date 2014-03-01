@@ -19,6 +19,23 @@ enum {
   MVMetaDataAttributeOrdinal
 };
 
+enum {
+  MVBlackColorOrdinal = 1,
+  MVDarkGrayColorOrdinal,
+  MVLightGrayColorOrdinal,
+  MVWhiteColorOrdinal,
+  MVGrayColorOrdinal,
+  MVRedColorOrdinal,
+  MVGreenColorOrdinal,
+  MVBlueColorOrdinal,
+  MVCyanColorOrdinal,
+  MVYellowColorOrdinal,
+  MVMagentaColorOrdinal,
+  MVOrangeColorOrdinal,
+  MVPurpleColorOrdinal,
+  MVBrownColorOrdinal
+};
+
 NSString * const MVUnderlineAttributeName         = @"MVUnderlineAttribute";
 NSString * const MVCellColorAttributeName         = @"MVCellColorAttribute";
 NSString * const MVTextColorAttributeName         = @"MVTextColorAttribute";
@@ -167,6 +184,25 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //-----------------------------------------------------------------------------
 - (void)writeColor:(NSColor *)color toFile:(FILE *)pFile
 {
+  int colorOrdinal = [color isEqualTo:[NSColor blackColor]]     ? MVBlackColorOrdinal
+                   : [color isEqualTo:[NSColor darkGrayColor]]  ? MVDarkGrayColorOrdinal
+                   : [color isEqualTo:[NSColor lightGrayColor]] ? MVLightGrayColorOrdinal
+                   : [color isEqualTo:[NSColor whiteColor]]     ? MVWhiteColorOrdinal
+                   : [color isEqualTo:[NSColor grayColor]]      ? MVGrayColorOrdinal
+                   : [color isEqualTo:[NSColor redColor]]       ? MVRedColorOrdinal
+                   : [color isEqualTo:[NSColor greenColor]]     ? MVGreenColorOrdinal
+                   : [color isEqualTo:[NSColor blueColor]]      ? MVBlueColorOrdinal
+                   : [color isEqualTo:[NSColor cyanColor]]      ? MVCyanColorOrdinal
+                   : [color isEqualTo:[NSColor yellowColor]]    ? MVYellowColorOrdinal
+                   : [color isEqualTo:[NSColor magentaColor]]   ? MVMagentaColorOrdinal
+                   : [color isEqualTo:[NSColor orangeColor]]    ? MVOrangeColorOrdinal
+                   : [color isEqualTo:[NSColor purpleColor]]    ? MVPurpleColorOrdinal
+                   : [color isEqualTo:[NSColor brownColor]]     ? MVBrownColorOrdinal
+                   : 0;
+  
+  putc(colorOrdinal, pFile);
+  if (colorOrdinal == 0)
+  {
   CGFloat red, green, blue, alpha;
   [color getRed:&red green:&green blue:&blue alpha:&alpha];
   float fred = red, fgreen = green, fblue = blue, falpha = alpha;
@@ -175,10 +211,30 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   fwrite(&fblue, sizeof(float), 1, pFile);
   fwrite(&falpha, sizeof(float), 1, pFile);
 }
+}
 
 //-----------------------------------------------------------------------------
 - (NSColor *)readColorFromFile:(FILE *)pFile
 {
+  int colorOrdinal = getc(pFile);
+  switch (colorOrdinal)
+  {
+    case MVBlackColorOrdinal:     return [NSColor blackColor];
+    case MVDarkGrayColorOrdinal:  return [NSColor darkGrayColor];
+    case MVLightGrayColorOrdinal: return [NSColor lightGrayColor];
+    case MVWhiteColorOrdinal:     return [NSColor whiteColor];
+    case MVGrayColorOrdinal:      return [NSColor grayColor];
+    case MVRedColorOrdinal:       return [NSColor redColor];
+    case MVGreenColorOrdinal:     return [NSColor greenColor];
+    case MVBlueColorOrdinal:      return [NSColor blueColor];
+    case MVCyanColorOrdinal:      return [NSColor cyanColor];
+    case MVYellowColorOrdinal:    return [NSColor yellowColor];
+    case MVMagentaColorOrdinal:   return [NSColor magentaColor];
+    case MVOrangeColorOrdinal:    return [NSColor orangeColor];
+    case MVPurpleColorOrdinal:    return [NSColor purpleColor];
+    case MVBrownColorOrdinal:     return [NSColor brownColor];
+  }
+
   float fred, fgreen, fblue, falpha;
   fread(&fred, sizeof(float), 1, pFile);
   fread(&fgreen, sizeof(float), 1, pFile);
@@ -845,7 +901,6 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   NSParameterAssert(detailsOffset != 0);
   fseek (pFile, detailsOffset, SEEK_SET);
   [details loadIndexes];
-    
   [layout.dataController updateStatus:MVStatusTaskTerminated];
 }
 
@@ -885,11 +940,12 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   switch (cputype)
   {
     default:                  return @"???"; 
-    case CPU_TYPE_X86:        return @"X86";
+    case CPU_TYPE_I386:       return @"X86";
     case CPU_TYPE_POWERPC:    return @"PPC";
     case CPU_TYPE_X86_64:     return @"X86_64";
     case CPU_TYPE_POWERPC64:  return @"PPC64";
     case CPU_TYPE_ARM:        return @"ARM";  
+    case CPU_TYPE_ARM64:      return @"ARM64";
   }
 }
 
@@ -908,6 +964,18 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     case CPU_SUBTYPE_ARM_V7F:     return @"ARM_V7F";
     case CPU_SUBTYPE_ARM_V7K:     return @"ARM_V7K";
     case CPU_SUBTYPE_ARM_V7S:     return @"ARM_V7S";
+    case CPU_SUBTYPE_ARM_V8:      return @"ARM_V8";
+  }
+}
+
+//----------------------------------------------------------------------------
+-(NSString *)getARM64Cpu:(cpu_subtype_t)cpusubtype
+{
+  switch (cpusubtype)
+  {
+    default:                      return @"???";
+    case CPU_SUBTYPE_ARM64_ALL:   return @"ARM64_ALL";
+    case CPU_SUBTYPE_ARM64_V8:    return @"ARM64_V8";
   }
 }
 
@@ -916,7 +984,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
   return ([machine isEqualToString:@"X86"] == YES ||
           [machine isEqualToString:@"X86_64"] == YES ||
-          [machine isEqualToString:@"ARM"] == YES);
+          [machine isEqualToString:@"ARM"] == YES ||
+          [machine isEqualToString:@"ARM64"] == YES);
 }
 
 //----------------------------------------------------------------------------
@@ -955,15 +1024,30 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 }
 
 //----------------------------------------------------------------------------
--(void)createArchiveLayout:(MVNode *)node machine:(NSString *)machine
+-(void)createMachO64Layout:(MVNode *)node
+            mach_header_64:(struct mach_header_64 const *)mach_header_64
 {
-  node.caption = machine ? [NSString stringWithFormat:@"Static Library (%@)", machine] : @"Static Library";
+  NSString * machine = [self getMachine:mach_header_64->cputype];
 
-  ArchiveLayout * layout = [ArchiveLayout layoutWithDataController:self rootNode:node];
+  node.caption = [NSString stringWithFormat:@"%@ (%@)",
+                  mach_header_64->filetype == MH_OBJECT      ? @"Object " :
+                  mach_header_64->filetype == MH_EXECUTE     ? @"Executable " :
+                  mach_header_64->filetype == MH_FVMLIB      ? @"Fixed VM Shared Library" :
+                  mach_header_64->filetype == MH_CORE        ? @"Core" :
+                  mach_header_64->filetype == MH_PRELOAD     ? @"Preloaded Executable" :
+                  mach_header_64->filetype == MH_DYLIB       ? @"Shared Library " :
+                  mach_header_64->filetype == MH_DYLINKER    ? @"Dynamic Link Editor" :
+                  mach_header_64->filetype == MH_BUNDLE      ? @"Bundle" :
+                  mach_header_64->filetype == MH_DYLIB_STUB  ? @"Shared Library Stub" :
+                  mach_header_64->filetype == MH_DSYM        ? @"Debug Symbols" :
+                  mach_header_64->filetype == MH_KEXT_BUNDLE ? @"Kernel Extension" : @"?????",
+                  [machine isEqualToString:@"ARM64"] == YES ? [self getARM64Cpu:mach_header_64->cpusubtype] : machine];
+  
+  MachOLayout * layout = [MachOLayout layoutWithDataController:self rootNode:node];
 
   [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
 
-  if (machine == nil || [self isSupportedMachine:machine])
+  if ([self isSupportedMachine:machine])
   {
     [layouts addObject:layout];
   }
@@ -972,6 +1056,73 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     // there is no detail to extract
     [layout.archiver halt];
   }
+}
+
+//----------------------------------------------------------------------------
+-(void)createArchiveLayout:(MVNode *)node machine:(NSString *)machine
+{
+  node.caption = machine ? [NSString stringWithFormat:@"Static Library (%@)", machine] : @"Static Library";
+  
+  ArchiveLayout * layout = [ArchiveLayout layoutWithDataController:self rootNode:node];
+  
+  [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
+    
+  if (machine == nil || [self isSupportedMachine:machine])
+    {
+    [layouts addObject:layout];
+    }
+    else
+    {
+    // there is no detail to extract
+    [layout.archiver halt];
+  }
+}
+
+//----------------------------------------------------------------------------
+// create Mach-O layouts based on file headers
+- (void)createLayouts:(MVNode *)parent
+             location:(uint32_t)location
+               length:(uint32_t)length
+{
+  uint32_t magic = *(uint32_t*)((uint8_t *)[fileData bytes] + location);
+  
+  switch (magic)
+  {
+    case FAT_MAGIC:
+    case FAT_CIGAM:
+    {
+      struct fat_header fat_header;
+      [fileData getBytes:&fat_header range:NSMakeRange(location, sizeof(struct fat_header))];
+      if (magic == FAT_CIGAM)
+        swap_fat_header(&fat_header, NX_LittleEndian);
+      [self createFatLayout:parent fat_header:&fat_header];
+    } break;
+      
+    case MH_MAGIC:
+    case MH_CIGAM:
+    {
+      struct mach_header mach_header;
+      [fileData getBytes:&mach_header range:NSMakeRange(location, sizeof(struct mach_header))];
+      if (magic == MH_CIGAM)
+        swap_mach_header(&mach_header, NX_LittleEndian);
+      [self createMachOLayout:parent mach_header:&mach_header];
+    } break;
+      
+    case MH_MAGIC_64:
+    case MH_CIGAM_64:
+    {
+      struct mach_header_64 mach_header_64;
+      [fileData getBytes:&mach_header_64 range:NSMakeRange(location, sizeof(struct mach_header_64))];
+      if (magic == MH_CIGAM_64)
+        swap_mach_header_64(&mach_header_64, NX_LittleEndian);
+      [self createMachO64Layout:parent mach_header_64:&mach_header_64];
+    } break;
+    
+    default:
+      [self createArchiveLayout:parent machine:nil];
+  }
+  
+  parent.dataRange = NSMakeRange(location, length);
 }
 
 //----------------------------------------------------------------------------
@@ -984,123 +1135,24 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
   
   [layouts addObject:layout];
-  uint32_t totalFatHeadersSize = sizeof(struct fat_header) + sizeof(struct fat_arch) * fat_header->nfat_arch;
-  
   for (uint32_t nimg = 0; nimg < fat_header->nfat_arch; ++nimg)
-  {
+  {      
     // need to make copy for byte swapping
     struct fat_arch fat_arch;
     [fileData getBytes:&fat_arch range:NSMakeRange(sizeof(struct fat_header) + nimg * sizeof(struct fat_arch), sizeof(struct fat_arch))];
     swap_fat_arch(&fat_arch, 1, NX_LittleEndian);
-    /* 
-     * try to validate the fat_arch structure
-     * XXXfG: needs additional checks here
-     */
-    uint8_t triggerAlert = 0;
-    NSString *informativeText;
-    /* offset points outside the binary */
-    if (fat_arch.offset > [fileData length])
-    {
-      informativeText = [NSString stringWithFormat:@"Fat arch number %d offset bigger than binary size!", nimg];
-      triggerAlert++;
-    }
-    /* size bigger than binary itself */
-    else if (fat_arch.size > [fileData length])
-    {
-      informativeText = [NSString stringWithFormat:@"Fat arch number %d size bigger than binary size!", nimg];
-      triggerAlert++;
-    }
-    /* increase of nfat_arch without modifying/adding any data */
-    else if (fat_arch.size == 0 || fat_arch.offset == 0)
-    {
-      informativeText = [NSString stringWithFormat:@"Fat arch number %d size or offset equal to 0!", nimg];
-      triggerAlert++;
-    }
-    /* be suspicious of a fat header that is longer than one page */
-    else if (totalFatHeadersSize > 4096)
-    {
-      informativeText = [NSString stringWithFormat:@"Total fat header size bigger than 4096 bytes, not normal."];
-      triggerAlert++;
-    }
-    /* the same, offset can't be located in the fat page */
-    else if (fat_arch.offset < 4096)
-    {
-      informativeText = [NSString stringWithFormat:@"Fat arch number %d offset pointing to offset lower than 4096.", nimg];
-      triggerAlert++;
-    }
-    /* show alert and skip bogus fat arch */
-    if (triggerAlert)
-    {
-      NSAlert *alert = [NSAlert new];
-      [alert setInformativeText:informativeText];
-      [alert addButtonWithTitle:@"OK!"];
-      [alert setMessageText:@"Malformed Fat Header"];
-      [alert setAlertStyle:NSCriticalAlertStyle];
-      [alert runModal];
-      continue;
-    }
     
+    MVNode * archNode = [node insertChild:nil location:fat_arch.offset length:fat_arch.size];
+
     if (*(uint64_t*)((uint8_t *)[fileData bytes] + fat_arch.offset) == *(uint64_t*)"!<arch>\n")
     {
-      MVNode * archNode = [node insertChild:nil location:fat_arch.offset length:fat_arch.size];
       [self createArchiveLayout:archNode machine:[self getMachine:fat_arch.cputype]];
     }
     else
     {
-      // need to make copy for byte swapping
-      struct mach_header mach_header;
-      [fileData getBytes:&mach_header range:NSMakeRange(fat_arch.offset, sizeof(struct mach_header))];
-      // XXX: workaround because NXGetArchInfoFromCpuType() doesn't know CPU_SUBTYPE_ARM_V7S and returns
-      //      invalid data leading to a crash on byteorder access
-      if (fat_arch.cpusubtype == CPU_SUBTYPE_ARM_V7S) fat_arch.cpusubtype = CPU_SUBTYPE_ARM_V7K;
-      enum NXByteOrder byteorder = NXGetArchInfoFromCpuType(fat_arch.cputype,fat_arch.cpusubtype)->byteorder;
-      if (byteorder == NX_BigEndian)
-      {
-        swap_mach_header(&mach_header, NX_LittleEndian);
-      }
-      
-      MVNode * machONode = [node insertChild:nil location:fat_arch.offset length:fat_arch.size];
-      [self createMachOLayout:machONode mach_header:&mach_header];
+      [self createLayouts:archNode location:fat_arch.offset length:fat_arch.size];
     }
   }
-  
-}
-
-//----------------------------------------------------------------------------
-// create Mach-O layouts based on file headers
-- (void)createLayouts
-{
-  uint32_t magic = *(uint32_t*)[fileData bytes];
-  
-  switch (magic)
-  {
-    case FAT_MAGIC:
-    case FAT_CIGAM:
-    {
-      struct fat_header fat_header;
-      [fileData getBytes:&fat_header length:sizeof(struct fat_header)];
-      if (magic == FAT_CIGAM)
-        swap_fat_header(&fat_header, NX_LittleEndian);
-      [self createFatLayout:rootNode fat_header:&fat_header];
-    } break;
-      
-    case MH_MAGIC:
-    case MH_MAGIC_64:
-    case MH_CIGAM:
-    case MH_CIGAM_64:
-    {
-      struct mach_header mach_header;
-      [fileData getBytes:&mach_header length:sizeof(struct mach_header)];
-      if (magic == MH_CIGAM || magic == MH_CIGAM_64)
-        swap_mach_header(&mach_header, NX_LittleEndian);
-      [self createMachOLayout:rootNode mach_header:&mach_header];
-    } break;
-    
-    default:
-      [self createArchiveLayout:rootNode machine:nil];
-  }
-  
-  rootNode.dataRange = NSMakeRange(0, [fileData length]);
 }
 
 //----------------------------------------------------------------------------
@@ -1246,7 +1298,9 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
       { 
         [saverLock lock];
 
+#if DEBUG
         NSLog(@"%@: saving %lu rows",[NSThread currentThread],(unsigned long)[objectsToSave count]);
+#endif
         for (id <MVSerializing> serializable in objectsToSave)
         {
           [serializable saveToFile:pFile];
@@ -1270,17 +1324,23 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
       [pipeCondition unlock];
     }
     
-    double rnd = 1. + rand()/((double)RAND_MAX+1); // between 1 and 2
-    [NSThread sleepForTimeInterval:rnd];
-    
+    if ([saverThread isCancelled])
+    {
     // only exit if buffer is surely empty
-    // (we waited for a second if anyone put in objects to save before terminate)
-    if ([saverThread isCancelled] && [objectsToSave count] == 0)
+      if ([objectsToSave count] == 0)
     {
       break; // the nicest way
       //return;
       //[NSThread exit];
     }
+      // do not wait for new rows if the saver has benn cancelled
+      // just flush out the existing ones
+      continue;
+    }
+    
+    // let's wait for some objects to collect for saving
+    double rnd = 1. + rand()/((double)RAND_MAX+1); // between 1 and 2
+    [NSThread sleepForTimeInterval:rnd];
   }
 }
 

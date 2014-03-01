@@ -50,8 +50,7 @@ using namespace std;
 - (BOOL)is64bit
 {
   MATCH_STRUCT(mach_header,imageOffset);
-  return (mach_header->cputype == CPU_TYPE_X86_64 ||
-          mach_header->cputype == CPU_TYPE_POWERPC64);
+  return ((mach_header->cputype & CPU_ARCH_ABI64) == CPU_ARCH_ABI64);
 }
 
 //-----------------------------------------------------------------------------
@@ -385,6 +384,7 @@ _hex2int(char const * a, uint32_t len)
   struct linkedit_data_command const * segment_split_info = NULL;
   struct linkedit_data_command const * code_signature = NULL;
   struct linkedit_data_command const * function_starts = NULL;
+  struct linkedit_data_command const * data_in_code_entries = NULL;
   
   MATCH_STRUCT(mach_header,imageOffset);
   
@@ -394,7 +394,7 @@ _hex2int(char const * a, uint32_t len)
 
   for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
   {
-    struct load_command const * load_command = (struct load_command const *)(*cmdIter);
+    struct load_command const * load_command = *cmdIter;
     switch (load_command->cmd)
     {
       case LC_SEGMENT:        
@@ -424,6 +424,7 @@ _hex2int(char const * a, uint32_t len)
       case LC_SEGMENT_SPLIT_INFO: segment_split_info = (struct linkedit_data_command const *)load_command; break;
       case LC_CODE_SIGNATURE: code_signature = (struct linkedit_data_command const *)load_command; break;
       case LC_FUNCTION_STARTS: function_starts = (struct linkedit_data_command const *)load_command; break;
+      case LC_DATA_IN_CODE: data_in_code_entries = (struct linkedit_data_command const *)load_command; break;
       default: ; // not interested
     }
   }
@@ -433,6 +434,7 @@ _hex2int(char const * a, uint32_t len)
   MVNode * twoLevelHintsNode = nil;
   MVNode * segmentSplitInfoNode = nil;
   MVNode * functionStartsNode = nil;
+  MVNode * dataInCodeEntriesNode = nil;
   
   NSString * lastNodeCaption;
   
@@ -523,6 +525,14 @@ _hex2int(char const * a, uint32_t len)
                                        length:function_starts->datasize];
   }
   
+  if (data_in_code_entries)
+  {
+    dataInCodeEntriesNode = [self createDataNode:rootNode
+                                         caption:@"Data in Code Entries"
+                                        location:data_in_code_entries->dataoff + imageOffset
+                                          length:data_in_code_entries->datasize];
+  }
+  
   //============ Symbol Table ====================
   //==============================================
   if (symtabNode)
@@ -581,7 +591,7 @@ _hex2int(char const * a, uint32_t len)
       //==============================================
       if (dysymtab_command->indirectsymoff * dysymtab_command->nindirectsyms > 0)
       {
-        [self createIndirectNode:dysymtabNode 
+        [self createISymbolsNode:dysymtabNode
                          caption:(lastNodeCaption = @"Indirect Symbols")
                         location:dysymtab_command->indirectsymoff + imageOffset
                           length:dysymtab_command->nindirectsyms * sizeof(uint32_t)];
@@ -636,7 +646,7 @@ _hex2int(char const * a, uint32_t len)
     @try
     {
       [self createSplitSegmentNode:segmentSplitInfoNode 
-                           caption:(lastNodeCaption = @"Code-to-Data References") 
+                           caption:(lastNodeCaption = @"Shared Region Info")
                           location:segmentSplitInfoNode.dataRange.location
                             length:segmentSplitInfoNode.dataRange.length
                        baseAddress:base_addr];
@@ -663,6 +673,20 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
+  if (dataInCodeEntriesNode)
+  {
+    @try
+    {
+      [self createDataInCodeEntriesNode:dataInCodeEntriesNode
+                                caption:(lastNodeCaption = @"Dices")
+                               location:dataInCodeEntriesNode.dataRange.location
+                                 length:dataInCodeEntriesNode.dataRange.length];
+    }
+    @catch(NSException * exception)
+    {
+      [self printException:exception caption:lastNodeCaption];
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -682,7 +706,7 @@ _hex2int(char const * a, uint32_t len)
   
   for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
   {
-    struct load_command const * load_command = (struct load_command const *)(*cmdIter);
+    struct load_command const * load_command = *cmdIter;
     switch (load_command->cmd)
     {
       case LC_SEGMENT_64:     
@@ -869,7 +893,7 @@ _hex2int(char const * a, uint32_t len)
       //==============================================
       if (dysymtab_command->indirectsymoff * dysymtab_command->nindirectsyms > 0)
       {
-        [self createIndirect64Node:dysymtabNode 
+        [self createISymbols64Node:dysymtabNode
                            caption:(lastNodeCaption = @"Indirect Symbols")
                           location:dysymtab_command->indirectsymoff + imageOffset
                             length:dysymtab_command->nindirectsyms * sizeof(uint32_t)];
@@ -924,7 +948,7 @@ _hex2int(char const * a, uint32_t len)
     @try
     {
       [self createSplitSegmentNode:segmentSplitInfoNode 
-                           caption:(lastNodeCaption = @"Code-to-Data References") 
+                           caption:(lastNodeCaption = @"Shared Region Info") 
                           location:segmentSplitInfoNode.dataRange.location
                             length:segmentSplitInfoNode.dataRange.length
                        baseAddress:base_addr];
@@ -963,7 +987,7 @@ _hex2int(char const * a, uint32_t len)
   
   for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
   {
-    struct load_command const * load_command = (struct load_command const *)(*cmdIter);
+    struct load_command const * load_command = *cmdIter;
     switch (load_command->cmd)
     {
       case LC_SEGMENT:     
@@ -2076,13 +2100,23 @@ struct CompareSectionByName
     if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V5TEJ) [node.details appendRow:@"":@"":@"00000007":@"CPU_SUBTYPE_ARM_V5TEJ"];
     if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_XSCALE)[node.details appendRow:@"":@"":@"00000008":@"CPU_SUBTYPE_ARM_XSCALE"];
     if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7)    [node.details appendRow:@"":@"":@"00000009":@"CPU_SUBTYPE_ARM_V7"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F)   [node.details appendRow:@"":@"":@"00000010":@"CPU_SUBTYPE_ARM_V7F"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S)   [node.details appendRow:@"":@"":@"00000011":@"CPU_SUBTYPE_ARM_V7S"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K)   [node.details appendRow:@"":@"":@"00000012":@"CPU_SUBTYPE_ARM_V7K"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F)   [node.details appendRow:@"":@"":@"0000000A":@"CPU_SUBTYPE_ARM_V7F (Cortex A9)"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S)   [node.details appendRow:@"":@"":@"0000000B":@"CPU_SUBTYPE_ARM_V7S (Swift)"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K)   [node.details appendRow:@"":@"":@"0000000C":@"CPU_SUBTYPE_ARM_V7K (Kirkwood40)"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6M)   [node.details appendRow:@"":@"":@"0000000E":@"CPU_SUBTYPE_ARM_V6M"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7M)   [node.details appendRow:@"":@"":@"0000000F":@"CPU_SUBTYPE_ARM_V7M"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7EM)  [node.details appendRow:@"":@"":@"00000010":@"CPU_SUBTYPE_ARM_V7EM"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V8)    [node.details appendRow:@"":@"":@"0000000D":@"CPU_SUBTYPE_ARM_V8"];
   }
-  else if (mach_header->cputype == CPU_TYPE_X86)
+  else if (mach_header->cputype == CPU_TYPE_I386)
   {
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_ALL) [node.details appendRow:@"":@"":@"00000003":@"CPU_SUBTYPE_X86_ALL"]; 
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_I386_ALL) [node.details appendRow:@"":@"":@"00000003":@"CPU_SUBTYPE_I386_ALL"];
+  }
+  else if (mach_header->cputype == CPU_TYPE_ANY)
+  {
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_MULTIPLE) [node.details appendRow:@"":@"":@"FFFFFFFF":@"CPU_SUBTYPE_MULTIPLE"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_LITTLE_ENDIAN) [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_LITTLE_ENDIAN"];
+    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_BIG_ENDIAN) [node.details appendRow:@"":@"":@"00000001":@"CPU_SUBTYPE_BIG_ENDIAN"];
   }
    
   [self read_uint32:range lastReadHex:&lastReadHex];
@@ -2173,7 +2207,8 @@ struct CompareSectionByName
                          :@"CPU Type"
                          :mach_header_64->cputype == CPU_TYPE_ANY ? @"CPU_TYPE_ANY" :
                           mach_header_64->cputype == CPU_TYPE_POWERPC64 ? @"CPU_TYPE_POWERPC64" :
-                          mach_header_64->cputype == CPU_TYPE_X86_64 ? @"CPU_TYPE_X86_64" : @"???"];
+                          mach_header_64->cputype == CPU_TYPE_X86_64 ? @"CPU_TYPE_X86_64" :
+                          mach_header_64->cputype == CPU_TYPE_ARM64 ? @"CPU_TYPE_ARM64" : @"???"];
   
   [self read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -2187,6 +2222,12 @@ struct CompareSectionByName
   {
     if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_64_ALL) [node.details appendRow:@"":@"":@"00000003":@"CPU_SUBTYPE_X86_64_ALL"]; 
   }
+  else if (mach_header_64->cputype == CPU_TYPE_ARM64)
+  {
+    if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_ALL)  [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_ARM64_ALL"];
+    if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_V8)   [node.details appendRow:@"":@"":@"00000001":@"CPU_SUBTYPE_ARM64_V8"];
+  }
+
   
   [self read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]

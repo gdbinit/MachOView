@@ -64,9 +64,15 @@ extern uint32_t arm_disassemble(
     char *object_addr,
     uint32_t object_size,
     struct data_in_code_entry *dices,
-    uint32_t ndices);
+    uint32_t ndices,
+    uint64_t seg_addr,
+    struct inst *inst,
+    struct inst *insts,
+    uint32_t ninsts);
 
-extern LLVMDisasmContextRef create_arm_llvm_disassembler(void);
-extern LLVMDisasmContextRef create_thumb_llvm_disassembler(void);
+extern LLVMDisasmContextRef create_arm_llvm_disassembler(
+    cpu_subtype_t cpusubtype);
+extern LLVMDisasmContextRef create_thumb_llvm_disassembler(
+    cpu_subtype_t cpusubtype);
 extern void delete_arm_llvm_disassembler(LLVMDisasmContextRef dc);
 extern void delete_thumb_llvm_disassembler(LLVMDisasmContextRef dc);

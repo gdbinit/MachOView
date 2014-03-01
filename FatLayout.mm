@@ -81,6 +81,7 @@ using namespace std;
                             fat_arch.cputype == CPU_TYPE_I386 ? @"CPU_TYPE_I386" :
                             fat_arch.cputype == CPU_TYPE_X86_64 ? @"CPU_TYPE_X86_64" :
                             fat_arch.cputype == CPU_TYPE_ARM ? @"CPU_TYPE_ARM" :
+                            fat_arch.cputype == CPU_TYPE_ARM64 ? @"CPU_TYPE_ARM64" :
                             fat_arch.cputype == CPU_TYPE_POWERPC ? @"CPU_TYPE_POWERPC" : 
                             fat_arch.cputype == CPU_TYPE_POWERPC64 ? @"CPU_TYPE_POWERPC64" : 
                             @"???"];
@@ -112,9 +113,16 @@ using namespace std;
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7 ? @"CPU_SUBTYPE_ARM_V7" :
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F ? @"CPU_SUBTYPE_ARM_V7F" :
                              (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S ? @"CPU_SUBTYPE_ARM_V7S" :
-                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K ? @"CPU_SUBTYPE_ARM_V7K" : @"???") :
-                            fat_arch.cputype == CPU_TYPE_X86 ?
-                            ((fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_ALL ? @"CPU_SUBTYPE_X86_ALL" : @"???") :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K ? @"CPU_SUBTYPE_ARM_V7K" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6M ? @"CPU_SUBTYPE_ARM_V6M" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7M ? @"CPU_SUBTYPE_ARM_V7M" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7EM ? @"CPU_SUBTYPE_ARM_V7EM" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V8 ? @"CPU_SUBTYPE_ARM_V8" : @"???") :
+                            fat_arch.cputype == CPU_TYPE_ARM64 ?
+                            ((fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_ALL ? @"CPU_SUBTYPE_ARM64_ALL" :
+                             (fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_V8 ? @"CPU_SUBTYPE_ARM64_V8" : @"???") :
+                            fat_arch.cputype == CPU_TYPE_I386 ?
+                            ((fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_I386_ALL ? @"CPU_SUBTYPE_I386_ALL" : @"???") :
                             fat_arch.cputype == CPU_TYPE_X86_64 ?
                             ((fat_arch.cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_64_ALL ? @"CPU_SUBTYPE_X86_64_ALL" : @"???") : 
                              @"???"];

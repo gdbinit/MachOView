@@ -18,6 +18,7 @@
 #include <mach-o/reloc.h>
 #include <mach-o/x86_64/reloc.h>
 #include <mach-o/arm/reloc.h>
+#include <mach-o/arm64/reloc.h>
 #include <mach-o/ranlib.h>
 #include <mach-o/compact_unwind_encoding.h>
 #include <mach-o/swap.h>

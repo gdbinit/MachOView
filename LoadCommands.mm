@@ -55,6 +55,7 @@ using namespace std;
     case LC_REEXPORT_DYLIB:       return @"LC_REEXPORT_DYLIB";      
     case LC_LAZY_LOAD_DYLIB:      return @"LC_LAZY_LOAD_DYLIB";     
     case LC_ENCRYPTION_INFO:      return @"LC_ENCRYPTION_INFO";     
+    case LC_ENCRYPTION_INFO_64:   return @"LC_ENCRYPTION_INFO_64";
     case LC_DYLD_INFO:            return @"LC_DYLD_INFO";           
     case LC_DYLD_INFO_ONLY:       return @"LC_DYLD_INFO_ONLY";      
     case LC_LOAD_UPWARD_DYLIB:    return @"LC_LOAD_UPWARD_DYLIB";
@@ -66,6 +67,7 @@ using namespace std;
     case LC_DATA_IN_CODE:         return @"LC_DATA_IN_CODE";
     case LC_SOURCE_VERSION:       return @"LC_SOURCE_VERSION";
     case LC_DYLIB_CODE_SIGN_DRS:  return @"LC_DYLIB_CODE_SIGN_DRS";
+    case LC_LINKER_OPTION:        return @"LC_LINKER_OPTION";
   }
 }
 
@@ -910,7 +912,7 @@ using namespace std;
                               MVUnderlineAttributeName,@"YES",nil];
   
   MATCH_STRUCT(mach_header,imageOffset);
-  if (mach_header->cputype == CPU_TYPE_X86 || mach_header->cputype == CPU_TYPE_X86_64)
+  if (mach_header->cputype == CPU_TYPE_I386 || mach_header->cputype == CPU_TYPE_X86_64)
   {
     MATCH_STRUCT(x86_thread_state,NSMaxRange(range))
     
@@ -1076,6 +1078,8 @@ using namespace std;
     
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
     
+    #pragma message "TODO: complete the remaining favors"
+    
     if (arm_thread_state->flavor == 1)
     {
       entryPoint = arm_thread_state->uts.ts.__pc;
@@ -1112,7 +1116,10 @@ using namespace std;
                                :[stateDict objectForKey:key]];
       }
     }
-    
+    else if (mach_header->cputype == CPU_TYPE_ARM64)
+    {
+#pragma message "TODO: ARM64"
+    }
   }
   
   return node;
@@ -1715,6 +1722,62 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
+- (MVNode *)createLCEncryptionInfo64Node:(MVNode *)parent
+                                 caption:(NSString *)caption
+                                location:(uint32_t)location
+              encryption_info_command_64:(struct encryption_info_command_64 const *)encryption_info_command_64
+{
+  MVNodeSaver nodeSaver;
+  MVNode * node = [parent insertChildWithDetails:caption location:location length:encryption_info_command_64->cmdsize saver:nodeSaver];
+  
+  NSRange range = NSMakeRange(location,0);
+  NSString * lastReadHex;
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command"
+                         :[self getNameForCommand:encryption_info_command_64->cmd]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command Size"
+                         :[NSString stringWithFormat:@"%u", encryption_info_command_64->cmdsize]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+   MVUnderlineAttributeName,@"YES",nil];
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Crypt Offset"
+                         :[NSString stringWithFormat:@"%u", encryption_info_command_64->cryptoff]];
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Crypt Size"
+                         :[NSString stringWithFormat:@"%u", encryption_info_command_64->cryptsize]];
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Crypt ID"
+                         :[NSString stringWithFormat:@"%u", encryption_info_command_64->cryptid]];
+
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Padding"
+                         :[NSString stringWithFormat:@"%u", encryption_info_command_64->pad]];
+  
+  return node;
+}
+
+//-----------------------------------------------------------------------------
 - (MVNode *)createLCRPathNode:(MVNode *)parent
                       caption:(NSString *)caption
                      location:(uint32_t)location
@@ -1939,6 +2002,75 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
+- (MVNode *)createLCLinkerOptionNode:(MVNode *)parent
+                             caption:(NSString *)caption
+                            location:(uint32_t)location
+               linker_option_command:(struct linker_option_command const *)linker_option_command
+{
+  MVNodeSaver nodeSaver;
+  MVNode * node = [parent insertChildWithDetails:caption location:location length:linker_option_command->cmdsize saver:nodeSaver];
+  
+  NSRange range = NSMakeRange(location,0);
+  NSString * lastReadHex;
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command"
+                         :[self getNameForCommand:linker_option_command->cmd]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+  
+  [self read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command Size"
+                         :[NSString stringWithFormat:@"%u", linker_option_command->cmdsize]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+   MVUnderlineAttributeName,@"YES",nil];
+  
+#pragma message "TODO"
+//  void
+//  print_linker_option_command(
+//                              struct linker_option_command *lo,
+//                              struct load_command *lc)
+//  {
+//    int left, len, i;
+//    char *string;
+//    
+//    printf("     cmd LC_LINKER_OPTION\n");
+//    printf(" cmdsize %u", lo->cmdsize);
+//    if(lo->cmdsize < sizeof(struct linker_option_command))
+//	    printf(" Incorrect size\n");
+//    else
+//	    printf("\n");
+//    printf("   count %u\n", lo->count);
+//    string = (char *)lc + sizeof(struct linker_option_command);
+//    left = lo->cmdsize - sizeof(struct linker_option_command);
+//    i = 0;
+//    while(left > 0){
+//	    while(*string == '\0' && left > 0){
+//        string++;
+//        left--;
+//	    }
+//	    if(left > 0){
+//        i++;
+//        printf("  string #%d %.*s\n", i, left, string);
+//        len = strnlen(string, left) + 1;
+//        string += len;
+//        left -= len;
+//	    }
+//    }
+//    if(lo->count != i)
+//      printf("   count %u does not match number of strings %u\n",
+//             lo->count, i);
+//  }
+  
+  return node;
+}
+
+//-----------------------------------------------------------------------------
 -(MVNode *)createLoadCommandNode:(MVNode *)parent
                          caption:(NSString *)caption
                         location:(uint32_t)location
@@ -2148,6 +2280,15 @@ using namespace std;
                       encryption_info_command:encryption_info_command];
     } break;
       
+    case LC_ENCRYPTION_INFO_64:
+    {
+      MATCH_STRUCT(encryption_info_command_64, location)
+      node = [self createLCEncryptionInfo64Node:parent
+                                        caption:caption
+                                       location:location
+                     encryption_info_command_64:encryption_info_command_64];
+    } break;
+
     case LC_RPATH:
     {
       MATCH_STRUCT(rpath_command, location)
@@ -2246,6 +2387,14 @@ using namespace std;
                                        caption:caption
                                       location:location
                         source_version_command:source_version_command];
+    } break;
+    case LC_LINKER_OPTION:
+    {
+      MATCH_STRUCT(linker_option_command, location);
+      node = [self createLCLinkerOptionNode:parent
+                                    caption:caption
+                                   location:location
+                      linker_option_command:linker_option_command];
     } break;
     default:
       [self createDataNode:parent 

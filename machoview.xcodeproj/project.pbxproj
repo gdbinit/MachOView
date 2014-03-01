@@ -483,7 +483,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx10.8;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include ADD_PATH_TO_LLVM_SOURCE_INCLUDES";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include /Users/reverser/Downloads/clang-425.0.24/src/include";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
@@ -531,7 +531,7 @@
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx10.8;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include ADD_PATH_TO_LLVM_SOURCE_INCLUDES";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include /Users/reverser/Downloads/clang-425.0.24/src/include";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};

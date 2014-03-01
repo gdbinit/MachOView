@@ -8,8 +8,7 @@
 
 
 #define MATCH_STRUCT(obj,location) \
-struct obj const * obj = (struct obj const *)((uint8_t *)[dataController.realData bytes] + (location));
-
+  struct obj const * obj = (struct obj *)[self imageAt:(location)];
 
 @class MVDataController;
 @class MVArchiver;
@@ -31,6 +30,7 @@ struct obj const * obj = (struct obj const *)((uint8_t *)[dataController.realDat
 @property(nonatomic,readonly) MVArchiver * archiver;
 
 - (id)                  initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node;
+- (void const *)        imageAt:(uint32_t)location;
 - (void)                printException:(NSException *)exception caption:(NSString *)caption;
 - (BOOL)                is64bit;
 - (void)                doMainTasks;

@@ -17,11 +17,15 @@
 
 static int tried_to_load_llvm = 0;
 static void *llvm_handle = NULL;
+static void (*initialize)(void) = NULL;
 static LLVMDisasmContextRef (*create)(const char *, void *, int,
+	LLVMOpInfoCallback, LLVMSymbolLookupCallback) = NULL;
+static LLVMDisasmContextRef (*createCPU)(const char *, const char *,void *, int,
 	LLVMOpInfoCallback, LLVMSymbolLookupCallback) = NULL;
 static void (*dispose)(LLVMDisasmContextRef) = NULL;
 static size_t (*disasm)(LLVMDisasmContextRef, uint8_t *, uint64_t, uint64_t,
 	char *, size_t) = NULL;
+static int (*options)(LLVMDisasmContextRef, uint64_t) = NULL;
 
 /*
  * Wrapper to dynamically load LIB_LLVM and call LLVMCreateDisasm().
@@ -30,6 +34,7 @@ __private_extern__
 LLVMDisasmContextRef
 llvm_create_disasm(
 const char *TripleName,
+const char *CPU,
 void *DisInfo,
 int TagType,
 LLVMOpInfoCallback GetOpInfo,
@@ -78,22 +83,41 @@ LLVMSymbolLookupCallback SymbolLookUp)
 	    dispose = dlsym(llvm_handle, "LLVMDisasmDispose");
 	    disasm = dlsym(llvm_handle, "LLVMDisasmInstruction");
 
+	    /* Note we allow these to not be defined */
+	    options = dlsym(llvm_handle, "LLVMSetDisasmOptions");
+	    createCPU = dlsym(llvm_handle, "LLVMCreateDisasmCPU");
+
 	    if(create == NULL ||
 	       dispose == NULL ||
 	       disasm == NULL){
+
 		dlclose(llvm_handle);
 		if(llvm_path != NULL)
 		    free(llvm_path);
 		llvm_handle = NULL;
 		create = NULL;
+		createCPU = NULL;
 		dispose = NULL;
 		disasm = NULL;
+		options = NULL;
 		return(NULL);
 	    }
 	}
 	if(llvm_handle == NULL)
 	    return(NULL);
 
+	/*
+	 * Note this was added after the interface was defined, so it may
+	 * be undefined.  But if not we must call it first.
+	 */
+	initialize = dlsym(llvm_handle, "lto_initialize_disassembler");
+	if(initialize != NULL)
+	    initialize();
+
+	if(*CPU != '\0' && createCPU != NULL)
+	    DC = createCPU(TripleName, CPU, DisInfo, TagType, GetOpInfo,
+			   SymbolLookUp);
+	else
 	DC = create(TripleName, DisInfo, TagType, GetOpInfo, SymbolLookUp);
 	return(DC);
 }
@@ -127,4 +151,19 @@ size_t OutStringSize)
 	if(disasm == NULL)
 	    return(0);
 	return(disasm(DC, Bytes, BytesSize, Pc, OutString, OutStringSize));
+}
+
+/*
+ * Wrapper to call LLVMSetDisasmOptions().
+ */
+__private_extern__
+int
+llvm_disasm_set_options(
+LLVMDisasmContextRef DC,
+uint64_t Options)
+{
+
+	if(options == NULL)
+	    return(0);
+	return(options(DC, Options));
 }

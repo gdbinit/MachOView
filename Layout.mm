@@ -35,8 +35,7 @@
     backgroundThread = [[NSThread alloc] initWithTarget:self selector:@selector(doBackgroundTasks) object:nil];
     
     const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
-    char *swapFilePath = (char*)malloc(strlen(tmp)+1);
-    strcpy(swapFilePath, tmp);
+    char *swapFilePath = strdup(tmp);
     if (mktemp(swapFilePath) == NULL)
     {
       NSLog(@"mktemp failed!");
@@ -49,6 +48,12 @@
     archiver = [MVArchiver archiverWithPath:swapPath];
   }
   return self;
+}
+
+//-----------------------------------------------------------------------------
+- (void const *)imageAt:(uint32_t)location
+{
+  return (uint8_t *)[dataController.realData bytes] + location;
 }
 
 //-----------------------------------------------------------------------------

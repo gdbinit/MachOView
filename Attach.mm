@@ -54,7 +54,7 @@ find_main_binary(pid_t pid, mach_vm_address_t *main_address)
       if ( (mh.magic == MH_MAGIC || mh.magic == MH_MAGIC_64) && mh.filetype == MH_EXECUTE)
       {
 #if DEBUG
-        NSLOG(@"Found main binary mach-o image @ %p!\n", (void*)addr);
+        NSLog(@"Found main binary mach-o image @ %p!\n", (void*)addr);
 #endif
         *main_address = addr;
         break;
@@ -200,7 +200,7 @@ dump_binary(mach_vm_address_t address, pid_t pid, uint8_t *buffer, uint64_t aslr
       if (strncmp(segCmd->segname, "__PAGEZERO", 16) != 0)
       {
 #if DEBUG
-        printf("[DEBUG] Dumping %s at %llx with size %x (buffer:%x)\n", segCmd->segname, segCmd->vmaddr+vmaddr_slide, segCmd->filesize, (uint32_t)buffer);
+        printf("[DEBUG] Dumping %s at %llx with size %x (buffer:%x)\n", segCmd->segname, segCmd->vmaddr+aslr_slide, segCmd->filesize, (uint32_t)*buffer);
 #endif
         readmem((mach_vm_offset_t*)buffer, segCmd->vmaddr+aslr_slide, segCmd->filesize, pid, &region_info);
       }
@@ -212,7 +212,7 @@ dump_binary(mach_vm_address_t address, pid_t pid, uint8_t *buffer, uint64_t aslr
       if (strncmp(segCmd64->segname, "__PAGEZERO", 16) != 0)
       {
 #if DEBUG
-        printf("[DEBUG] Dumping %s at %llx with size %llx (buffer:%x)\n", segCmd64->segname, segCmd64->vmaddr+vmaddr_slide, segCmd64->filesize, (uint32_t)buffer);
+        printf("[DEBUG] Dumping %s at %llx with size %llx (buffer:%x)\n", segCmd64->segname, segCmd64->vmaddr+aslr_slide, segCmd64->filesize, (uint32_t)*buffer);
 #endif
         readmem((mach_vm_offset_t*)buffer, segCmd64->vmaddr+aslr_slide, segCmd64->filesize, pid, &region_info);
       }

@@ -1240,6 +1240,115 @@ static AsmFootPrint const SDK106Target104X86v2 =
   {1,  0xE8}, GAP(4),                       // call    _exit
 };
 
+static AsmFootPrint const SDK109Target104X86 = {
+  // start
+  { 2, 0x6A, 0x00 },                          // push    0
+  { 2, 0x89, 0xE5 },                          // mov     ebp, esp
+  { 3, 0x83, 0xE4, 0xF0 },                    // and     esp, 0FFFFFFF0h
+  { 3, 0x83, 0xEC, 0x10 },                    // sub     esp, 10h
+  { 3, 0x8B, 0x5D, 0x04 },                    // mov     ebx, [ebp+4]
+  { 3, 0x89, 0x1C, 0x24 },                    // mov     [esp+14h+var_14], ebx
+  { 3, 0x8D, 0x4D, 0x08 },                    // lea     ecx, [ebp+8]
+  { 4, 0x89, 0x4C, 0x24, 0x04 },              // mov     [esp+14h+var_10], ecx
+  { 3, 0x83, 0xC3, 0x01 },                    // add     ebx, 1
+  { 3, 0xC1, 0xE3, 0x02 },                    // shl     ebx, 2
+  { 2, 0x01, 0xCB },                          // add     ebx, ecx
+  { 4, 0x89, 0x5C, 0x24, 0x08 },              // mov     [esp+14h+var_C], ebx
+  { 5, 0xE8, 0x01, 0x00, 0x00, 0x00 },        // call    __start
+  { 1, 0xF4 },                                // hlt
+  
+  // __start
+  { 1, 0x55 },                                // push    ebp
+  { 2, 0x89, 0xE5 },                          // mov     ebp, esp
+  { 1, 0x53 },                                // push    ebx
+  { 1, 0x57 },                                // push    edi
+  { 1, 0x56 },                                // push    esi
+  { 3, 0x83, 0xEC, 0x1C },                    // sub     esp, 1Ch
+  { 3, 0x8B, 0x45, 0x08 },                    // mov     eax, [ebp+arg_
+  { 1, 0xA3 }, GAP(4),                        // mov     ds:_NXArgc, eax
+  { 3, 0x8B, 0x7D, 0x0C },                    // mov     edi, [ebp+arg_4]
+  { 2, 0x89, 0x3D }, GAP(4),                  // mov     ds:_NXArgv, edi
+  { 3, 0x8B, 0x75, 0x10 },                    // mov     esi, [ebp+arg_8]
+  { 2, 0x89, 0x35 }, GAP(4),                  // mov     ds:_environ, esi
+  { 2, 0x8B, 0x07 },                          // mov     eax, [edi]
+  { 1, 0xB9 }, GAP(4),                        // mov     ecx, 12EB30h
+  { 2, 0x85, 0xC0 },                          // test    eax, eax
+  { 2, 0x74, 0x1A },                          // jz      short loc_2551
+  { 2, 0xEB, 0x02 },                          // jmp     short loc_253B
+
+  //  loc_2539: 
+  { 2, 0x89, 0xC8 },                          // mov     eax, ecx
+
+  // loc_253B:
+  { 3, 0x8D, 0x48, 0x01 },                    // lea     ecx, [eax+1]
+  { 2, 0xEB, 0x01 },                          // jmp     short loc_2541
+
+  // loc_2540:
+  { 1, 0x41 },                                // inc     ecx
+
+  // loc_2541:
+  { 3, 0x8A, 0x51, 0xFF },                    // mov     dl, [ecx-1]
+  { 2, 0x84, 0xD2 },                          // test    dl, dl
+  { 2, 0x74, 0x07 },                          // jz      short loc_254F
+  { 3, 0x80, 0xFA, 0x2F },                    // cmp     dl, 2Fh
+  { 2, 0x75, 0xF3 },                          // jnz     short loc_2540
+  { 2, 0xEB, 0xEA },                          // jmp     short loc_2539
+
+  // loc_254F:
+  { 3, 0x89, 0xC1, 0x89 },                    // mov     ecx, eax
+
+  // loc_2551:
+  { 1, 0x0D }, GAP(4),                        // mov     ds:___progname, ecx
+  { 2, 0x89, 0xF3 },                          // mov     ebx, esi
+
+  // loc_2559:
+  { 3, 0x83, 0x3B, 0x00 },                    // cmp     dword ptr [ebx], 0
+  { 3, 0x8D, 0x5B, 0x04 },                    // lea     ebx, [ebx+4]
+  { 2, 0x75, 0xF8 },                          // jnz     short loc_2559
+  { 1, 0xA1 }, GAP(4),                        // mov     eax, ds:_mach_init_routine_ptr
+  { 2, 0x8B, 0x00 },                          // mov     eax, [eax]
+  { 2, 0x85, 0xC0 },                          // test    eax, eax
+  { 2, 0x74, 0x02 },                          // jz      short loc_256E
+  { 2, 0xFF, 0xD0 },                          // call    eax
+
+
+  // loc_256E:
+  { 1, 0xA1 }, GAP(4),                        // mov     eax, ds:__cthread_init_routine_ptr                                          
+  { 2, 0x8B, 0x00 },                          // mov     eax, [eax]                                         
+  { 2, 0x85, 0xC0 },                          // test    eax, eax                                         
+  { 2, 0x74, 0x02 },                          // jz      short loc_257B                                         
+  { 2, 0xFF, 0xD0 },                          // call    eax
+
+  // loc_257B:
+  { 1, 0xE8 }, GAP(4),                        // call    ___keymgr_dwarf2_register_sections
+  { 3, 0x8D, 0x45, 0xEC },                    // lea     eax, [ebp+var_14]
+  { 4, 0x89, 0x44, 0x24, 0x04 },              // mov     [esp+4], eax
+  { 3, 0xC7, 0x04, 0x24 }, GAP(4),            // mov     dword ptr [esp], offset a__dyld_make_de ; 
+  { 1, 0xE8 }, GAP(4),                        // call    __dyld_func_lookup
+  { 3, 0xFF, 0x55, 0xEC },                    // call    [ebp+var_14]
+  { 3, 0x8D, 0x45, 0xF0 },                    // lea     eax, [ebp+var_10]
+  { 4, 0x89, 0x44, 0x24, 0x04 },              // mov     [esp+4], eax
+  { 3, 0xC7, 0x04, 0x24 }, GAP(4),            // mov     dword ptr [esp], offset a__dyld_mod_ter ; 
+  { 1, 0xE8 }, GAP(4),                        // call    __dyld_func_lookup
+  { 3, 0x8B, 0x45, 0xF0 },                    // mov     eax, [ebp+var_10]
+  { 2, 0x85, 0xC0 },                          // test    eax, eax
+  { 2, 0x74, 0x08 },                          // jz      short loc_25B8
+  { 3, 0x89, 0x04, 0x24 },                    // mov     [esp], eax      ; void (*)(void)
+  { 1, 0xE8 }, GAP(4),                        // call    _atexit
+
+  // loc_25B8:
+  { 1, 0xA1 }, GAP(4),                        // mov     eax, ds:_errno_ptr
+  { 6, 0xC7, 0x00, 0x00, 0x00, 0x00, 0x00 },  // mov     dword ptr [eax], 0
+  { 4, 0x89, 0x5C, 0x24, 0x0C },              // mov     [esp+0Ch], ebx
+  { 4, 0x89, 0x74, 0x24, 0x08 },              // mov     [esp+8], esi
+  { 4, 0x89, 0x7C, 0x24, 0x04 },              // mov     [esp+4], edi
+  { 3, 0x8B, 0x45, 0x08 },                    // mov     eax, [ebp+arg_0]
+  { 3, 0x89, 0x04, 0x24 },                    // mov     [esp], eax
+  { 1, 0xE8 }, GAP(4),                        // call    _main
+  { 3, 0x89, 0x04, 0x24 },                    // mov     [esp], eax
+  { 1, 0xE8 }, GAP(4)                         // call    _exit
+};
+
 
 // SDK106Target105X86_64 == SDK105Target105X86_64;
 
@@ -1360,7 +1469,7 @@ static AsmFootPrint const SDK106Target104X86v2 =
       
       for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
       {
-        struct load_command const * load_command = (struct load_command const *)(*cmdIter);
+        struct load_command const * load_command = *cmdIter;
         if (load_command->cmd == LC_DYLD_INFO_ONLY)
         {
           rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.6]"]; 
@@ -1369,6 +1478,13 @@ static AsmFootPrint const SDK106Target104X86v2 =
         }
       }
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.5]"];
+      return;
+    }
+    else if (MATCHASM (SDK109Target104X86))
+    {
+      NSLog(@"SDK109Target104X86 matched");
+
+      rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.9 Target10.4]"];
       return;
     }
   }
@@ -1398,7 +1514,7 @@ static AsmFootPrint const SDK106Target104X86v2 =
       
       for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
       {
-        struct load_command const * load_command = (struct load_command const *)(*cmdIter);
+        struct load_command const * load_command = *cmdIter;
         if (load_command->cmd == LC_DYLD_INFO_ONLY)
         {
           NSLog(@"LC_DYLD_INFO_ONLY  ==> target10.6");

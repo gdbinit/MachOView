@@ -32,6 +32,7 @@
 #import <mach-o/reloc.h>
 #import <mach-o/nlist.h>
 #import <stuff/bool.h>
+#include "otool.h"
 #include "stuff/symbol.h"
 #include "llvm-c/Disassembler.h"
 
@@ -61,7 +62,11 @@ extern uint32_t i386_disassemble(
     LLVMDisasmContextRef i386_dc,
     LLVMDisasmContextRef x86_64_dc,
     char *object_addr,
-    uint32_t object_size);
+    uint32_t object_size,
+    struct inst *inst,
+    struct inst *insts,
+    uint32_t ninsts,
+    uint32_t filetype);
 
 extern LLVMDisasmContextRef create_i386_llvm_disassembler(void);
 extern void delete_i386_llvm_disassembler(LLVMDisasmContextRef dc);

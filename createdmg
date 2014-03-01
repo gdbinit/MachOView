@@ -1,7 +1,21 @@
 #!/bin/bash
+
+#TARGET=Debug
+TARGET=Release
+
+# Build disassembler
+cd otool_disasm
+/usr/bin/xcodebuild -configuration $TARGET
+cp -f build/$TARGET/libdisasm.a ..
+cd ..
+
+# Build MachOView
+/usr/bin/xcodebuild -configuration $TARGET
+
 # Create DMG Installer
-buildPlist="build/MachOView.app/Contents/Info.plist"
+buildPlist="build/"$TARGET"/MachOView.app/Contents/Info.plist"
 CFBuildNumber=$(/usr/libexec/PlistBuddy -c "Print CFBuildNumber" $buildPlist)
 CFBundleShortVersionString=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $buildPlist)
-cp -f README build
-hdiutil create -fs HFS+ -volname "MachOView" -srcfolder build "MachOView "$CFBundleShortVersionString.$CFBuildNumber".dmg"
+cp -f README "build/"$TARGET
+
+hdiutil create -fs HFS+ -volname "MachOView" -srcfolder "build/"$TARGET "MachOView-"$CFBundleShortVersionString.$CFBuildNumber".dmg"

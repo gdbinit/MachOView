@@ -40,7 +40,7 @@
 extern void print_fat_headers(
     struct fat_header *fat_header,
     struct fat_arch *fat_archs,
-    uint32_t size,
+    uint64_t size,
     enum bool verbose);
 
 extern void print_ar_hdr(
@@ -60,7 +60,7 @@ extern void print_library_toc(
     enum byte_sex toc_byte_sex,
     char *library_name,
     char *library_addr,
-    uint32_t library_size,
+    uint64_t library_size,
     char *arch_name,
     enum bool verbose);
 
@@ -181,6 +181,11 @@ extern void print_hints(
     uint32_t nsymbols,
     char *strings,
     uint32_t strings_size,
+    enum bool verbose);
+
+extern void print_dices(
+    struct data_in_code_entry *dices,
+    uint32_t ndices,
     enum bool verbose);
 
 extern void print_segment_command(
@@ -305,6 +310,14 @@ extern void print_encryption_info_command(
     struct encryption_info_command *ec,
     uint32_t object_size);
 
+extern void print_encryption_info_command_64(
+    struct encryption_info_command_64 *ec,
+    uint32_t object_size);
+
+extern void print_linker_option_command(
+    struct linker_option_command *lo,
+    struct load_command *lc);
+
 extern void print_dyld_info_info_command(
     struct dyld_info_command *dc,
     uint32_t object_size);
@@ -344,6 +357,7 @@ extern void print_literal16_section(
     enum bool print_addresses);
 
 extern void print_literal_pointer_section(
+    cpu_type_t cputype,
     struct load_command *lc,
     uint32_t ncmds,
     uint32_t sizeofcmds,
@@ -352,7 +366,7 @@ extern void print_literal_pointer_section(
     uint32_t size,
     char *sect,
     uint32_t sect_size,
-    uint32_t sect_addr,
+    uint64_t sect_addr,
     struct nlist *symbols,
     struct nlist_64 *symbols64,
     uint32_t nsymbols,
@@ -538,6 +552,11 @@ extern void print_coff_reloc_section(
     uint32_t object_size,
     enum bool verbose);
 
+extern char *get_label(
+    uint64_t addr,
+    struct symbol *sorted_symbols,
+    uint32_t nsorted_symbols);
+
 extern void print_label(
     uint64_t addr,
     enum bool colon_and_newline,
@@ -559,4 +578,5 @@ extern enum bool get_sect_info(
     uint64_t *sect_addr,
     struct relocation_info **sect_relocs,
     uint32_t *sect_nrelocs,
-    uint32_t *sect_flags);
+    uint32_t *sect_flags,
+    uint64_t *seg_addr);

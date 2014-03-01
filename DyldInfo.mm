@@ -465,7 +465,6 @@ using namespace std;
                                :@"BIND_OPCODE_DONE"
                                :@""];
         
-        [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
         // The lazy bindings have one of these at the end of each bind.
         if (nodeType != NodeTypeLazyBind)
         {
@@ -606,7 +605,7 @@ using namespace std;
                                :@"BIND_OPCODE_DO_BIND"
                                :@""];
         
-//        [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+        [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
         
         [self bindAddress:address 
                      type:type 

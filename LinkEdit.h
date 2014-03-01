@@ -36,12 +36,12 @@
                          location:(uint32_t)location
                            length:(uint32_t)length;
 
-- (MVNode *) createIndirectNode:parent 
+- (MVNode *) createISymbolsNode:parent
                         caption:(NSString *)caption
                        location:(uint32_t)location
                          length:(uint32_t)length;
 
-- (MVNode *) createIndirect64Node:parent 
+- (MVNode *) createISymbols64Node:parent
                           caption:(NSString *)caption
                          location:(uint32_t)location
                            length:(uint32_t)length;
@@ -83,6 +83,12 @@
                              location:(uint32_t)location
                                length:(uint32_t)length
                           baseAddress:(uint64_t)baseAddress;
+
+- (MVNode *) createDataInCodeEntriesNode:parent
+                                 caption:(NSString *)caption
+                                location:(uint32_t)location
+                                  length:(uint32_t)length;
+
 
 @end
 

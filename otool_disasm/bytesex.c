@@ -2460,6 +2460,22 @@ enum byte_sex target_byte_sex)
 
 __private_extern__
 void
+swap_data_in_code_entry(
+struct data_in_code_entry *dices,
+uint32_t ndices,
+enum byte_sex target_byte_sex)
+{
+    uint32_t i;
+
+	for(i = 0; i < ndices; i++){
+	    dices[i].offset = SWAP_INT(dices[i].offset);
+	    dices[i].length = SWAP_INT(dices[i].length);
+	    dices[i].kind = SWAP_INT(dices[i].kind);
+	}
+}
+
+__private_extern__
+void
 swap_prebind_cksum_command(
 struct prebind_cksum_command *cksum_cmd,
 enum byte_sex target_byte_sex)
@@ -2527,6 +2543,31 @@ enum byte_sex target_byte_sex)
 	ec->cryptoff = SWAP_INT(ec->cryptoff);
 	ec->cryptsize = SWAP_INT(ec->cryptsize);
 	ec->cryptid = SWAP_INT(ec->cryptid);
+}
+
+__private_extern__
+ void
+swap_encryption_command_64(
+struct encryption_info_command_64 *ec,
+enum byte_sex target_byte_sex)
+{
+	ec->cmd = SWAP_INT(ec->cmd);
+	ec->cmdsize = SWAP_INT(ec->cmdsize);
+	ec->cryptoff = SWAP_INT(ec->cryptoff);
+	ec->cryptsize = SWAP_INT(ec->cryptsize);
+	ec->cryptid = SWAP_INT(ec->cryptid);
+	ec->cryptid = SWAP_INT(ec->pad);
+}
+
+__private_extern__
+ void
+swap_linker_option_command(
+struct linker_option_command *lo,
+enum byte_sex target_byte_sex)
+{
+	lo->cmd = SWAP_INT(lo->cmd);
+	lo->cmdsize = SWAP_INT(lo->cmdsize);
+	lo->count = SWAP_INT(lo->count);
 }
 
 __private_extern__

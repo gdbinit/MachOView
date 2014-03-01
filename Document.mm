@@ -405,16 +405,21 @@ enum ViewType
 {
   if ([notification object] == dataController)
   {
-    //[dataController.treeLock lock];
-    
-    @try // for some reason sometimes weird exceptions come from NSTreeView
+    dispatch_async(dispatch_get_main_queue(), ^
     {
+      // Update UI here, on the main queue
       NSDictionary * userInfo = [notification userInfo];
       if (userInfo)
       {
         //refresh the modified node only
         MVNode * node = [userInfo objectForKey:MVNodeUserInfoKey];
       
+        // check if the window still exists which contains the leftView to update
+        if ([[self windowControllers] count] == 0)
+        {
+          return;
+        }
+        
         [leftView reloadItem:node.parent];
      
         if ([leftView isItemExpanded:node.parent])
@@ -426,15 +431,7 @@ enum ViewType
       {
         [leftView reloadItem:dataController.rootNode reloadChildren:YES]; 
       }
-    }    
-    @catch (NSException * e) 
-    {
-      NSLog(@"***%@", e);
-    }
-    @finally 
-    {
-      //[dataController.treeLock unlock];
-    }
+    });
   }
 }
 
@@ -521,8 +518,7 @@ enum ViewType
 {
   // create a temporary copy for patching
   const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
-  char *tmpFilePath = (char*)malloc(strlen(tmp)+1);
-  strcpy(tmpFilePath, tmp);
+  char *tmpFilePath = strdup(tmp);
   if (mktemp(tmpFilePath) == NULL)
   {
     NSLog(@"mktemp failed!");
@@ -553,7 +549,7 @@ enum ViewType
 
   @try 
   {
-    [dataController createLayouts];
+    [dataController createLayouts:dataController.rootNode location:0 length:[dataController.fileData length]];
   }
   @catch (NSException * exception) 
   {

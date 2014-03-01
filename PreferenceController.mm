@@ -8,6 +8,8 @@
 
 #import "PreferenceController.h"
 
+#include "disasm.h" // for the disassembler flags
+
 @implementation MVPreferenceController
 
 -(id)init

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C0B08E71872CD0C00A22D6D /* ofile_print.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C0B08E61872CD0C00A22D6D /* ofile_print.c */; };
 		3CDC216D16938243006CF053 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC215F16938243006CF053 /* main.c */; };
 		3CDC216E16938243006CF053 /* allocate.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC216016938243006CF053 /* allocate.c */; };
 		3CDC216F16938243006CF053 /* arm_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC216116938243006CF053 /* arm_disasm.c */; };
@@ -20,10 +21,10 @@
 		3CDC217716938243006CF053 /* llvm.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CDC216916938243006CF053 /* llvm.h */; };
 		3CDC217816938243006CF053 /* ofile_print.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CDC216A16938243006CF053 /* ofile_print.h */; };
 		3CDC217916938243006CF053 /* otool.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CDC216B16938243006CF053 /* otool.h */; };
-		3CDC217A16938243006CF053 /* symbol.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC216C16938243006CF053 /* symbol.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C0B08E61872CD0C00A22D6D /* ofile_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ofile_print.c; sourceTree = "<group>"; };
 		3CDC215316938207006CF053 /* libdisasm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdisasm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CDC215F16938243006CF053 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		3CDC216016938243006CF053 /* allocate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allocate.c; sourceTree = "<group>"; };
@@ -38,7 +39,6 @@
 		3CDC216916938243006CF053 /* llvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llvm.h; sourceTree = "<group>"; };
 		3CDC216A16938243006CF053 /* ofile_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofile_print.h; sourceTree = "<group>"; };
 		3CDC216B16938243006CF053 /* otool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = otool.h; sourceTree = "<group>"; };
-		3CDC216C16938243006CF053 /* symbol.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = symbol.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +73,7 @@
 			children = (
 				3CDC216416938243006CF053 /* disasm.h */,
 				3CDC215F16938243006CF053 /* main.c */,
+				3CDC216B16938243006CF053 /* otool.h */,
 				3CDC216016938243006CF053 /* allocate.c */,
 				3CDC216116938243006CF053 /* arm_disasm.c */,
 				3CDC216216938243006CF053 /* arm_disasm.h */,
@@ -83,8 +84,7 @@
 				3CDC216816938243006CF053 /* llvm.c */,
 				3CDC216916938243006CF053 /* llvm.h */,
 				3CDC216A16938243006CF053 /* ofile_print.h */,
-				3CDC216B16938243006CF053 /* otool.h */,
-				3CDC216C16938243006CF053 /* symbol.c */,
+				3C0B08E61872CD0C00A22D6D /* ofile_print.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -163,7 +163,7 @@
 				3CDC217316938243006CF053 /* fatals.c in Sources */,
 				3CDC217416938243006CF053 /* i386_disasm.c in Sources */,
 				3CDC217616938243006CF053 /* llvm.c in Sources */,
-				3CDC217A16938243006CF053 /* symbol.c in Sources */,
+				3C0B08E71872CD0C00A22D6D /* ofile_print.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,51 +173,35 @@
 		3CDC215516938207006CF053 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
 		3CDC215616938207006CF053 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

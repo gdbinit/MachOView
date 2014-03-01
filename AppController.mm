@@ -13,6 +13,8 @@
 #import "PreferenceController.h"
 #import "Attach.h"
 
+#include "disasm.h"  // for the disassembler flags
+
 // counters for statistics
 int64_t nrow_total;  // number of rows (loaded and empty)
 int64_t nrow_loaded; // number of loaded rows

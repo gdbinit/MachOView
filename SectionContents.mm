@@ -552,7 +552,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
   NSUInteger bookmark = node.details.rowCount;
   NSString * symbolName = nil;
   
-  if (length == 0) // prevent of attempting to parse zero length sections
+  if (length == 0) // prevent from attempting to parse zero length sections
   {
     return node;
   }
@@ -561,56 +561,119 @@ static AsmFootPrint const fastStubHelperHelperARM =
   //===========================================================================
   MATCH_STRUCT(mach_header,imageOffset);
   
-  struct dysymtab_command const * dysymtab_command = NULL;
-  for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
-  {
-    struct load_command const * load_command = (struct load_command const *)(*cmdIter);
-    if (load_command->cmd == LC_DYSYMTAB)
-    {
-      dysymtab_command = (struct dysymtab_command const *)load_command; 
-      break;
-    }
-  }
+  
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  #pragma message "TODO: ARM64"
+  if (mach_header->cputype == CPU_TYPE_ARM64)
+    return node;
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
   
   char *                    ot_sect = (char*)[dataController.fileData bytes] + location;
   uint32_t                  ot_left = length;
   uint64_t                  ot_addr = ([self is64bit] == NO ? [self fileOffsetToRVA:location] : [self fileOffsetToRVA64:location]);
   uint64_t                  ot_sect_addr = ot_addr;
+  uint64_t                    ot_seg_addr = ot_addr;
   enum byte_sex             ot_object_byte_sex = LITTLE_ENDIAN_BYTE_SEX; // the only one we support so far
   struct nlist *            ot_symbols = (symbols.empty() ? NULL : const_cast<struct nlist *>(symbols[0]));
   struct nlist_64 *         ot_symbols64 = (symbols_64.empty() ? NULL : const_cast<struct nlist_64 *>(symbols_64[0]));
   uint32_t                  ot_nsymbols = ([self is64bit] == NO ? symbols.size() : symbols_64.size());
   char *                      ot_strings = (char *)strtab;
   uint32_t                  ot_strings_size = (char *)[dataController.fileData bytes] - strtab;
-  uint32_t *                ot_indirect_symbols = (dysymtab_command ? (uint32_t*)((char*)[dataController.fileData bytes] + dysymtab_command->indirectsymoff + imageOffset) : NULL);
-  uint32_t                  ot_nindirect_symbols = (dysymtab_command ? dysymtab_command->nindirectsyms : 0);
+  uint32_t *                  ot_indirect_symbols = (isymbols.empty() ? NULL : const_cast<uint32_t *>(isymbols[0]));
+  uint32_t                    ot_nindirect_symbols = isymbols.size();
   struct load_command *       ot_load_commands = (struct load_command *)(commands[0]);
   uint32_t                  ot_ncmds = commands.size();
   uint32_t                  ot_sizeofcmds = mach_header->sizeofcmds;
   cpu_type_t                ot_cputype = mach_header->cputype;
   cpu_subtype_t             ot_cpu_subtype = mach_header->cpusubtype;
-  bool                      ot_verbose = true;
-  bool                      ot_llvm_mc = false;
+  uint32_t                    ot_filetype = mach_header->filetype;
+  BOOL                        ot_verbose = TRUE;
+  BOOL                        ot_llvm_mc = FALSE; /* disassemble as llvm-mc will assemble */
   
-  struct data_in_code_entry * ot_dices = NULL; // TODO
-  uint32_t                    ot_ndices = 0; // TODO
+  struct data_in_code_entry * ot_dices = (dices.empty() ? NULL : const_cast<struct data_in_code_entry *>(dices[0]));
+  uint32_t                    ot_ndices = dices.size();
   char *                      ot_object_addr = (char *)mach_header;
   uint32_t                    ot_object_size = imageSize;
 
-  LLVMDisasmContextRef        ot_arm_dc = (qflag && mach_header->cputype == CPU_TYPE_ARM ? create_arm_llvm_disassembler() : NULL);
-  LLVMDisasmContextRef        ot_thumb_dc = (qflag && mach_header->cputype == CPU_TYPE_ARM ? create_thumb_llvm_disassembler() : NULL);
-  LLVMDisasmContextRef        ot_i386_dc = (qflag && mach_header->cputype == CPU_TYPE_I386 ? create_i386_llvm_disassembler() : NULL);
-  LLVMDisasmContextRef        ot_x86_64_dc = (qflag && mach_header->cputype == CPU_TYPE_X86_64 ? create_x86_64_llvm_disassembler() : NULL);
+  uint32_t                    ot_ninsts = 0, n = 0;
+  struct inst *               ot_insts = NULL;
+#if 1
+  LLVMDisasmContextRef        ot_arm_dc = NULL;
+  LLVMDisasmContextRef        ot_thumb_dc = NULL;
+  LLVMDisasmContextRef        ot_i386_dc = NULL;
+  LLVMDisasmContextRef        ot_x86_64_dc = NULL;
   
-  vector<symbol> sorted_symbols;
-  set<uint64_t> thumbSymbols;
+  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_ARM)
+  {
+    @synchronized([self class])
+    {
+      ot_arm_dc = create_arm_llvm_disassembler(mach_header->cpusubtype);
+      NSAssert(ot_arm_dc, @"ARM Disassembler could not be created");
+    }
+    @synchronized([self class])
+    {
+      ot_thumb_dc = create_thumb_llvm_disassembler(mach_header->cpusubtype);
+      NSAssert(ot_thumb_dc, @"Thumb Disassembler could not be created");
+    }
+    llvm_disasm_set_options(ot_arm_dc,      LLVMDisassembler_Option_PrintImmHex);
+    llvm_disasm_set_options(ot_thumb_dc,    LLVMDisassembler_Option_PrintImmHex);
+    if(eflag) // print enhanced disassembly
+    {
+      llvm_disasm_set_options(ot_arm_dc,    LLVMDisassembler_Option_UseMarkup);
+      llvm_disasm_set_options(ot_thumb_dc,  LLVMDisassembler_Option_UseMarkup);
+    }
+  }
+  
+  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_I386)
+  {
+    @synchronized([self class])
+    {
+      ot_i386_dc = create_i386_llvm_disassembler();
+      NSAssert(ot_i386_dc, @"I386 Disassembler could not be created");
+    }
+    llvm_disasm_set_options(ot_i386_dc,     LLVMDisassembler_Option_PrintImmHex);
+    if(nflag) // use intel disassembly syntax
+      llvm_disasm_set_options(ot_i386_dc,   LLVMDisassembler_Option_AsmPrinterVariant);
+    if(eflag) // print enhanced disassembly
+      llvm_disasm_set_options(ot_i386_dc,   LLVMDisassembler_Option_UseMarkup);
+  }
+  
+  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_X86_64)
+  {
+    @synchronized([self class])
+    {
+      ot_x86_64_dc = create_x86_64_llvm_disassembler();
+      NSAssert(ot_x86_64_dc, @"X86_64 Disassembler could not be created");
+    }
+    llvm_disasm_set_options(ot_x86_64_dc,   LLVMDisassembler_Option_PrintImmHex);
+    if(nflag) // use intel disassembly syntax
+      llvm_disasm_set_options(ot_x86_64_dc, LLVMDisassembler_Option_AsmPrinterVariant);
+    if(eflag) // print enhanced disassembly
+      llvm_disasm_set_options(ot_x86_64_dc, LLVMDisassembler_Option_UseMarkup);
+  }
   
   if (mach_header->cputype == CPU_TYPE_ARM && 
-      (mach_header->cpusubtype == CPU_SUBTYPE_ARM_V6 ||
-       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7 ||
+     (mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7 ||
        mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7F ||
+      mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7S ||
        mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7K ||
-       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7S))
+      mach_header->cpusubtype == CPU_SUBTYPE_ARM_V8))
+  {
+    //if(sect_flags & S_SYMBOL_STUBS)
+    //  in_thumb = FALSE;
+    //else
+    in_thumb = TRUE;
+  }
+  else
+		in_thumb = FALSE;
+
+  
+  // collect thumb symbols
+  set<uint64_t> thumbSymbols;
+  if (mach_header->cputype == CPU_TYPE_ARM ||
+      mach_header->cputype == CPU_TYPE_ARM64)
+  {
   for(uint32_t i = 0; i < ot_nsymbols; ++i)
   {
     uint8_t n_type;
@@ -637,8 +700,10 @@ static AsmFootPrint const fastStubHelperHelperARM =
       thumbSymbols.insert(n_value);
     }
   }
+  }
   
-  in_thumb = (mach_header->cputype != CPU_TYPE_ARM && mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7);
+  /* create aligned, sorted symbol entries */
+  vector<struct symbol> sorted_symbols;
   
   NSEnumerator * enumerator = [symbolNames keyEnumerator];
   id key;
@@ -667,9 +732,20 @@ static AsmFootPrint const fastStubHelperHelperARM =
   struct symbol *           ot_sorted_symbols = &sorted_symbols[0];
   uint32_t                  ot_nsorted_symbols = sorted_symbols.size();
   
+  
+  /* create aligned, sorted relocations entries */
+  
+//  vector<struct relocation_info> sorted_relocs(nreloc);
+//  
+//  memcpy(&sorted_relocs[0], (struct relocation_info *)((char *)[dataController.fileData bytes] + reloff), nreloc * sizeof(struct relocation_info));
+//  qsort(&sorted_relocs[0], nreloc, sizeof(struct relocation_info),
+//        (int (*)(const void *, const void *))rel_compare);
+//  
+//  struct relocation_info *  ot_sorted_relocs = &sorted_relocs[0];
+//  uint32_t                  ot_nsorted_relocs = sorted_relocs.size();
+
   struct relocation_info *  ot_sorted_relocs = (struct relocation_info *)((char *)[dataController.fileData bytes] + reloff);
   uint32_t                  ot_nsorted_relocs = nreloc;
-
   //===========================================================================
 
   do {
@@ -712,7 +788,8 @@ static AsmFootPrint const fastStubHelperHelperARM =
       {
         
         parsed_bytes =
-        (mach_header->cputype != CPU_TYPE_ARM
+        (mach_header->cputype == CPU_TYPE_I386 ||
+         mach_header->cputype == CPU_TYPE_X86_64
          ? i386_disassemble(
                             ot_sect,
                             ot_left,
@@ -739,9 +816,14 @@ static AsmFootPrint const fastStubHelperHelperARM =
                             ot_i386_dc,
                             ot_x86_64_dc,
                             ot_object_addr,
-                            ot_object_size
+                            ot_object_size,
+                            &(ot_insts[n]),
+                            NULL,
+                            0,
+                            ot_filetype
                             )
-         : arm_disassemble(
+         : mach_header->cputype == CPU_TYPE_ARM
+         ? arm_disassemble(
                            ot_sect,
                            ot_left,
                            ot_addr,
@@ -767,19 +849,26 @@ static AsmFootPrint const fastStubHelperHelperARM =
                            ot_object_addr,
                            ot_object_size,
                            ot_dices,
-                           ot_ndices
+                           ot_ndices,
+                           ot_seg_addr,
+                           &(ot_insts[n]),
+                           NULL,
+                           0
                            )
-       );
+         : 0);
       }
       catch(...)
       {
-        // sometimes the disassembler crashes on encrypted test section
+        // sometimes the disassembler crashes on encrypted text section
         break;
       }
         
+      if (parsed_bytes == 0)
+        break;
+      
       // read from pipe
       char buf[0x1000], *pbuf = buf;
-      ssize_t lenbuf = read(pfdout[0], buf, sizeof(buf));
+      ssize_t lenbuf = read(pfdout[0], buf, sizeof(buf)-1);
       buf[lenbuf] = '\0'; // terminate buffer
       size_t field_start_pos = 0; // start position in buffer of the current field
       
@@ -881,12 +970,19 @@ static AsmFootPrint const fastStubHelperHelperARM =
     free(iter->name);
   }
   
+  // Free up allocated space
+  for(uint32_t i = 0 ; i < n ; i++){
+    if(ot_insts[i].tmp_label != NULL)
+			free(ot_insts[i].tmp_label);
+  }
+  free(ot_insts);
+
   // clean up LLVM disasm context
   if (ot_arm_dc)     delete_arm_llvm_disassembler(ot_arm_dc);
   if (ot_thumb_dc)   delete_thumb_llvm_disassembler(ot_thumb_dc);
   if (ot_i386_dc)    delete_i386_llvm_disassembler(ot_i386_dc);
   if (ot_x86_64_dc)  delete_x86_64_llvm_disassembler(ot_x86_64_dc);
-
+#endif
   // close last block
   if (symbolName)
   {

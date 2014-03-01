@@ -382,7 +382,7 @@ using namespace std;
   //        Frame Description Entry (FDE) Records
   
   if (Pointer_encoding != DW_EH_PE_omit)
-  do
+  while (NSMaxRange(range) - location < length)
   {
     // accumulate search info
     NSUInteger bookmark = node.details.rowCount;
@@ -486,7 +486,7 @@ using namespace std;
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
 
-  } while (NSMaxRange(range) - location < length);
+  }
   
   return node;
 }

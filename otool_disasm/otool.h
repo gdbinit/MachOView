@@ -28,7 +28,8 @@
  *
  * @APPLE_LICENSE_HEADER_END@
  */
-#import <stuff/bool.h>
+#include <stuff/bool.h>
+#include "llvm-c/Disassembler.h"
 
 /* Name of this program for error messages (argv[0]) */
 extern char *progname;
@@ -58,13 +59,30 @@ extern enum bool Zflag; /* don't use simplified ppc mnemonics in disassembly */
 extern enum bool Bflag; /* force Thumb disassembly (ARM objects only) */
 extern enum bool Qflag; /* use the HACKED llvm-mc disassembler */
 extern enum bool qflag; /* use 'C' Public llvm-mc disassembler */
+extern enum bool gflag; /* group the disassembly */
 extern enum bool jflag; /* print opcode bytes */
 extern char *pflag; 	/* procedure name to start disassembling from */
 extern char *segname,
      *sectname;	    /* name of the section to print the contents of */
+extern char *mcpu; 	/* the arg of the -mcpu=arg flag */
 
 uint32_t m68k_usrstack(void);
 uint32_t m88k_usrstack(void);
 uint32_t i386_usrstack(void);
 uint32_t hppa_usrstack(void);
 uint32_t sparc_usrstack(void);
+
+#ifndef STRUCT_INST
+#define STRUCT_INST
+
+struct inst {
+    uint64_t address;
+    char *label;
+    enum bool needs_tmp_label;
+    char *tmp_label;
+    enum bool print;
+    enum bool has_raw_target_address;
+    uint64_t raw_target_address;
+};
+
+#endif /* !defined(STRUCT_INST) */

@@ -180,7 +180,7 @@ using namespace std;
       
       uint32_t r_type = scattered_relocation_info->r_type;
       if (
-          (mach_header->cputype == CPU_TYPE_X86 && (r_type == GENERIC_RELOC_SECTDIFF || r_type == GENERIC_RELOC_LOCAL_SECTDIFF)) 
+          (mach_header->cputype == CPU_TYPE_I386 && (r_type == GENERIC_RELOC_SECTDIFF || r_type == GENERIC_RELOC_LOCAL_SECTDIFF))
           ||
           (mach_header->cputype == CPU_TYPE_ARM && (r_type == ARM_RELOC_SECTDIFF || r_type == ARM_RELOC_LOCAL_SECTDIFF))
           )
@@ -188,7 +188,7 @@ using namespace std;
         prev_scattered_relocation_info = scattered_relocation_info;
       }
       else if (
-               ((mach_header->cputype == CPU_TYPE_X86 && r_type == GENERIC_RELOC_PAIR)
+               ((mach_header->cputype == CPU_TYPE_I386 && r_type == GENERIC_RELOC_PAIR)
                ||
                (mach_header->cputype == CPU_TYPE_ARM && r_type == ARM_RELOC_PAIR))
                && prev_scattered_relocation_info
@@ -220,7 +220,9 @@ using namespace std;
       }
     }
     
-    if (mach_header->cputype == CPU_TYPE_X86)
+    //=============================== normal relocations ===============================
+    
+    if (mach_header->cputype == CPU_TYPE_I386)
     {
       uint32_t r_type = (relocation_info ? relocation_info->r_type : scattered_relocation_info->r_type);
       
@@ -293,6 +295,8 @@ using namespace std;
   
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
+  
+  MATCH_STRUCT(mach_header_64,imageOffset);
   
   struct relocation_info const * prev_relocation_info = NULL;
   
@@ -602,6 +606,8 @@ using namespace std;
     }
     //========== end of differentation 
     
+    if (mach_header_64->cputype == CPU_TYPE_X86_64)
+    {
     [node.details appendRow:@"":@"":@"Type"
                            :relocation_info->r_type == X86_64_RELOC_UNSIGNED ? @"X86_64_RELOC_UNSIGNED" :
                             relocation_info->r_type == X86_64_RELOC_SIGNED ? @"X86_64_RELOC_SIGNED" :
@@ -612,6 +618,22 @@ using namespace std;
                             relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? @"X86_64_RELOC_SIGNED_1" :
                             relocation_info->r_type == X86_64_RELOC_SIGNED_2 ? @"X86_64_RELOC_SIGNED_2" :
                             relocation_info->r_type == X86_64_RELOC_SIGNED_4 ? @"X86_64_RELOC_SIGNED_4" : @"?????"];
+    }
+    else if (mach_header_64->cputype == CPU_TYPE_ARM64)
+    {
+      [node.details appendRow:@"":@"":@"Type"
+                             :relocation_info->r_type == ARM64_RELOC_UNSIGNED ? @"ARM64_RELOC_UNSIGNED" :
+                              relocation_info->r_type == ARM64_RELOC_SUBTRACTOR ? @"ARM64_RELOC_SUBTRACTOR" :
+                              relocation_info->r_type == ARM64_RELOC_BRANCH26 ? @"ARM64_RELOC_BRANCH26" :
+                              relocation_info->r_type == ARM64_RELOC_PAGE21 ? @"ARM64_RELOC_PAGE21" :
+                              relocation_info->r_type == ARM64_RELOC_PAGEOFF12 ? @"ARM64_RELOC_PAGEOFF12" :
+                              relocation_info->r_type == ARM64_RELOC_GOT_LOAD_PAGE21 ? @"ARM64_RELOC_GOT_LOAD_PAGE21" :
+                              relocation_info->r_type == ARM64_RELOC_GOT_LOAD_PAGEOFF12 ? @"ARM64_RELOC_GOT_LOAD_PAGEOFF12" :
+                              relocation_info->r_type == ARM64_RELOC_POINTER_TO_GOT ? @"ARM64_RELOC_POINTER_TO_GOT" :
+                              relocation_info->r_type == ARM64_RELOC_TLVP_LOAD_PAGE21 ? @"ARM64_RELOC_TLVP_LOAD_PAGE21" :
+                              relocation_info->r_type == ARM64_RELOC_TLVP_LOAD_PAGEOFF12 ? @"ARM64_RELOC_TLVP_LOAD_PAGEOFF12" :
+                              relocation_info->r_type == ARM64_RELOC_ADDEND ? @"ARM64_RELOC_ADDEND" : @"?????"];
+    }
     
     if (relocation_info)
     {
@@ -1010,7 +1032,7 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
-- (MVNode *) createIndirectNode:parent 
+- (MVNode *) createISymbolsNode:parent
                         caption:(NSString *)caption
                        location:(uint32_t)location
                          length:(uint32_t)length
@@ -1038,6 +1060,9 @@ using namespace std;
         continue;
       }
       
+      // preserve location of indirect symbol index for further processing
+      isymbols.push_back((uint32_t *)[self imageAt:location + sizeof(uint32_t)*nindsym]);
+
       // calculate stub or pointer length
       uint32_t length = (section->reserved2 > 0 ? section->reserved2 : sizeof(uint32_t));
         
@@ -1135,7 +1160,7 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
-- (MVNode *) createIndirect64Node:parent 
+- (MVNode *) createISymbols64Node:parent
                           caption:(NSString *)caption
                          location:(uint32_t)location
                            length:(uint32_t)length
@@ -1163,6 +1188,9 @@ using namespace std;
         continue;
       }
       
+      // preserve location of indirect symbol index for further processing
+      isymbols.push_back((uint32_t *)[self imageAt:location + sizeof(uint32_t)*nindsym]);
+
       // calculate stub or pointer length
       uint32_t length = (section_64->reserved2 > 0 ? section_64->reserved2 : sizeof(uint64_t));
         
@@ -1643,8 +1671,6 @@ using namespace std;
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
   
-  uint64_t address = baseAddress;
-  
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
 
@@ -1683,10 +1709,11 @@ using namespace std;
                             kind == 0x1E ? @"thumb2 movt low high 4 bits=0xE" :
                             kind == 0x1f ? @"thumb2 movt low high 4 bits=0xF" : @"???"];
     
-    uint64_t offset;
+    uint64_t address = baseAddress;
+    uint64_t offset = 0;
     do
     {
-      uint64_t offset = [self read_uleb128:range lastReadHex:&lastReadHex];
+      offset = [self read_uleb128:range lastReadHex:&lastReadHex];
       address += offset;
       
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1732,6 +1759,51 @@ using namespace std;
                               [self findSymbolAtRVA64:address])];
 
     [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil]; 
+  }
+  
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+- (MVNode *) createDataInCodeEntriesNode:parent
+                                 caption:(NSString *)caption
+                                location:(uint32_t)location
+                                  length:(uint32_t)length
+{
+  MVNodeSaver nodeSaver;
+  MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
+  
+  NSRange range = NSMakeRange(location,0);
+  NSString * lastReadHex;
+  
+  while (NSMaxRange(range) < location + length)
+  {
+    MATCH_STRUCT(data_in_code_entry, NSMaxRange(range))
+    dices.push_back(data_in_code_entry);
+    
+    [self read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Offset"
+                           :[self findSymbolAtRVA:[self fileOffsetToRVA:data_in_code_entry->offset + imageOffset]]];
+
+    [self read_uint16:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Length"
+                           :[NSString stringWithFormat:@"%u", (uint32_t)data_in_code_entry->length]];
+
+    [self read_uint16:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Kind"
+                           :data_in_code_entry->kind == DICE_KIND_DATA ? @"DICE_KIND_DATA" :
+                            data_in_code_entry->kind == DICE_KIND_JUMP_TABLE8 ? @"DICE_KIND_JUMP_TABLE8" :
+                            data_in_code_entry->kind == DICE_KIND_JUMP_TABLE16 ? @"DICE_KIND_JUMP_TABLE16" :
+                            data_in_code_entry->kind == DICE_KIND_JUMP_TABLE32 ? @"DICE_KIND_JUMP_TABLE32" :
+                            data_in_code_entry->kind == DICE_KIND_ABS_JUMP_TABLE32 ? @"DICE_KIND_ABS_JUMP_TABLE32" : @"???"];
+    
+    [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
   }
   
   return node;

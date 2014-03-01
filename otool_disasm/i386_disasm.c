@@ -176,6 +176,7 @@ static void displacement(
     uint64_t sect_addr,
     uint32_t *length,
     uint32_t *left,
+    const uint32_t filetype,
     const cpu_type_t cputype,
     const uint64_t addr,
     const struct relocation_info *sorted_relocs,
@@ -237,9 +238,10 @@ static void modrm_byte(
 
 #define DISPLACEMENT(symadd, symsub, value, value_size) \
 	displacement((symadd), (symsub), (value), (value_size), sect, \
-		     sect_addr, &length, &left, cputype, addr, sorted_relocs, \
-		     nsorted_relocs, symbols, symbols64, nsymbols, strings, \
-		     strings_size, sorted_symbols, nsorted_symbols, verbose)
+		     sect_addr, &length, &left, filetype, cputype, addr, \
+		     sorted_relocs, nsorted_relocs, symbols, symbols64, \
+		     nsymbols, strings, strings_size, sorted_symbols, \
+		     nsorted_symbols, verbose)
 
 #define IMMEDIATE(symadd, symsub, value, value_size) \
 	immediate((symadd), (symsub), (value), (value_size), sect, sect_addr, \
@@ -1631,6 +1633,10 @@ struct disassemble_info {
   LLVMDisasmContextRef x86_64_dc;
   char *object_addr;
   uint32_t object_size;
+  struct inst *inst;
+  struct inst *insts;
+  uint32_t ninsts;
+  uint32_t filetype;
 } dis_info;
 
 /*
@@ -1663,7 +1669,11 @@ enum bool llvm_mc,
 LLVMDisasmContextRef i386_dc,
 LLVMDisasmContextRef x86_64_dc,
 char *object_addr,
-uint32_t object_size)
+uint32_t object_size,
+struct inst *inst,
+struct inst *insts,
+uint32_t ninsts,
+uint32_t filetype)
 {
     char mnemonic[MAX_MNEMONIC+2]; /* one extra for suffix */
     const char *seg;
@@ -1697,7 +1707,7 @@ uint32_t object_size)
 	}
 
 	/* Use the llvm disassembler with the -q flag. */
-	if(qflag){
+	if(qflag || gflag){
 	    LLVMDisasmContextRef dc;
 	    char dst[4096];
 
@@ -1725,15 +1735,22 @@ uint32_t object_size)
 	    dis_info.cputype = cputype;
 	    dis_info.object_addr = object_addr;
 	    dis_info.object_size = object_size;
+	    dis_info.inst = inst;
+	    dis_info.insts = insts;
+	    dis_info.ninsts = ninsts;
+	    dis_info.filetype = filetype;
 	    if(cputype == CPU_TYPE_I386)
 		dc = i386_dc;
 	    else
 		dc = x86_64_dc;
             length = llvm_disasm_instruction(dc, (uint8_t *)sect, left,
 					     addr, dst, 4095);
-	    if(length != 0)
+	    if(length != 0){
+		if(inst == NULL || inst->print)
 	        printf("%s\n", dst);
+	    }
 	    else{
+		if(inst == NULL || inst->print)
 		printf("\t.byte 0x%02x #bad opcode\n", 0xff & sect[0]);
 		length = 1;
 	    }
@@ -4059,6 +4076,7 @@ uint64_t sect_addr,
 uint32_t *length,
 uint32_t *left,
 
+const uint32_t filetype,
 const cpu_type_t cputype,
 const uint64_t addr,
 const struct relocation_info *sorted_relocs,
@@ -4077,7 +4095,9 @@ const enum bool verbose)
 	uint64_t offset;
 	uint64_t guess_addr;
 
-	sect_offset = addr + *length - sect_addr;
+	sect_offset = addr + *length;
+	if(filetype != MH_KEXT_BUNDLE)
+	    sect_offset -= sect_addr;
 	*value = get_value(value_size, sect, length, left);
 	switch(value_size){
 	case 1:
@@ -4415,7 +4435,9 @@ void *TagBuf)
 	   info->verbose == FALSE)
 	    return(0);
 
-	sect_offset = (Pc + Offset) - info->sect_addr;
+	sect_offset = (Pc + Offset);
+	if(info->filetype != MH_KEXT_BUNDLE)
+	    sect_offset -= info->sect_addr;
 	relocs = info->sorted_relocs;
 	nrelocs = info->nsorted_relocs;
 	symbols = info->symbols;
@@ -4596,7 +4618,9 @@ void *TagBuf)
 	   info->verbose == FALSE)
 	    return(0);
 
-	sect_offset = (Pc + Offset) - info->sect_addr;
+	sect_offset = (Pc + Offset);
+	if(info->filetype != MH_KEXT_BUNDLE)
+	    sect_offset -= info->sect_addr;
 	relocs = info->sorted_relocs;
 	nrelocs = info->nsorted_relocs;
 	symbols = info->symbols64;
@@ -4622,6 +4646,8 @@ void *TagBuf)
 		op_info->Value -= Pc + Offset + Width;
 	    if(symbols != NULL)
 		n_strx = symbols[relocs[i].r_symbolnum].n_un.n_strx;
+	    else
+		return(0);
 	    if(n_strx >= strings_size)
 		return(0);
 	    name = strings + n_strx;
@@ -4822,6 +4848,7 @@ const char **ReferenceName)
 {
     struct disassemble_info *info;
     const char *SymbolName;
+    uint32_t i;
 
 	info = (struct disassemble_info *)DisInfo;
 	if(info->verbose == FALSE){
@@ -4831,6 +4858,14 @@ const char **ReferenceName)
 	}
 	SymbolName = guess_symbol(SymbolValue, info->sorted_symbols,
 				  info->nsorted_symbols, TRUE);
+	if(SymbolName == NULL && info->insts != NULL && info->ninsts != 0){
+	    for(i = 0; i < info->ninsts; i++){
+		if(info->insts[i].address == SymbolValue){
+		    SymbolName = info->insts[i].tmp_label;
+		    break;
+		}
+	    }
+	}
 
 	if(*ReferenceType == LLVMDisassembler_ReferenceType_In_Branch){
 	    *ReferenceName = guess_indirect_symbol(SymbolValue,
@@ -4842,6 +4877,10 @@ const char **ReferenceName)
 		*ReferenceType = LLVMDisassembler_ReferenceType_Out_SymbolStub;
 	    else
 		*ReferenceType = LLVMDisassembler_ReferenceType_InOut_None;
+	    if(info->inst != NULL && SymbolName == NULL){
+		info->inst->has_raw_target_address = TRUE;
+		info->inst->raw_target_address = SymbolValue;
+	    }
 	}
 	else if(*ReferenceType == LLVMDisassembler_ReferenceType_In_PCrel_Load){
 	    *ReferenceName = guess_literal_pointer(SymbolValue, ReferencePC,
@@ -4862,7 +4901,7 @@ void)
 {
     LLVMDisasmContextRef dc;
 
-	dc = llvm_create_disasm("i386-apple-darwin10", &dis_info, 1,
+	dc = llvm_create_disasm("i386-apple-darwin10", mcpu, &dis_info, 1,
 				i386GetOpInfo, SymbolLookUp);
 	return(dc);
 }
@@ -4880,7 +4919,7 @@ void)
 {
     LLVMDisasmContextRef dc;
 
-	dc = llvm_create_disasm("x86_64-apple-darwin10", &dis_info, 1,
+	dc = llvm_create_disasm("x86_64-apple-darwin10", mcpu, &dis_info, 1,
 				x86_64GetOpInfo, SymbolLookUp);
 	return(dc);
 }
