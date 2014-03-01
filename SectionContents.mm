@@ -12,8 +12,6 @@
 #import "ReadWrite.h"
 #import "DataController.h"
 
-#include "disasm.h"
-
 #define TAB_WIDTH 10
 
 using namespace std;
@@ -574,7 +572,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
   uint64_t                  ot_addr = ([self is64bit] == NO ? [self fileOffsetToRVA:location] : [self fileOffsetToRVA64:location]);
   uint64_t                  ot_sect_addr = ot_addr;
   uint64_t                    ot_seg_addr = ot_addr;
-  enum byte_sex             ot_object_byte_sex = LITTLE_ENDIAN_BYTE_SEX; // the only one we support so far
+//  enum byte_sex             ot_object_byte_sex = LITTLE_ENDIAN_BYTE_SEX; // the only one we support so far
   struct nlist *            ot_symbols = (symbols.empty() ? NULL : const_cast<struct nlist *>(symbols[0]));
   struct nlist_64 *         ot_symbols64 = (symbols_64.empty() ? NULL : const_cast<struct nlist_64 *>(symbols_64[0]));
   uint32_t                  ot_nsymbols = ([self is64bit] == NO ? symbols.size() : symbols_64.size());
@@ -598,7 +596,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
 
   uint32_t                    ot_ninsts = 0, n = 0;
   struct inst *               ot_insts = NULL;
-#if 1
+#if 0
   LLVMDisasmContextRef        ot_arm_dc = NULL;
   LLVMDisasmContextRef        ot_thumb_dc = NULL;
   LLVMDisasmContextRef        ot_i386_dc = NULL;
@@ -674,32 +672,32 @@ static AsmFootPrint const fastStubHelperHelperARM =
   if (mach_header->cputype == CPU_TYPE_ARM ||
       mach_header->cputype == CPU_TYPE_ARM64)
   {
-  for(uint32_t i = 0; i < ot_nsymbols; ++i)
-  {
-    uint8_t n_type;
-    uint16_t n_desc;
-    uint64_t n_value;
-    
-    if([self is64bit] == NO)
-    {
-      struct nlist const * nlist = symbols.at(i);
-      n_type = nlist->n_type;
-      n_desc = nlist->n_desc;
-      n_value = nlist->n_value;
-    }
-    else
-    {
-      struct nlist_64 const * nlist_64 = symbols_64.at(i);
-      n_type = nlist_64->n_type;
-      n_desc = nlist_64->n_desc;
-      n_value = nlist_64->n_value;
-    }
-    
-    if((n_type & N_TYPE) == N_SECT && (n_desc & N_ARM_THUMB_DEF))
-    {
-      thumbSymbols.insert(n_value);
-    }
-  }
+      for(uint32_t i = 0; i < ot_nsymbols; ++i)
+      {
+          uint8_t n_type;
+          uint16_t n_desc;
+          uint64_t n_value;
+          
+          if([self is64bit] == NO)
+          {
+              struct nlist const * nlist = symbols.at(i);
+              n_type = nlist->n_type;
+              n_desc = nlist->n_desc;
+              n_value = nlist->n_value;
+          }
+          else
+          {
+              struct nlist_64 const * nlist_64 = symbols_64.at(i);
+              n_type = nlist_64->n_type;
+              n_desc = nlist_64->n_desc;
+              n_value = nlist_64->n_value;
+          }
+          
+          if((n_type & N_TYPE) == N_SECT && (n_desc & N_ARM_THUMB_DEF))
+          {
+              thumbSymbols.insert(n_value);
+          }
+      }
   }
   
   /* create aligned, sorted symbol entries */

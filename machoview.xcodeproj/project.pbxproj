@@ -21,7 +21,6 @@
 		3C46C84B1687DEE600212190 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3C46C8491687DEE600212190 /* Credits.rtf */; };
 		3C61A87C1240B0B400BDF3D0 /* SectionContents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C61A87B1240B0B400BDF3D0 /* SectionContents.mm */; };
 		3C73525A11DE122900DF1950 /* Document.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C73525911DE122900DF1950 /* Document.mm */; };
-		3CB9D3F8139FC96D003D8D33 /* libdisasm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB9D3F7139FC96D003D8D33 /* libdisasm.a */; };
 		3CC0022211F64A45000F7A3D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC0022111F64A45000F7A3D /* Cocoa.framework */; };
 		3CCC228D129EE70C0083DAE2 /* CRTFootPrints.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CCC228C129EE70C0083DAE2 /* CRTFootPrints.mm */; };
 		3CD037C21248F66C00DCFC68 /* DyldInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CD037C11248F66C00DCFC68 /* DyldInfo.mm */; };
@@ -79,7 +78,6 @@
 		3C73525911DE122900DF1950 /* Document.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Document.mm; sourceTree = "<group>"; };
 		3C871CB1141AC7C100288512 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		3CA2331811F6445700684D15 /* MachOView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MachOView.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CB9D3F7139FC96D003D8D33 /* libdisasm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libdisasm.a; sourceTree = "<group>"; };
 		3CC0022111F64A45000F7A3D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CCB9FDF11F6DC2000F57CAA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCC228B129EE70C0083DAE2 /* CRTFootPrints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRTFootPrints.h; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CC0022211F64A45000F7A3D /* Cocoa.framework in Frameworks */,
-				3CB9D3F8139FC96D003D8D33 /* libdisasm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,7 +178,6 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3CB9D3F7139FC96D003D8D33 /* libdisasm.a */,
 				3CC0022111F64A45000F7A3D /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -483,7 +479,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx10.8;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include /Users/reverser/Downloads/clang-425.0.24/src/include";
+				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
@@ -531,7 +527,7 @@
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx10.8;
 				SKIP_INSTALL = NO;
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/otool_disasm $(SRCROOT)/otool_disasm/include /Users/reverser/Downloads/clang-425.0.24/src/include";
+				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};

@@ -8,8 +8,6 @@
 
 #import "PreferenceController.h"
 
-#include "disasm.h" // for the disassembler flags
-
 @implementation MVPreferenceController
 
 -(id)init
@@ -22,7 +20,7 @@
 
 - (IBAction)toggleUseLLVMDisassembler:(id)sender
 {
-  qflag = ([useLLVMDisassembler state] == NSOnState);
+//  qflag = ([useLLVMDisassembler state] == NSOnState);
 }
 
 - (IBAction)toggleOpenAtLaunch:(id)sender
