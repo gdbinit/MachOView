@@ -11,13 +11,11 @@ Also some small changes to the original behaviour.
 Original MachOView by psaghelyi at http://sourceforge.net/projects/machoview/.
 Thanks to psaghelyi for his great work :-)
 
-Latest versions use LLVM disassembler and are Lion+ only.
-You will need to download the Clang package from http://opensource.apple.com, from Developer Tools.
-Unpack it, go to src folder and run configure (you might need to install cmake, from brew or macports).
-Now modify the XCode Project settings. Go to Search Paths, and add the path to clang/src/include folder to
-the User Header Search Paths.
+Latest versions are Lion+ only.
+The LLVM disassembler was replaced with Capstone. This eliminates Clang/LLVM packages requirements.
+The downside is that Capstone stops disassembling on bad instructions which means that for now data in code and jump tables data will create problems and __text section disassembly might be incomplete in binaries that contain such data.
 
-Try to compile and hopefully it should work. Not sure if this is the best way to achieve it, it works.
+A static Capstone library is included in the repo, you should probably download Capstone, compile it yourself and replace the binary. I will try to integrate Capstone source in future release to close this "issue".
 
 Now features the attach option to analyse headers of a running process.
 To use this feature you will need to codesign the binary.
