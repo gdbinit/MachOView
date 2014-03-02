@@ -11,6 +11,7 @@
 #import "CRTFootPrints.h"
 #import "ReadWrite.h"
 #import "DataController.h"
+#import "capstone.h"
 
 #define TAB_WIDTH 10
 
@@ -558,21 +559,13 @@ static AsmFootPrint const fastStubHelperHelperARM =
   // prepare disassembler params
   //===========================================================================
   MATCH_STRUCT(mach_header,imageOffset);
-  
-  
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  #pragma message "TODO: ARM64"
-  if (mach_header->cputype == CPU_TYPE_ARM64)
-    return node;
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-  
+    
   char *                    ot_sect = (char*)[dataController.fileData bytes] + location;
   uint32_t                  ot_left = length;
   uint64_t                  ot_addr = ([self is64bit] == NO ? [self fileOffsetToRVA:location] : [self fileOffsetToRVA64:location]);
+#if 0
   uint64_t                  ot_sect_addr = ot_addr;
   uint64_t                    ot_seg_addr = ot_addr;
-//  enum byte_sex             ot_object_byte_sex = LITTLE_ENDIAN_BYTE_SEX; // the only one we support so far
   struct nlist *            ot_symbols = (symbols.empty() ? NULL : const_cast<struct nlist *>(symbols[0]));
   struct nlist_64 *         ot_symbols64 = (symbols_64.empty() ? NULL : const_cast<struct nlist_64 *>(symbols_64[0]));
   uint32_t                  ot_nsymbols = ([self is64bit] == NO ? symbols.size() : symbols_64.size());
@@ -583,11 +576,6 @@ static AsmFootPrint const fastStubHelperHelperARM =
   struct load_command *       ot_load_commands = (struct load_command *)(commands[0]);
   uint32_t                  ot_ncmds = commands.size();
   uint32_t                  ot_sizeofcmds = mach_header->sizeofcmds;
-  cpu_type_t                ot_cputype = mach_header->cputype;
-  cpu_subtype_t             ot_cpu_subtype = mach_header->cpusubtype;
-  uint32_t                    ot_filetype = mach_header->filetype;
-  BOOL                        ot_verbose = TRUE;
-  BOOL                        ot_llvm_mc = FALSE; /* disassemble as llvm-mc will assemble */
   
   struct data_in_code_entry * ot_dices = (dices.empty() ? NULL : const_cast<struct data_in_code_entry *>(dices[0]));
   uint32_t                    ot_ndices = dices.size();
@@ -595,7 +583,85 @@ static AsmFootPrint const fastStubHelperHelperARM =
   uint32_t                    ot_object_size = imageSize;
 
   uint32_t                    ot_ninsts = 0, n = 0;
-  struct inst *               ot_insts = NULL;
+#endif
+  
+    csh cs_handle = 0;
+    cs_insn *cs_insn = NULL;
+    size_t disasm_count = 0;
+
+    /* open capstone */
+    cs_arch target_arch;
+    cs_mode target_mode;
+    switch (mach_header->cputype)
+    {
+        case CPU_TYPE_I386:
+            target_arch = CS_ARCH_X86;
+            target_mode = CS_MODE_32;
+            break;
+        case CPU_TYPE_X86_64:
+            target_arch = CS_ARCH_X86;
+            target_mode = CS_MODE_64;
+            break;
+        case CPU_TYPE_ARM:
+            target_arch = CS_ARCH_ARM;
+            target_mode = CS_MODE_ARM;
+            break;
+        case CPU_TYPE_ARM64:
+            target_arch = CS_ARCH_ARM64;
+            target_mode = CS_MODE_ARM;
+            break;
+        default:
+            NSLog(@"NO CPU FOUND!");
+            break;
+    }
+
+    if ( cs_open(target_arch, target_mode, &cs_handle) != CS_ERR_OK )
+    {
+        NSLog(@"Failed to initialize Capstone: %s.", cs_strerror(cs_errno(cs_handle)));
+        return node;
+    }
+
+    /* set or not thumb mode for 32 bits ARM targets */
+    if (mach_header->cputype == CPU_TYPE_ARM)
+    {
+        switch (mach_header->cpusubtype)
+        {
+            case CPU_SUBTYPE_ARM_V7:
+            case CPU_SUBTYPE_ARM_V7F:
+            case CPU_SUBTYPE_ARM_V7S:
+            case CPU_SUBTYPE_ARM_V7K:
+            case CPU_SUBTYPE_ARM_V8:
+                cs_option(cs_handle, CS_OPT_MODE, CS_MODE_THUMB);
+                break;
+            default:
+                cs_option(cs_handle, CS_OPT_MODE, CS_MODE_ARM);
+                break;
+        }
+    }
+    
+    /* disassemble the whole section */
+    /* this will fail if we have data in code or jump tables because Capstone stops when it can't disassemble */
+    /* a bit of a problem with most binaries :( */
+    /* XXX: parse data in code section to partially solve this */
+    disasm_count = cs_disasm_ex(cs_handle, (const uint8_t *)ot_sect, ot_left, ot_addr, 0, &cs_insn);
+    NSLog(@"Disassembled %lu instructions.", disasm_count);
+    uint32_t fileOffset = ([self is64bit] == NO ? [self RVAToFileOffset:(uint32_t)ot_addr] : [self RVA64ToFileOffset:ot_addr]);
+    for (size_t i = 0; i < disasm_count; i++)
+    {
+        /* XXX: replace this bytes retrieval with Capstone internal data since it already contains this info */
+        NSRange range = NSMakeRange(fileOffset,0);
+        NSString * lastReadHex;
+        [self read_bytes:range length:cs_insn[i].size lastReadHex:&lastReadHex];
+        /* format the disassembly output using Capstone strings */
+        NSString *asm_string = [NSString stringWithFormat:@"%-10s\t%s", cs_insn[i].mnemonic, cs_insn[i].op_str];
+        [node.details appendRow:[NSString stringWithFormat:@"%.8X", fileOffset]
+                               :lastReadHex
+                               :asm_string
+                               :@""];
+        /* advance to next instruction */
+        fileOffset += cs_insn[i].size;
+    }
+    
 #if 0
   LLVMDisasmContextRef        ot_arm_dc = NULL;
   LLVMDisasmContextRef        ot_thumb_dc = NULL;
@@ -981,6 +1047,8 @@ static AsmFootPrint const fastStubHelperHelperARM =
   if (ot_i386_dc)    delete_i386_llvm_disassembler(ot_i386_dc);
   if (ot_x86_64_dc)  delete_x86_64_llvm_disassembler(ot_x86_64_dc);
 #endif
+    
+    cs_close(&cs_handle);
   // close last block
   if (symbolName)
   {

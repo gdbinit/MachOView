@@ -35,6 +35,7 @@
 		3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF978C511C7B34C004CD74C /* DataSources.mm */; };
 		3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF97F0E11C91F93004CD74C /* MachOLayout.mm */; };
 		7B111E4717DC33F8008ED484 /* Attach.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B111E4617DC33F8008ED484 /* Attach.mm */; };
+		7B8FC37A18C287C3002F0B96 /* libcapstone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8FC37918C287C3002F0B96 /* libcapstone.a */; };
 		8D11072D0486CEB800E47090 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
@@ -117,6 +118,14 @@
 		3CF97F0E11C91F93004CD74C /* MachOLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = MachOLayout.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7B111E4617DC33F8008ED484 /* Attach.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Attach.mm; sourceTree = "<group>"; };
 		7B111E4817DC3401008ED484 /* Attach.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Attach.h; sourceTree = "<group>"; };
+		7B8FC37918C287C3002F0B96 /* libcapstone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcapstone.a; path = capstone/libcapstone.a; sourceTree = "<group>"; };
+		7B8FC37B18C287D2002F0B96 /* arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arm.h; path = capstone/arm.h; sourceTree = "<group>"; };
+		7B8FC37C18C287D2002F0B96 /* arm64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arm64.h; path = capstone/arm64.h; sourceTree = "<group>"; };
+		7B8FC37D18C287D2002F0B96 /* capstone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = capstone.h; path = capstone/capstone.h; sourceTree = "<group>"; };
+		7B8FC37E18C287D2002F0B96 /* diet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = diet.h; path = capstone/diet.h; sourceTree = "<group>"; };
+		7B8FC37F18C287D2002F0B96 /* mips.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mips.h; path = capstone/mips.h; sourceTree = "<group>"; };
+		7B8FC38018C287D2002F0B96 /* ppc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ppc.h; path = capstone/ppc.h; sourceTree = "<group>"; };
+		7B8FC38118C287D2002F0B96 /* x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = x86.h; path = capstone/x86.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B8FC37A18C287C3002F0B96 /* libcapstone.a in Frameworks */,
 				3CC0022211F64A45000F7A3D /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -178,6 +188,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7B8FC37918C287C3002F0B96 /* libcapstone.a */,
 				3CC0022111F64A45000F7A3D /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -206,6 +217,7 @@
 			children = (
 				3CE90DFC11F6107600543402 /* README */,
 				3C30845A11FDAF6F008A270F /* createdmg */,
+				7B8FC37118C28651002F0B96 /* capstone */,
 				080E96DDFE201D6D7F000001 /* machoview */,
 				3C78CB26139EE44B006C9591 /* mach-o */,
 				29B97315FDCFA39411CA2CEA /* main */,
@@ -281,6 +293,20 @@
 				3CDFB368139F603C00F46F18 /* reloc.h */,
 			);
 			path = x86_64;
+			sourceTree = "<group>";
+		};
+		7B8FC37118C28651002F0B96 /* capstone */ = {
+			isa = PBXGroup;
+			children = (
+				7B8FC37B18C287D2002F0B96 /* arm.h */,
+				7B8FC37C18C287D2002F0B96 /* arm64.h */,
+				7B8FC37D18C287D2002F0B96 /* capstone.h */,
+				7B8FC37E18C287D2002F0B96 /* diet.h */,
+				7B8FC37F18C287D2002F0B96 /* mips.h */,
+				7B8FC38018C287D2002F0B96 /* ppc.h */,
+				7B8FC38118C287D2002F0B96 /* x86.h */,
+			);
+			name = capstone;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -463,7 +489,10 @@
 				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					/Volumes/Travel/machoview/trunk/capstone,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
@@ -510,7 +539,10 @@
 				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					/Volumes/Travel/machoview/trunk/capstone,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
