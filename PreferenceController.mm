@@ -18,11 +18,6 @@
   return self;
 }
 
-- (IBAction)toggleUseLLVMDisassembler:(id)sender
-{
-//  qflag = ([useLLVMDisassembler state] == NSOnState);
-}
-
 - (IBAction)toggleOpenAtLaunch:(id)sender
 {
   // nothing to do here?
