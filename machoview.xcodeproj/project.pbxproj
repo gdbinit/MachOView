@@ -491,7 +491,7 @@
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
-					/Volumes/Travel/machoview/trunk/capstone,
+					"$(SRCROOT)/capstone",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
@@ -541,7 +541,7 @@
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)",
-					/Volumes/Travel/machoview/trunk/capstone,
+					"$(SRCROOT)/capstone",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
