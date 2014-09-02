@@ -701,6 +701,12 @@ using namespace std;
     NSString * symbolName = NSSTRING(strtab + nlist->n_un.n_strx);
     NSColor * color = nil;
     
+    /* print the symbol nr */
+    [node.details appendRow:[NSString stringWithFormat:@"#%d", nsym]
+                           :@""
+                           :@""
+                           :@""];
+      
     [self read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -865,6 +871,12 @@ using namespace std;
     NSString * symbolName = NSSTRING(strtab + nlist_64->n_un.n_strx);
     NSColor * color = nil;
     
+    /* print the symbol nr */
+    [node.details appendRow:[NSString stringWithFormat:@"#%d", nsym]
+                           :@""
+                           :@""
+                           :@""];
+
     [self read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
