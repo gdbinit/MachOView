@@ -297,14 +297,14 @@ struct nlist_64 {
 #define N_SYMBOL_RESOLVER  0x0100 
 
 #ifndef __STRICT_BSD__
-#if __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 /*
  * The function nlist(3) from the C library.
  */
 extern int nlist (const char *filename, struct nlist *list);
-#if __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 #endif /* __STRICT_BSD__ */

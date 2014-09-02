@@ -68,6 +68,7 @@ using namespace std;
     case LC_SOURCE_VERSION:       return @"LC_SOURCE_VERSION";
     case LC_DYLIB_CODE_SIGN_DRS:  return @"LC_DYLIB_CODE_SIGN_DRS";
     case LC_LINKER_OPTION:        return @"LC_LINKER_OPTION";
+    case LC_LINKER_OPTIMIZATION_HINT: return @"LC_LINKER_OPTIMIZATION_HINT";
   }
 }
 
@@ -2263,6 +2264,7 @@ using namespace std;
     case LC_FUNCTION_STARTS:
     case LC_DATA_IN_CODE:
     case LC_DYLIB_CODE_SIGN_DRS:
+    case LC_LINKER_OPTIMIZATION_HINT:
     {
       MATCH_STRUCT(linkedit_data_command,location)
       node = [self createLCLinkeditDataNode:parent 

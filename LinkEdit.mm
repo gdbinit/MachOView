@@ -362,7 +362,9 @@ using namespace std;
       // The first one has to be a X86_64_RELOC_SUBTRACTOR then must
       // be followed by a X86_64_RELOC_UNSIGNED.
       
-      if (relocation_info->r_type == X86_64_RELOC_SUBTRACTOR)
+      if ((mach_header_64->cputype == CPU_TYPE_X86_64 && relocation_info->r_type == X86_64_RELOC_SUBTRACTOR)
+          ||
+          (mach_header_64->cputype == CPU_TYPE_ARM64 && relocation_info->r_type == ARM64_RELOC_SUBTRACTOR))
       {
         color = [NSColor magentaColor];
         prev_relocation_info = relocation_info;
@@ -372,7 +374,8 @@ using namespace std;
         // reference computed from difference of two symbols
         //============================================
 
-        NSAssert(relocation_info->r_type == X86_64_RELOC_UNSIGNED, @"X86_64_RELOC_SUBTRACTOR must be followed by X86_64_RELOC_UNSIGNED");
+        NSAssert(!(mach_header_64->cputype == CPU_TYPE_X86_64) || relocation_info->r_type == X86_64_RELOC_UNSIGNED, @"X86_64_RELOC_SUBTRACTOR must be followed by X86_64_RELOC_UNSIGNED");
+        NSAssert(!(mach_header_64->cputype == CPU_TYPE_ARM64) || relocation_info->r_type == ARM64_RELOC_UNSIGNED, @"ARM64_RELOC_SUBTRACTOR must be followed by ARM64_RELOC_UNSIGNED");
         NSParameterAssert (relocation_info->r_address == prev_relocation_info->r_address);
         
         color = [NSColor magentaColor];
@@ -429,10 +432,15 @@ using namespace std;
           // 32bit signed PC Rel
           NSParameterAssert(relocation_info->r_pcrel == true);
           uint32_t relocValue = nlist_64->n_value - relocation_info->r_address - baseAddress - relocLength;
-          uint32_t relocAddend = [self read_uint32:rangeReloc] - 
-                                  (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
+          uint32_t relocAddend = [self read_uint32:rangeReloc];
+
+          if (mach_header_64->cputype == CPU_TYPE_X86_64)
+          {
+            relocAddend -= (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
                                    relocation_info->r_type == X86_64_RELOC_SIGNED_2 ? 2 :
                                    relocation_info->r_type == X86_64_RELOC_SIGNED_4 ? 4 : 0);
+          }
+          
           if (relocAddend != 0)
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -477,10 +485,15 @@ using namespace std;
         {
           NSParameterAssert(relocation_info->r_pcrel == true);
           NSRange rangeReloc = NSMakeRange(relocLocation,0);
-          uint32_t relocAddend = [self read_uint32:rangeReloc] - 
-                                  (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
+          uint32_t relocAddend = [self read_uint32:rangeReloc];
+          
+          if (mach_header_64->cputype == CPU_TYPE_X86_64)
+          {
+            relocAddend -= (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
                                    relocation_info->r_type == X86_64_RELOC_SIGNED_2 ? 2 :
                                    relocation_info->r_type == X86_64_RELOC_SIGNED_4 ? 4 : 0);
+          }
+          
           if (relocAddend != 0) 
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -551,7 +564,9 @@ using namespace std;
         NSRange rangeReloc = NSMakeRange(relocLocation,0);
         uint64_t relocValue = 0;
         
-        if (relocation_info->r_type == X86_64_RELOC_SUBTRACTOR)
+        if ((mach_header_64->cputype == CPU_TYPE_X86_64 && relocation_info->r_type == X86_64_RELOC_SUBTRACTOR)
+            ||
+            (mach_header_64->cputype == CPU_TYPE_ARM64 && relocation_info->r_type == ARM64_RELOC_SUBTRACTOR))
         {
           prev_relocation_info = relocation_info;
         }
@@ -565,7 +580,9 @@ using namespace std;
         {
           relocValue = [self read_uint32:rangeReloc];
 
-          if (relocation_info->r_type == X86_64_RELOC_UNSIGNED)
+          if ((mach_header_64->cputype == CPU_TYPE_X86_64 && relocation_info->r_type == X86_64_RELOC_UNSIGNED)
+              ||
+              (mach_header_64->cputype == CPU_TYPE_ARM64 && relocation_info->r_type == ARM64_RELOC_UNSIGNED))
           {
             // 32bit direct relocation
             NSParameterAssert (relocation_info->r_pcrel == false);
@@ -574,16 +591,22 @@ using namespace std;
           {
             // 32bit PC relative signed relocation
             NSParameterAssert (relocation_info->r_pcrel == true);
-            relocValue += relocation_info->r_address + baseAddress + relocLength -
-                          (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
+            relocValue += relocation_info->r_address + baseAddress + relocLength;
+            
+            if (mach_header_64->cputype == CPU_TYPE_X86_64)
+            {
+              relocValue -= (relocation_info->r_type == X86_64_RELOC_SIGNED_1 ? 1 :
                            relocation_info->r_type == X86_64_RELOC_SIGNED_2 ? 2 :
                            relocation_info->r_type == X86_64_RELOC_SIGNED_4 ? 4 : 0);
+          }
+            
           }
         }
         else if (relocLength == sizeof(uint64_t))
         {
           // 64bit direct relocation
-          NSParameterAssert (relocation_info->r_type == X86_64_RELOC_UNSIGNED);
+          NSParameterAssert (!(mach_header_64->cputype == CPU_TYPE_X86_64) || relocation_info->r_type == X86_64_RELOC_UNSIGNED);
+          NSParameterAssert (!(mach_header_64->cputype == CPU_TYPE_ARM64) || relocation_info->r_type == ARM64_RELOC_UNSIGNED);
           NSParameterAssert (relocation_info->r_pcrel == false);
           relocValue = [self read_uint64:rangeReloc];
         }
@@ -1673,6 +1696,7 @@ using namespace std;
   
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
+  NSString * symbolName = nil;
 
   while (NSMaxRange(range) < location + length)
   {    
@@ -1709,6 +1733,8 @@ using namespace std;
                             kind == 0x1E ? @"thumb2 movt low high 4 bits=0xE" :
                             kind == 0x1f ? @"thumb2 movt low high 4 bits=0xF" : @"???"];
     
+    [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+    
     uint64_t address = baseAddress;
     uint64_t offset = 0;
     do
@@ -1719,9 +1745,12 @@ using namespace std;
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"uleb128"
-                             :[NSString stringWithFormat:@"%@ 0x%qX",
+                             :[NSString stringWithFormat:@"%@ %@",
                                [self is64bit] == NO ? [self findSectionContainsRVA:address] : [self findSectionContainsRVA64:address],
-                               address]];
+                               (symbolName = [self is64bit] == NO ? [self findSymbolAtRVA:(uint32_t)address] : [self findSymbolAtRVA64:address])]];
+      
+      [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil]; 
+      
     } while (offset != 0);
     
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];

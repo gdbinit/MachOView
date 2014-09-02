@@ -1118,17 +1118,20 @@ struct message_ref64
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
   
+  NSString * className;
+  NSString * categoryName;
+  
   [self read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Name"
-                         :[self findSymbolAtRVA:objc_category_t->category_name]];
+                         :categoryName = [self findSymbolAtRVA:objc_category_t->category_name]];
   
   [self read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Class Name"
-                         :[self findSymbolAtRVA:objc_category_t->class_name]];
+                         :className = [self findSymbolAtRVA:objc_category_t->class_name]];
   
   [self read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1147,6 +1150,10 @@ struct message_ref64
                          :lastReadHex
                          :@"Protocols"
                          :[NSString stringWithFormat:@"0x%X",objc_category_t->protocols]];
+  
+
+  node.caption = [NSString stringWithFormat:@"%@ [%@ %@]", node.caption, className, categoryName];
+  
   
   MVNode * childNode = nil;
   
@@ -1241,7 +1248,7 @@ struct message_ref64
                          :@"Category Definition Count"
                          :[NSString stringWithFormat:@"%u", objc_symtab_t->cat_def_cnt]];
   
-  // continue processing definitions
+  // processing definitions
   for (uint32_t ndef = 0; ndef < objc_symtab_t->cls_def_cnt + objc_symtab_t->cat_def_cnt; ++ndef)
   {
     uint32_t location = [self RVAToFileOffset:objc_symtab_t->defs[ndef]];

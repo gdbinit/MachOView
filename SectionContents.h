@@ -64,6 +64,10 @@
                   location:(uint32_t)location
                     length:(uint32_t)length
                     reloff:(uint32_t)reloff
-                    nreloc:(uint32_t)nreloc;
+                    nreloc:(uint32_t)nreloc
+                 extreloff:(uint32_t)extreloff
+                   nextrel:(uint32_t)nextrel
+                 locreloff:(uint32_t)locreloff
+                   nlocrel:(uint32_t)nlocrel;
 
 @end

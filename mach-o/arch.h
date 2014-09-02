@@ -48,7 +48,7 @@ typedef struct {
     const char *description;
 } NXArchInfo;
 
-#if __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -98,7 +98,7 @@ extern cpu_subtype_t NXCombineCpuSubtypes(cpu_type_t cputype,
 					  cpu_subtype_t cpusubtype1,
 					  cpu_subtype_t cpusubtype2);
 
-#if __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 

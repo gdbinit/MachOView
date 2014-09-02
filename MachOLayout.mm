@@ -200,7 +200,7 @@ using namespace std;
   --sectIter;
   uint32_t sectOffset = sectIter->second.first;
   uint32_t fileOffset = sectOffset + (rva - [self fileOffsetToRVA:sectOffset]);
-  NSParameterAssert(fileOffset < [dataController.fileData length]);
+  NSAssert1(fileOffset < [dataController.fileData length], @"rva is out of range (0x%X)", rva);
   return fileOffset;
 }
 
@@ -218,7 +218,7 @@ using namespace std;
   --sectIter;
   uint32_t sectOffset = sectIter->second.first;
   uint32_t fileOffset = sectOffset + (rva64 - [self fileOffsetToRVA64:sectOffset]);
-  NSParameterAssert(fileOffset < [dataController.fileData length]);
+  NSAssert1(fileOffset < [dataController.fileData length], @"rva is out of range (0x%qX)", rva64);
   return fileOffset;
 }
 
@@ -625,7 +625,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
-  if (twoLevelHintsNode)
+  if (twoLevelHintsNode && twoLevelHintsNode.dataRange.length > 0)
   {
     @try
     {
@@ -641,7 +641,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
 
-  if (segmentSplitInfoNode)
+  if (segmentSplitInfoNode && segmentSplitInfoNode.dataRange.length > 0)
   {
     @try
     {
@@ -657,7 +657,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
-  if (functionStartsNode)
+  if (functionStartsNode && functionStartsNode.dataRange.length > 0)
   {
     @try
     {
@@ -673,7 +673,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
-  if (dataInCodeEntriesNode)
+  if (dataInCodeEntriesNode && dataInCodeEntriesNode.dataRange.length > 0)
   {
     @try
     {
@@ -699,6 +699,9 @@ _hex2int(char const * a, uint32_t len)
   struct linkedit_data_command const * segment_split_info = NULL;
   struct linkedit_data_command const * code_signature = NULL;
   struct linkedit_data_command const * function_starts = NULL;
+  struct linkedit_data_command const * data_in_code_entries = NULL;
+  
+  MATCH_STRUCT(mach_header_64,imageOffset);
   
   uint64_t base_addr;
   uint64_t seg1addr = (uint64_t)-1LL;
@@ -736,6 +739,7 @@ _hex2int(char const * a, uint32_t len)
       case LC_SEGMENT_SPLIT_INFO: segment_split_info = (struct linkedit_data_command const *)load_command; break;
       case LC_CODE_SIGNATURE: code_signature = (struct linkedit_data_command const *)load_command; break;
       case LC_FUNCTION_STARTS: function_starts = (struct linkedit_data_command const *)load_command; break;
+      case LC_DATA_IN_CODE: data_in_code_entries = (struct linkedit_data_command const *)load_command; break;
       default: ; // not interested
     }
   }
@@ -745,6 +749,7 @@ _hex2int(char const * a, uint32_t len)
   MVNode * twoLevelHintsNode = nil;
   MVNode * segmentSplitInfoNode = nil;
   MVNode * functionStartsNode = nil;
+  MVNode * dataInCodeEntriesNode = nil;
 
   NSString * lastNodeCaption;
   
@@ -835,6 +840,14 @@ _hex2int(char const * a, uint32_t len)
                                        length:function_starts->datasize];
   }
 
+  if (data_in_code_entries)
+  {
+    dataInCodeEntriesNode = [self createDataNode:rootNode
+                                         caption:@"Data in Code Entries"
+                                        location:data_in_code_entries->dataoff + imageOffset
+                                          length:data_in_code_entries->datasize];
+  }
+  
   //============ Symbol Table ====================
   //==============================================
   if (symtabNode)
@@ -907,7 +920,7 @@ _hex2int(char const * a, uint32_t len)
                         caption:(lastNodeCaption = @"External Relocations")
                        location:dysymtab_command->extreloff + imageOffset
                          length:dysymtab_command->nextrel * sizeof(struct relocation_info)
-                    baseAddress:segs_read_write_addr];
+                    baseAddress:(mach_header_64->flags & MH_SPLIT_SEGS) == MH_SPLIT_SEGS ? segs_read_write_addr : seg1addr];
       }
 
       //=========== Local Reloc Table ================
@@ -918,7 +931,7 @@ _hex2int(char const * a, uint32_t len)
                         caption:(lastNodeCaption = @"Local Reloc Table")
                        location:dysymtab_command->locreloff + imageOffset
                          length:dysymtab_command->nlocrel * sizeof(struct relocation_info)
-                    baseAddress:segs_read_write_addr];
+                    baseAddress:(mach_header_64->flags & MH_SPLIT_SEGS) == MH_SPLIT_SEGS ? segs_read_write_addr : seg1addr];
       }
     }
     @catch(NSException * exception)
@@ -927,7 +940,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
-  if (twoLevelHintsNode)
+  if (twoLevelHintsNode && twoLevelHintsNode.dataRange.length > 0)
   {
     @try
     {
@@ -943,7 +956,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
-  if (segmentSplitInfoNode)
+  if (segmentSplitInfoNode && segmentSplitInfoNode.dataRange.length > 0)
   {
     @try
     {
@@ -959,7 +972,7 @@ _hex2int(char const * a, uint32_t len)
     }
   }  
   
-  if (functionStartsNode)
+  if (functionStartsNode && functionStartsNode.dataRange.length > 0)
   {
     @try
     {
@@ -975,6 +988,20 @@ _hex2int(char const * a, uint32_t len)
     }
   }
   
+  if (dataInCodeEntriesNode && dataInCodeEntriesNode.dataRange.length > 0)
+  {
+    @try
+    {
+      [self createDataInCodeEntriesNode:dataInCodeEntriesNode
+                                caption:(lastNodeCaption = @"Dices")
+                               location:dataInCodeEntriesNode.dataRange.location
+                                 length:dataInCodeEntriesNode.dataRange.length];
+    }
+    @catch(NSException * exception)
+    {
+      [self printException:exception caption:lastNodeCaption];
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1686,6 +1713,18 @@ struct CompareSectionByName
     // second Objective-C ABI
     if (hasObjCModules == false)
     {
+      section = [self findSectionByName:"__category_list" andSegment:"__OBJC2"];
+      if (section == NULL)
+        section = [self findSectionByName:"__objc_catlist" andSegment:"__DATA"];
+      if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
+      {
+        [self createObjC2PointerListNode:sectionNode
+                                 caption:(lastNodeCaption = @"ObjC2 Category List")
+                                location:section->offset + imageOffset
+                                  length:section->size
+                                pointers:objcCategoryPointers];
+      }
+
       section = [self findSectionByName:"__class_list" andSegment:"__OBJC2"];
       if (section == NULL)
         section = [self findSectionByName:"__objc_classlist" andSegment:"__DATA"];
@@ -1720,18 +1759,6 @@ struct CompareSectionByName
                                 location:section->offset + imageOffset 
                                   length:section->size
                                 pointers:objcSuperReferences];
-      }
-      
-      section = [self findSectionByName:"__category_list" andSegment:"__OBJC2"];
-      if (section == NULL)
-        section = [self findSectionByName:"__objc_catlist" andSegment:"__DATA"];
-      if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
-      {
-        [self createObjC2PointerListNode:sectionNode 
-                                 caption:(lastNodeCaption = @"ObjC2 Category List")
-                                location:section->offset + imageOffset 
-                                  length:section->size
-                                pointers:objcCategoryPointers];
       }
       
       section = [self findSectionByName:"__protocol_list" andSegment:"__OBJC2"];
@@ -1925,6 +1952,19 @@ struct CompareSectionByName
 //-----------------------------------------------------------------------------
 - (void)processCodeSections
 {
+  // find related load commands
+  struct dysymtab_command const * dysymtab_command = NULL;
+  for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
+  {
+    struct load_command const * load_command = *cmdIter;
+    switch (load_command->cmd)
+    {
+      case LC_DYSYMTAB: dysymtab_command = (struct dysymtab_command const *)load_command; break;
+      default: ; // not interested
+    }
+  }
+  
+
   NSString * lastNodeCaption;
   
   for (SectionVector::const_iterator sectIter = ++sections.begin(); sectIter != sections.end(); ++sectIter)
@@ -1945,7 +1985,11 @@ struct CompareSectionByName
                     location:section->offset + imageOffset 
                       length:section->size
                       reloff:section->reloff + imageOffset
-                      nreloc:section->nreloc];
+                      nreloc:section->nreloc
+                   extreloff:dysymtab_command ? dysymtab_command->extreloff : 0
+                     nextrel:dysymtab_command ? dysymtab_command->nextrel : 0
+                   locreloff:dysymtab_command ? dysymtab_command->locreloff : 0
+                     nlocrel:dysymtab_command ? dysymtab_command->nlocrel : 0];
       }
     }
     @catch(NSException * exception)
@@ -1958,6 +2002,19 @@ struct CompareSectionByName
 //-----------------------------------------------------------------------------
 - (void)processCodeSections64
 {
+  // find related load commands
+  struct dysymtab_command const * dysymtab_command = NULL;
+  for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
+  {
+    struct load_command const * load_command = *cmdIter;
+    switch (load_command->cmd)
+    {
+      case LC_DYSYMTAB: dysymtab_command = (struct dysymtab_command const *)load_command; break;
+      default: ; // not interested
+    }
+  }
+  
+  
   NSString * lastNodeCaption;
   
   for (Section64Vector::const_iterator sectIter = ++sections_64.begin(); sectIter != sections_64.end(); ++sectIter)
@@ -1978,7 +2035,11 @@ struct CompareSectionByName
                     location:section_64->offset + imageOffset 
                       length:section_64->size
                       reloff:section_64->reloff + imageOffset
-                      nreloc:section_64->nreloc];
+                      nreloc:section_64->nreloc
+                   extreloff:dysymtab_command ? dysymtab_command->extreloff : 0
+                     nextrel:dysymtab_command ? dysymtab_command->nextrel : 0
+                   locreloff:dysymtab_command ? dysymtab_command->locreloff : 0
+                     nlocrel:dysymtab_command ? dysymtab_command->nlocrel : 0];
       }
     }
     @catch(NSException * exception)
@@ -2551,7 +2612,7 @@ struct CompareSectionByName
   [sectionRelocsOperation addDependency:sectionOperation];
   [dyldInfoOperation      addDependency:sectionRelocsOperation];
   [objcSectionOperation   addDependency:dyldInfoOperation];
-  [codeSectionsOperation  addDependency:dyldInfoOperation];
+  [codeSectionsOperation  addDependency:objcSectionOperation];
   [EHFramesOperation      addDependency:dyldInfoOperation];
   [LSDAsOperation         addDependency:EHFramesOperation];
     

@@ -31,7 +31,7 @@
 #include <mach-o/reloc.h>
 #include <mach-o/ranlib.h>
 
-#if __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -150,6 +150,50 @@ extern void swap_uuid_command(
     struct uuid_command *uuid_cmd,
     enum NXByteOrder target_byte_sex);
 
+extern void swap_linkedit_data_command(
+    struct linkedit_data_command *ld,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_version_min_command(
+    struct version_min_command *ver_cmd,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_rpath_command(
+    struct rpath_command *rpath_cmd,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_encryption_command(
+    struct encryption_info_command *ec,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_encryption_command_64(
+    struct encryption_info_command_64 *ec,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_linker_option_command(
+    struct linker_option_command *lo,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_dyld_info_command(
+    struct dyld_info_command *ed,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_entry_point_command(
+    struct entry_point_command *ep,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_source_version_command(
+    struct source_version_command *sv,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_prebind_cksum_command(
+    struct prebind_cksum_command *cksum_cmd,
+    enum NXByteOrder target_byte_sex);
+
+extern void swap_uuid_command(
+    struct uuid_command *uuid_cmd,
+    enum NXByteOrder target_byte_sex);
+
 extern void swap_twolevel_hint(
     struct twolevel_hint *hints,
     uint32_t nhints,
@@ -200,7 +244,7 @@ extern void swap_dylib_table_of_contents(
     uint32_t ntocs,
     enum NXByteOrder target_byte_sex);
 
-#if __cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 

@@ -116,12 +116,23 @@
 //-----------------------------------------------------------------------------
 - (NSString *) replaceEscapeCharsInString: (NSString *)orig
 {
-  NSString * str = orig;
-  str = [str stringByReplacingOccurrencesOfString:@"\f" withString:@"\\f"]; // form feed - new page (byte 0x0c)
-  str = [str stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"]; // line feed - new line (byte 0x0a)
-  str = [str stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"]; // carriage return (byte 0x0d)
-  str = [str stringByReplacingOccurrencesOfString:@"\t" withString:@"\\t"]; // horizontal tab (byte 0x09)
-  str = [str stringByReplacingOccurrencesOfString:@"\v" withString:@"\\v"]; // vertical tab (byte 0x0b)
+  NSUInteger len = [orig length];
+  NSMutableString * str = [[NSMutableString alloc] init];
+  SEL sel = @selector(characterAtIndex:);
+  unichar (*charAtIdx)(id, SEL, NSUInteger) = (typeof(charAtIdx)) [orig methodForSelector:sel];
+  for (NSUInteger i = 0; i < len; i++)
+  {
+    unichar c = charAtIdx(orig, sel, i);
+    switch (c)
+    {
+      default:    [str appendFormat:@"%C",c]; break;
+      case L'\f': [str appendString:@"\\f"]; break; // form feed - new page (byte 0x0c)
+      case L'\n': [str appendString:@"\\n"]; break; // line feed - new line (byte 0x0a)
+      case L'\r': [str appendString:@"\\r"]; break; // carriage return (byte 0x0d)
+      case L'\t': [str appendString:@"\\t"]; break; // horizontal tab (byte 0x09)
+      case L'\v': [str appendString:@"\\v"]; break; // vertical tab (byte 0x0b)
+    }
+  }
   return str;
 }
 
