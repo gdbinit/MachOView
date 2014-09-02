@@ -3,6 +3,34 @@ Hungry Apple icons by Nicholas Boyd (http://loafninja.deviantart.com)
 
 todo:
 - code sections parsing on demand
+- string table
+
+ver 2.4.9102
+- Updated disassembler from cctools-855
+- Updated llvm disassembler from libLTO OSX10.9
+- ARM64 relocations in detail (need to review)
+- Added load commands
+
+ver 2.4.9000
+- ARM64
+- LC_ENCRYPTION_INFO_64,LC_LINKER_OPTION
+- data in code and entries (DICES)
+- updated disassembler (cctools-845 and LLVM with enhanced symbol table)
+- SDK 10.8 / deploy 10.8
+- fix for multithreaded usage of CoreAnimation
+
+ver 2.3.8505
+- updated disassembler (LLVM included for testing)
+- some GUI improvements (PreferencePanel)
+- transitions to __weak references instead of __unsafe_retain
+- SDK 10.8 / deploy 10.6
+- crash fix for disassembling encrypted ARM text sections
+
+ver 2.3.8370
+- merge changes from fG!
+  -- do not reopen unclosed binaries
+  -- some new Load Commands
+  -- bugfixes
 
 ver 2.3.8345
 - Transition to ARC (but targeting OS X 10.6 for compatibility)
