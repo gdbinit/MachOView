@@ -548,51 +548,30 @@ static AsmFootPrint const fastStubHelperHelperARM =
                  locreloff:(uint32_t)locreloff
                    nlocrel:(uint32_t)nlocrel
 {
-  MVNodeSaver nodeSaver;
-  MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
-  
-  // accumulate search info
-  NSUInteger bookmark = node.details.rowCount;
-  NSString * symbolName = nil;
-  
-  if (length == 0) // prevent from attempting to parse zero length sections
-  {
-    return node;
-  }
-
-  // prepare disassembler params
-  //===========================================================================
-  MATCH_STRUCT(mach_header,imageOffset);
+    MVNodeSaver nodeSaver;
+    MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
     
-  char *                    ot_sect = (char*)[dataController.fileData bytes] + location;
-  uint32_t                  ot_left = length;
-  uint64_t                  ot_addr = ([self is64bit] == NO ? [self fileOffsetToRVA:location] : [self fileOffsetToRVA64:location]);
-#if 0
-  uint64_t                  ot_sect_addr = ot_addr;
-  uint64_t                    ot_seg_addr = ot_addr;
-  struct nlist *            ot_symbols = (symbols.empty() ? NULL : const_cast<struct nlist *>(symbols[0]));
-  struct nlist_64 *         ot_symbols64 = (symbols_64.empty() ? NULL : const_cast<struct nlist_64 *>(symbols_64[0]));
-  uint32_t                  ot_nsymbols = ([self is64bit] == NO ? symbols.size() : symbols_64.size());
-  char *                      ot_strings = (char *)strtab;
-  uint32_t                  ot_strings_size = (char *)[dataController.fileData bytes] - strtab;
-  uint32_t *                  ot_indirect_symbols = (isymbols.empty() ? NULL : const_cast<uint32_t *>(isymbols[0]));
-  uint32_t                    ot_nindirect_symbols = isymbols.size();
-  struct load_command *       ot_load_commands = (struct load_command *)(commands[0]);
-  uint32_t                  ot_ncmds = commands.size();
-  uint32_t                  ot_sizeofcmds = mach_header->sizeofcmds;
-  
-  struct data_in_code_entry * ot_dices = (dices.empty() ? NULL : const_cast<struct data_in_code_entry *>(dices[0]));
-  uint32_t                    ot_ndices = dices.size();
-  char *                      ot_object_addr = (char *)mach_header;
-  uint32_t                    ot_object_size = imageSize;
-
-  uint32_t                    ot_ninsts = 0, n = 0;
-#endif
-  
+    // accumulate search info
+    NSUInteger bookmark = node.details.rowCount;
+    NSString * symbolName = nil;
+    
+    if (length == 0) // prevent from attempting to parse zero length sections
+    {
+        return node;
+    }
+    
+    // prepare disassembler params
+    //===========================================================================
+    MATCH_STRUCT(mach_header,imageOffset);
+    
+    char *                    ot_sect = (char*)[dataController.fileData bytes] + location;
+    uint32_t                  ot_left = length;
+    uint64_t                  ot_addr = ([self is64bit] == NO ? [self fileOffsetToRVA:location] : [self fileOffsetToRVA64:location]);
+    
     csh cs_handle = 0;
     cs_insn *cs_insn = NULL;
     size_t disasm_count = 0;
-
+    
     /* open capstone */
     cs_arch target_arch;
     cs_mode target_mode;
@@ -618,13 +597,13 @@ static AsmFootPrint const fastStubHelperHelperARM =
             NSLog(@"NO CPU FOUND!");
             break;
     }
-
+    
     if ( cs_open(target_arch, target_mode, &cs_handle) != CS_ERR_OK )
     {
         NSLog(@"Failed to initialize Capstone: %s.", cs_strerror(cs_errno(cs_handle)));
         return node;
     }
-
+    
     /* set or not thumb mode for 32 bits ARM targets */
     if (mach_header->cputype == CPU_TYPE_ARM)
     {
@@ -666,436 +645,15 @@ static AsmFootPrint const fastStubHelperHelperARM =
         fileOffset += cs_insn[i].size;
     }
     
-#if 0
-  LLVMDisasmContextRef        ot_arm_dc = NULL;
-  LLVMDisasmContextRef        ot_thumb_dc = NULL;
-  LLVMDisasmContextRef        ot_i386_dc = NULL;
-  LLVMDisasmContextRef        ot_x86_64_dc = NULL;
-  
-  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_ARM)
-  {
-    @synchronized([self class])
-    {
-      ot_arm_dc = create_arm_llvm_disassembler(mach_header->cpusubtype);
-      NSAssert(ot_arm_dc, @"ARM Disassembler could not be created");
-    }
-    @synchronized([self class])
-    {
-      ot_thumb_dc = create_thumb_llvm_disassembler(mach_header->cpusubtype);
-      NSAssert(ot_thumb_dc, @"Thumb Disassembler could not be created");
-    }
-    llvm_disasm_set_options(ot_arm_dc,      LLVMDisassembler_Option_PrintImmHex);
-    llvm_disasm_set_options(ot_thumb_dc,    LLVMDisassembler_Option_PrintImmHex);
-    if(eflag) // print enhanced disassembly
-    {
-      llvm_disasm_set_options(ot_arm_dc,    LLVMDisassembler_Option_UseMarkup);
-      llvm_disasm_set_options(ot_thumb_dc,  LLVMDisassembler_Option_UseMarkup);
-    }
-  }
-  
-  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_I386)
-  {
-    @synchronized([self class])
-    {
-      ot_i386_dc = create_i386_llvm_disassembler();
-      NSAssert(ot_i386_dc, @"I386 Disassembler could not be created");
-    }
-    llvm_disasm_set_options(ot_i386_dc,     LLVMDisassembler_Option_PrintImmHex);
-    if(nflag) // use intel disassembly syntax
-      llvm_disasm_set_options(ot_i386_dc,   LLVMDisassembler_Option_AsmPrinterVariant);
-    if(eflag) // print enhanced disassembly
-      llvm_disasm_set_options(ot_i386_dc,   LLVMDisassembler_Option_UseMarkup);
-  }
-  
-  if((qflag || gflag) && mach_header->cputype == CPU_TYPE_X86_64)
-  {
-    @synchronized([self class])
-    {
-      ot_x86_64_dc = create_x86_64_llvm_disassembler();
-      NSAssert(ot_x86_64_dc, @"X86_64 Disassembler could not be created");
-    }
-    llvm_disasm_set_options(ot_x86_64_dc,   LLVMDisassembler_Option_PrintImmHex);
-    if(nflag) // use intel disassembly syntax
-      llvm_disasm_set_options(ot_x86_64_dc, LLVMDisassembler_Option_AsmPrinterVariant);
-    if(eflag) // print enhanced disassembly
-      llvm_disasm_set_options(ot_x86_64_dc, LLVMDisassembler_Option_UseMarkup);
-  }
-  
-  if (mach_header->cputype == CPU_TYPE_ARM && 
-     (mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7 ||
-       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7F ||
-      mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7S ||
-       mach_header->cpusubtype == CPU_SUBTYPE_ARM_V7K ||
-      mach_header->cpusubtype == CPU_SUBTYPE_ARM_V8))
-  {
-    //if(sect_flags & S_SYMBOL_STUBS)
-    //  in_thumb = FALSE;
-    //else
-    in_thumb = TRUE;
-  }
-  else
-		in_thumb = FALSE;
-
-  
-  // collect thumb symbols
-  set<uint64_t> thumbSymbols;
-  if (mach_header->cputype == CPU_TYPE_ARM ||
-      mach_header->cputype == CPU_TYPE_ARM64)
-  {
-      for(uint32_t i = 0; i < ot_nsymbols; ++i)
-      {
-          uint8_t n_type;
-          uint16_t n_desc;
-          uint64_t n_value;
-          
-          if([self is64bit] == NO)
-          {
-              struct nlist const * nlist = symbols.at(i);
-              n_type = nlist->n_type;
-              n_desc = nlist->n_desc;
-              n_value = nlist->n_value;
-          }
-          else
-          {
-              struct nlist_64 const * nlist_64 = symbols_64.at(i);
-              n_type = nlist_64->n_type;
-              n_desc = nlist_64->n_desc;
-              n_value = nlist_64->n_value;
-          }
-          
-          if((n_type & N_TYPE) == N_SECT && (n_desc & N_ARM_THUMB_DEF))
-          {
-              thumbSymbols.insert(n_value);
-          }
-      }
-  }
-  
-  /* create aligned, sorted symbol entries */
-  vector<struct symbol> sorted_symbols;
-  
-  NSEnumerator * enumerator = [symbolNames keyEnumerator];
-  id key;
-  while ((key = [enumerator nextObject]) != nil) 
-  {
-    NSNumber * symbolIndex = (NSNumber *)key;
-    
-    // skip external symbols
-    if (([self is64bit] == NO && (int32_t)[symbolIndex unsignedLongValue] < 0) ||
-        (int64_t)[symbolIndex unsignedLongLongValue] < 0)
-    {
-      continue;
-    }
-
-    struct symbol symbol;
-    symbol.name = strdup(CSTRING([symbolNames objectForKey:key]));
-    symbol.n_value = [symbolIndex unsignedLongLongValue];
-    symbol.is_thumb = (thumbSymbols.find(symbol.n_value) != thumbSymbols.end());
-    
-    sorted_symbols.push_back(symbol);
-  }
-  
-  qsort(&sorted_symbols[0], sorted_symbols.size(), sizeof(struct symbol),
-        (int (*)(const void *, const void *))sym_compare);
-
-  struct symbol *           ot_sorted_symbols = &sorted_symbols[0];
-  uint32_t                  ot_nsorted_symbols = sorted_symbols.size();
-  
-  //===========================================================================
-  /* collect relocations entries */
- 
-  struct relocation_info *  ot_relocs = (struct relocation_info *)((char *)[dataController.fileData bytes] + reloff);
-  uint32_t                  ot_nrelocs = nreloc;
-  
-  struct relocation_info *  ot_ext_relocs = (struct relocation_info *)((char *)[dataController.fileData bytes] + extreloff);
-  uint32_t                  ot_next_relocs = nextrel;
-  
-  struct relocation_info *  ot_loc_relocs = (struct relocation_info *)((char *)[dataController.fileData bytes] + locreloff);
-  uint32_t                  ot_nloc_relocs = nlocrel;
-  
-
-  //===========================================================================
-  /*
-  start = (uint8_t *)(object_addr + dyld_info.bind_off);
-	end = start + dyld_info.bind_size;
-	get_dyld_bind_info(start, end, dylibs, ndylibs, segs, nsegs,
-                     segs64, nsegs64, dbi, ndbi);
-  */
-  //===========================================================================
-
-  do
-  {
-    // catch thread cancellation request
-    if ([backgroundThread isCancelled])
-    {
-      break;
-    }
-    
-    // pipes makes us to run disassembling exclusively on a single thread
-    [pipeCondition lock];
-    while (numIOThread > 0)
-    {
-      [pipeCondition wait];
-    }
-    
-    int pfdout[3]; // 0:read 1:write 2:stdout
-    if (pipe (pfdout) != 0) 
-    {
-      [NSException raise:@"pipe" format:@"unable to create pipes"];
-    }
-    
-    // save standard output descriptor
-    pfdout[2] = dup(STDOUT_FILENO);
-    
-    // redirect
-    close(STDOUT_FILENO);
-    dup2 (pfdout[1], STDOUT_FILENO);
-  
-    // run disassembler line by line
-    setlinebuf(stdout);
-    
-    NSUInteger nAsmLine = 0;
-    do
-    {
-      uint32_t parsed_bytes;
-      
-      try
-      {
-        
-        parsed_bytes =
-        (mach_header->cputype == CPU_TYPE_I386 ||
-         mach_header->cputype == CPU_TYPE_X86_64
-         ? i386_disassemble(
-                            ot_sect,
-                            ot_left,
-                            ot_addr,
-                            ot_sect_addr,
-                            ot_object_byte_sex,
-                            ot_relocs,
-                            ot_nrelocs,
-                            ot_ext_relocs,
-                            ot_next_relocs,
-                            ot_loc_relocs,
-                            ot_nloc_relocs,
-                            ot_dbi,
-                            ot_ndbi,
-                            ot_symbols,
-                            ot_symbols64,
-                            ot_nsymbols,
-                            ot_sorted_symbols,
-                            ot_nsorted_symbols,
-                            ot_strings,
-                            ot_strings_size,
-                            ot_indirect_symbols,
-                            ot_nindirect_symbols,
-                            ot_cputype,
-                            ot_load_commands,
-                            ot_ncmds,
-                            ot_sizeofcmds,
-                            ot_verbose,
-                            ot_llvm_mc,
-                            ot_i386_dc,
-                            ot_x86_64_dc,
-                            ot_object_addr,
-                            ot_object_size,
-                            NULL,
-                            NULL,
-                            0
-                            )
-         : mach_header->cputype == CPU_TYPE_ARM
-         ? arm_disassemble(
-                           ot_sect,
-                           ot_left,
-                           ot_addr,
-                           ot_sect_addr,
-                           ot_object_byte_sex,
-                           ot_relocs,
-                           ot_nrelocs,
-                           ot_symbols,
-                           ot_nsymbols,
-                           ot_sorted_symbols,
-                           ot_nsorted_symbols,
-                           ot_strings,
-                           ot_strings_size,
-                           ot_indirect_symbols,
-                           ot_nindirect_symbols,
-                           ot_load_commands,
-                           ot_ncmds,
-                           ot_sizeofcmds,
-                           ot_cpu_subtype,
-                           ot_verbose,
-                           ot_arm_dc,
-                           ot_thumb_dc,
-                           ot_object_addr,
-                           ot_object_size,
-                           ot_dices,
-                           ot_ndices,
-                           ot_seg_addr,
-                           NULL,
-                           NULL,
-                           0
-                           )
-         : mach_header->cputype == CPU_TYPE_ARM64
-         ? arm64_disassemble(
-                           ot_sect,
-                           ot_left,
-                           ot_addr,
-                           ot_sect_addr,
-                           ot_object_byte_sex,
-                           ot_relocs,
-                           ot_nrelocs,
-                           ot_ext_relocs,
-                           ot_next_relocs,
-                           ot_loc_relocs,
-                           ot_nloc_relocs,
-                           ot_dbi,
-                           ot_ndbi,
-                           ot_symbols64,
-                           ot_nsymbols,
-                           ot_sorted_symbols,
-                           ot_nsorted_symbols,
-                           ot_strings,
-                           ot_strings_size,
-                           ot_indirect_symbols,
-                           ot_nindirect_symbols,
-                           ot_load_commands,
-                           ot_ncmds,
-                           ot_sizeofcmds,
-                           ot_object_addr,
-                           ot_object_size,
-                           ot_verbose,
-                           ot_arm64_dc
-                           )
-         : 0);
-      }
-      catch(...)
-      {
-        // sometimes the disassembler crashes on encrypted text section
-        break;
-      }
-        
-      if (parsed_bytes == 0)
-        break;
-      
-      // read from pipe
-      char buf[0x1000], *pbuf = buf;
-      ssize_t lenbuf = read(pfdout[0], buf, sizeof(buf)-1);
-      buf[lenbuf] = '\0'; // terminate buffer
-      size_t field_start_pos = 0; // start position in buffer of the current field
-      
-      while (pbuf - buf < lenbuf)
-      {
-        if (*pbuf == '\n') // newline or
-        {
-          *pbuf = '\0'; // clear newline
-          
-          char const * symbol_name = guess_symbol(ot_addr,
-                                                  ot_sorted_symbols,
-                                                  ot_nsorted_symbols);
-          // print label if any
-          if (symbol_name)
-          {
-            // close previous block (if any)
-            if (symbolName)
-            {
-              [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
-              [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
-            }
-
-            // start new block
-            bookmark = node.details.rowCount;
-            [node.details appendRow:@""
-                                   :@""
-                                   :[NSString stringWithFormat:@"%@:", (symbolName = NSSTRING(symbol_name))]
-                                   :@""];
-                
-            [node.details setAttributes:MVCellColorAttributeName,[NSColor orangeColor],nil];
-          }
-              
-          // print one line of asm
-          uint32_t fileOffset = ([self is64bit] == NO ? [self RVAToFileOffset:(uint32_t)ot_addr] : [self RVA64ToFileOffset:ot_addr]);
-          NSRange range = NSMakeRange(fileOffset,0);
-          NSString * lastReadHex;
-          [self read_bytes:range length:parsed_bytes lastReadHex:&lastReadHex];
-          [node.details appendRow:[NSString stringWithFormat:@"%.8X", fileOffset]
-                                 :lastReadHex
-                                 :NSSTRING(buf)
-                                 :@""];
-              
-          break; // stop processing after the first new line
-        }
-        else if (*pbuf == '\t')
-        {
-          // replace tabs with spaces in order to keep indention
-          size_t wsn = TAB_WIDTH - ((pbuf - buf - field_start_pos) % TAB_WIDTH);
-          *pbuf = ' '; // change the tab char to space
-              
-          // shift everything after the tab char right
-          for (char * p = buf + lenbuf; p > pbuf; --p)
-          {
-            *(p + wsn - 1) = *p;
-            *p = ' ';
-          }
-              
-          // adjust pointers
-          pbuf += wsn;
-          lenbuf += wsn;
-              
-          // store start position of the field for the next tab
-          field_start_pos = pbuf - buf;
-        }
-        else
-        {
-          ++pbuf;
-        }
-      }
-      
-      // synchronize disassembler
-      ot_left -= parsed_bytes;
-      ot_sect += parsed_bytes;
-      ot_addr += parsed_bytes;
-      
-      // inner loop forces to switch task after every 4096 lines of assembly
-    } while (ot_addr < ot_sect_addr + length && (++nAsmLine % 0x1000));
-
-    // close read handle
-    close (pfdout[0]);
-    
-    // close write handle
-    close (pfdout[1]);
-    
-    // restore standard outputs
-    dup2 (pfdout[2], STDOUT_FILENO);
-    close (pfdout[2]);
-    
-    [pipeCondition unlock];
-
-  } while (ot_addr < ot_sect_addr + length);
-  
-  // clean up symbols
-  for (vector<symbol>::iterator iter = sorted_symbols.begin();
-       iter != sorted_symbols.end();
-       ++iter)
-  {
-    free(iter->name);
-  }
-  
-  // clean up LLVM disasm context
-  if (ot_arm_dc)     delete_arm_llvm_disassembler(ot_arm_dc);
-  if (ot_arm64_dc)   delete_arm64_llvm_disassembler(ot_arm64_dc);
-  if (ot_thumb_dc)   delete_thumb_llvm_disassembler(ot_thumb_dc);
-  if (ot_i386_dc)    delete_i386_llvm_disassembler(ot_i386_dc);
-  if (ot_x86_64_dc)  delete_x86_64_llvm_disassembler(ot_x86_64_dc);
-#endif
-    
     cs_close(&cs_handle);
-  // close last block
-  if (symbolName)
-  {
-    [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
-    [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
-  }
-  
-  return node;
+    // close last block
+    if (symbolName)
+    {
+        [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
+        [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+    }
+    
+    return node;
 }
 
 @end
