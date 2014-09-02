@@ -14,8 +14,10 @@ Thanks to psaghelyi for his great work :-)
 Latest versions are Lion+ only.
 The LLVM disassembler was replaced with Capstone. This eliminates Clang/LLVM packages requirements.
 The downside is that Capstone stops disassembling on bad instructions which means that for now data in code and jump tables data will create problems and __text section disassembly might be incomplete in binaries that contain such data.
+Capstone improved disassembly on error but data in code locations are available in header so this can and should be improved.
 
-A static Capstone library is included in the repo, you should probably download Capstone, compile it yourself and replace the binary. I will try to integrate Capstone source in future release to close this "issue".
+A static Capstone library extracted from the official DMG is included in the repo.
+If you want to be safe you should download Capstone and compile it yourself.
 
 Now features the attach option to analyse headers of a running process.
 To use this feature you will need to codesign the binary.
