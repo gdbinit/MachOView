@@ -6,6 +6,12 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+#include <cxxabi.h>
+
 #import "Layout.h"
 
 typedef std::vector<struct load_command const *>          CommandVector;

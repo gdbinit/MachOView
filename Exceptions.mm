@@ -6,6 +6,11 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+
 #import "Exceptions.h"
 #import "ReadWrite.h"
 #import "DataController.h"

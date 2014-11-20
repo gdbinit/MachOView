@@ -5,6 +5,10 @@
  *  Created by Peter Saghelyi on 17/10/2011.
  *
  */
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
 
 #import "ObjC.h"
 #import "ReadWrite.h"

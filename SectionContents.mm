@@ -6,6 +6,11 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+
 #import "Common.h"
 #import "SectionContents.h"
 #import "CRTFootPrints.h"
@@ -571,7 +576,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
     csh cs_handle = 0;
     cs_insn *cs_insn = NULL;
     size_t disasm_count = 0;
-    
+    cs_err cserr;
     /* open capstone */
     cs_arch target_arch;
     cs_mode target_mode;
@@ -598,9 +603,9 @@ static AsmFootPrint const fastStubHelperHelperARM =
             break;
     }
     
-    if ( cs_open(target_arch, target_mode, &cs_handle) != CS_ERR_OK )
+    if ( (cserr = cs_open(target_arch, target_mode, &cs_handle)) != CS_ERR_OK )
     {
-        NSLog(@"Failed to initialize Capstone: %s.", cs_strerror(cs_errno(cs_handle)));
+        NSLog(@"Failed to initialize Capstone: %d, %s.", cserr, cs_strerror(cs_errno(cs_handle)));
         return node;
     }
     
@@ -622,11 +627,15 @@ static AsmFootPrint const fastStubHelperHelperARM =
         }
     }
     
+    /* enable detail - we need fields available in detail field */
+    cs_option(cs_handle, CS_OPT_DETAIL, CS_OPT_ON);
+    cs_option(cs_handle, CS_OPT_SKIPDATA, CS_OPT_ON);
+    
     /* disassemble the whole section */
     /* this will fail if we have data in code or jump tables because Capstone stops when it can't disassemble */
     /* a bit of a problem with most binaries :( */
     /* XXX: parse data in code section to partially solve this */
-    disasm_count = cs_disasm_ex(cs_handle, (const uint8_t *)ot_sect, ot_left, ot_addr, 0, &cs_insn);
+    disasm_count = cs_disasm(cs_handle, (const uint8_t *)ot_sect, ot_left, ot_addr, 0, &cs_insn);
     NSLog(@"Disassembled %lu instructions.", disasm_count);
     uint32_t fileOffset = ([self is64bit] == NO ? [self RVAToFileOffset:(uint32_t)ot_addr] : [self RVA64ToFileOffset:ot_addr]);
     for (size_t i = 0; i < disasm_count; i++)
@@ -644,7 +653,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
         /* advance to next instruction */
         fileOffset += cs_insn[i].size;
     }
-    
+    cs_free(cs_insn, disasm_count);
     cs_close(&cs_handle);
     // close last block
     if (symbolName)

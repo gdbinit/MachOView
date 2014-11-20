@@ -6,6 +6,11 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+
 #import "Common.h"
 #import "LoadCommands.h"
 #import "ReadWrite.h"

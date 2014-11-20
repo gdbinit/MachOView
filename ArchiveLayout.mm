@@ -6,6 +6,12 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+#include <cxxabi.h>
+
 #import "Common.h"
 #import "ArchiveLayout.h"
 #import "DataController.h"

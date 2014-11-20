@@ -6,11 +6,6 @@
     #import <Cocoa/Cocoa.h>
 #endif
 
-#include <string>
-#include <vector>
-#include <set>
-#include <map>
-
 #include <mach-o/arch.h>
 #include <mach-o/loader.h>
 #include <mach-o/fat.h>
@@ -24,4 +19,3 @@
 #include <mach-o/swap.h>
 
 #include <libkern/OSAtomic.h>
-#include <cxxabi.h>

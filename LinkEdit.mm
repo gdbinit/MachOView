@@ -6,6 +6,11 @@
  *
  */
 
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+
 #import "Common.h"
 #import "LinkEdit.h"
 #import "ReadWrite.h"
