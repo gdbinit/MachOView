@@ -16,6 +16,13 @@
 
 @synthesize dataController, backgroundThread, archiver;
 
+/*
+- (void)dealloc
+{
+  NSLog(@"********MVLayout deallocated: %@", self);
+}
+*/
+
 //-----------------------------------------------------------------------------
 - (id)init
 {
@@ -53,7 +60,8 @@
 //-----------------------------------------------------------------------------
 - (void const *)imageAt:(uint32_t)location
 {
-  return (uint8_t *)[dataController.realData bytes] + location;
+  auto p = (uint8_t const *)[dataController.realData bytes];
+  return p ? p + location : NULL;
 }
 
 //-----------------------------------------------------------------------------

@@ -5,11 +5,12 @@ todo:
 - code sections parsing on demand
 - string table
 
-ver 2.4.9102
+ver 2.4.9200
+- Lots of leaks fixed
 - Updated disassembler from cctools-855
 - Updated llvm disassembler from libLTO OSX10.9
 - ARM64 relocations in detail (need to review)
-- Added load commands
+- Added new load commands
 
 ver 2.4.9000
 - ARM64

@@ -16,16 +16,16 @@
 #import "DataController.h"
 
 //============================================================================
-@implementation MVLayout (ReadWrite)
+@implementation MVDataController (ReadWrite)
 
 //-----------------------------------------------------------------------------
 - (uint8_t)read_uint8:(NSRange &)range lastReadHex:(NSString **)lastReadHex
 {
   uint8_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(uint8_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.2X",(0xFF & buffer)];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -34,9 +34,9 @@
 {
   uint16_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(uint16_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.4X",(0xFFFF & buffer)];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -45,9 +45,9 @@
 {
   uint32_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(uint32_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.8X",buffer];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -56,9 +56,9 @@
 {
   uint64_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(uint64_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.16qX",buffer];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -67,9 +67,9 @@
 {
   int8_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(int8_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.2X",(0xFF & buffer)];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -78,9 +78,9 @@
 {
   int16_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(int16_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.4X",(0xFFFF & buffer)];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -89,9 +89,9 @@
 {
   int32_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(int32_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.8X",buffer];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -100,9 +100,9 @@
 {
   int64_t buffer;
   range = NSMakeRange(NSMaxRange(range),sizeof(int64_t));
-  [dataController.fileData getBytes:&buffer range:range];
+  [fileData getBytes:&buffer range:range];
   if (lastReadHex) *lastReadHex = [NSString stringWithFormat:@"%.16qX",buffer];
-  [dataController.realData getBytes:&buffer range:range];
+  [realData getBytes:&buffer range:range];
   return buffer;
 }
 
@@ -112,7 +112,7 @@
   NSMutableString * lastReadHex = [NSMutableString stringWithCapacity:2*range.length];
   for (NSUInteger i = 0; i < range.length; ++i)
   {
-    int value = *((uint8_t *)[dataController.fileData bytes] + range.location + i);
+    int value = *((uint8_t *)[fileData bytes] + range.location + i);
     [lastReadHex appendFormat:@"%.2X",value];
   }
   return lastReadHex;
@@ -145,7 +145,7 @@
 - (NSString *)read_string:(NSRange &)range lastReadHex:(NSString **)lastReadHex
 {
   range.location = NSMaxRange(range);
-  NSString * str = NSSTRING((uint8_t *)[dataController.fileData bytes] + range.location);
+  NSString * str = NSSTRING((uint8_t *)[fileData bytes] + range.location);
   range.length = [str length] + 1;
   if (lastReadHex) *lastReadHex = [self getHexStr:range];
   return [self replaceEscapeCharsInString:str];
@@ -156,7 +156,7 @@
 {
   range = NSMakeRange(NSMaxRange(range),len);
   uint8_t * buffer = (uint8_t *)malloc(len + 1); buffer[len] = '\0';
-  [dataController.fileData getBytes:buffer range:range];
+  [fileData getBytes:buffer range:range];
   if (lastReadHex) *lastReadHex = [self getHexStr:range];
   NSString * str = NSSTRING(buffer);
   free (buffer);
@@ -168,7 +168,7 @@
 {
   range = NSMakeRange(NSMaxRange(range),length);
   uint8_t * buffer = (uint8_t *)malloc(length);
-  [dataController.fileData getBytes:buffer range:range];
+  [fileData getBytes:buffer range:range];
   if (lastReadHex) *lastReadHex = [self getHexStr:range];
   NSData * ret = [NSData dataWithBytes:buffer length:length];
   free (buffer);
@@ -179,7 +179,7 @@
 - (int64_t)read_sleb128:(NSRange &)range lastReadHex:(NSString **)lastReadHex
 {
   range.location = NSMaxRange(range);
-  uint8_t * p = (uint8_t *)[dataController.fileData bytes] + range.location, *start = p;
+  uint8_t * p = (uint8_t *)[fileData bytes] + range.location, *start = p;
   
   int64_t result = 0;
   int bit = 0;
@@ -206,7 +206,7 @@
 - (uint64_t)read_uleb128:(NSRange &)range lastReadHex:(NSString **)lastReadHex
 {
   range.location = NSMaxRange(range);
-  uint8_t * p = (uint8_t *)[dataController.fileData bytes] + range.location, *start = p;
+  uint8_t * p = (uint8_t *)[fileData bytes] + range.location, *start = p;
   
   uint64_t result = 0;
   int bit = 0;
@@ -231,56 +231,56 @@
 // ----------------------------------------------------------------------------
 - (void) write_uint8:(NSUInteger)location data:(uint8_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint8_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint8_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_uint16:(NSUInteger)location data:(uint16_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint16_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint16_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_uint32:(NSUInteger)location data:(uint32_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint32_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint32_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_uint64:(NSUInteger)location data:(uint64_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint64_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(uint64_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_int8:(NSUInteger)location data:(int8_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(int8_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(int8_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_int16:(NSUInteger)location data:(int16_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(int16_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(int16_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_int32:(NSUInteger)location data:(int32_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(int32_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(int32_t)) 
                                      withBytes:&data];
 }
 
 // ----------------------------------------------------------------------------
 - (void) write_int64:(NSUInteger)location data:(int64_t)data
 {
-  [dataController.fileData replaceBytesInRange:NSMakeRange(location,sizeof(int64_t)) 
+  [fileData replaceBytesInRange:NSMakeRange(location,sizeof(int64_t)) 
                                      withBytes:&data];
 }
 

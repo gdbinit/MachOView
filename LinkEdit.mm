@@ -61,7 +61,7 @@ using namespace std;
     NSColor * color = nil;
     
     // read the first half of the entry
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Address"
@@ -72,13 +72,13 @@ using namespace std;
     [node.details appendRow:@"":@"":@"Scattered":scattered_relocation_info ? @"True" : @"False"];
     
     // read the second half of the entry
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     
     if (relocation_info)
     {
       uint32_t relocLocation = [self RVAToFileOffset:baseAddress + relocation_info->r_address];
       NSRange rangeReloc = NSMakeRange(relocLocation,0);
-      uint32_t relocValue = [self read_uint32:rangeReloc];
+      uint32_t relocValue = [dataController read_uint32:rangeReloc];
       uint32_t relocLength = (1 << relocation_info->r_length);
       NSParameterAssert(relocLength == sizeof(uint32_t));
       
@@ -204,7 +204,7 @@ using namespace std;
         uint32_t relocLength = (1 << prev_scattered_relocation_info->r_length);
         NSAssert1(relocLength == sizeof(uint32_t), @"unsupported reloc length (%u)", relocLength);
         NSRange rangeReloc = NSMakeRange(relocLocation,0);
-        uint32_t relocValue = [self read_uint32:rangeReloc];
+        uint32_t relocValue = [dataController read_uint32:rangeReloc];
         uint32_t relocAddend = relocValue - (prev_scattered_relocation_info->r_value - scattered_relocation_info->r_value);
 
         // the relocation value only differs if it has an addend
@@ -324,14 +324,14 @@ using namespace std;
     NSColor * color = nil;
 
     // read the first half of the entry
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Address"
                            :[NSString stringWithFormat:@"0x%qX", relocation_info->r_address + baseAddress]];
 
     // read the second half of the entry
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     
     //========================================================================
     if (relocation_info->r_extern)
@@ -395,7 +395,7 @@ using namespace std;
         
         if (relocLength == sizeof(uint32_t))
         {
-          uint32_t relocAddend = [self read_uint32:rangeReloc];
+          uint32_t relocAddend = [dataController read_uint32:rangeReloc];
           if (relocAddend != 0) 
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -411,7 +411,7 @@ using namespace std;
         }
         else if (relocLength == sizeof(uint64_t))
         {
-          uint64_t relocAddend = [self read_uint64:rangeReloc];
+          uint64_t relocAddend = [dataController read_uint64:rangeReloc];
           if (relocAddend != 0) 
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -437,7 +437,7 @@ using namespace std;
           // 32bit signed PC Rel
           NSParameterAssert(relocation_info->r_pcrel == true);
           uint32_t relocValue = nlist_64->n_value - relocation_info->r_address - baseAddress - relocLength;
-          uint32_t relocAddend = [self read_uint32:rangeReloc];
+          uint32_t relocAddend = [dataController read_uint32:rangeReloc];
 
           if (mach_header_64->cputype == CPU_TYPE_X86_64)
           {
@@ -464,7 +464,7 @@ using namespace std;
           // 64bit unsigned direct
           NSParameterAssert(relocation_info->r_pcrel == false);
           uint64_t relocValue = nlist_64->n_value;
-          uint64_t relocAddend = [self read_uint64:rangeReloc];
+          uint64_t relocAddend = [dataController read_uint64:rangeReloc];
           if (relocAddend != 0) 
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -490,7 +490,7 @@ using namespace std;
         {
           NSParameterAssert(relocation_info->r_pcrel == true);
           NSRange rangeReloc = NSMakeRange(relocLocation,0);
-          uint32_t relocAddend = [self read_uint32:rangeReloc];
+          uint32_t relocAddend = [dataController read_uint32:rangeReloc];
           
           if (mach_header_64->cputype == CPU_TYPE_X86_64)
           {
@@ -518,7 +518,7 @@ using namespace std;
         {
           NSParameterAssert(relocation_info->r_pcrel == false);
           NSRange rangeReloc = NSMakeRange(relocLocation,0);
-          uint64_t relocAddend = [self read_uint64:rangeReloc];
+          uint64_t relocAddend = [dataController read_uint64:rangeReloc];
           if (relocAddend != 0) 
           {
             [node.details appendRow:@"":@"":@"Addend"
@@ -583,7 +583,7 @@ using namespace std;
         }
         else if (relocLength == sizeof(uint32_t))
         {
-          relocValue = [self read_uint32:rangeReloc];
+          relocValue = [dataController read_uint32:rangeReloc];
 
           if ((mach_header_64->cputype == CPU_TYPE_X86_64 && relocation_info->r_type == X86_64_RELOC_UNSIGNED)
               ||
@@ -613,7 +613,7 @@ using namespace std;
           NSParameterAssert (!(mach_header_64->cputype == CPU_TYPE_X86_64) || relocation_info->r_type == X86_64_RELOC_UNSIGNED);
           NSParameterAssert (!(mach_header_64->cputype == CPU_TYPE_ARM64) || relocation_info->r_type == ARM64_RELOC_UNSIGNED);
           NSParameterAssert (relocation_info->r_pcrel == false);
-          relocValue = [self read_uint64:rangeReloc];
+          relocValue = [dataController read_uint64:rangeReloc];
         }
         else
         {
@@ -712,13 +712,13 @@ using namespace std;
                            :@""
                            :@""];
       
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"String Table Index"
                            :symbolName];
     
-    [self read_uint8:range lastReadHex:&lastReadHex];
+    [dataController read_uint8:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Type"
@@ -749,7 +749,7 @@ using namespace std;
     
     struct section const * section = [self getSectionByIndex:nlist->n_sect];
     
-    [self read_uint8:range lastReadHex:&lastReadHex];
+    [dataController read_uint8:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Section Index"
@@ -759,7 +759,7 @@ using namespace std;
                                  string(section->segname,16).c_str(),
                                  string(section->sectname,16).c_str()]];
     
-    [self read_uint16:range lastReadHex:&lastReadHex];
+    [dataController read_uint16:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Description"
@@ -807,7 +807,7 @@ using namespace std;
       if ((nlist->n_desc & N_SYMBOL_RESOLVER) == N_SYMBOL_RESOLVER)         [node.details appendRow:@"":@"":@"0100":@"N_SYMBOL_RESOLVER"];
     }
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     if ((nlist->n_type & N_TYPE) == N_SECT)
     {
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -882,13 +882,13 @@ using namespace std;
                            :@""
                            :@""];
 
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"String Table Index"
                            :symbolName];
     
-    [self read_uint8:range lastReadHex:&lastReadHex];
+    [dataController read_uint8:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Type"
@@ -919,7 +919,7 @@ using namespace std;
     
     struct section_64 const * section_64 = [self getSection64ByIndex:nlist_64->n_sect];
     
-    [self read_uint8:range lastReadHex:&lastReadHex];
+    [dataController read_uint8:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Section Index"
@@ -929,7 +929,7 @@ using namespace std;
                                  string(section_64->segname,16).c_str(),
                                  string(section_64->sectname,16).c_str()]];
     
-    [self read_uint16:range lastReadHex:&lastReadHex];
+    [dataController read_uint16:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Description"
@@ -971,7 +971,7 @@ using namespace std;
                                                                                   : @"N_WEAK_DEF"];
     if ((nlist_64->n_desc & N_SYMBOL_RESOLVER) == N_SYMBOL_RESOLVER)            [node.details appendRow:@"":@"":@"0100":@"N_SYMBOL_RESOLVER"];
     
-    [self read_uint64:range lastReadHex:&lastReadHex];
+    [dataController read_uint64:range lastReadHex:&lastReadHex];
     if ((nlist_64->n_type & N_TYPE) == N_SECT)
     {
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1043,7 +1043,7 @@ using namespace std;
     NSUInteger bookmark = node.details.rowCount;
     NSString * symbolName = NSSTRING(strtab + [self getSymbolByIndex:dylib_reference->isym]->n_un.n_strx);
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Symbol"
@@ -1115,7 +1115,7 @@ using namespace std;
       NSColor * color = nil;
         
       // read indirect symbol index
-      uint32_t indirectIndex = [self read_uint32:range lastReadHex:&lastReadHex];
+      uint32_t indirectIndex = [dataController read_uint32:range lastReadHex:&lastReadHex];
         
       if ((indirectIndex & (INDIRECT_SYMBOL_LOCAL | INDIRECT_SYMBOL_ABS)) == 0)
       {
@@ -1153,7 +1153,7 @@ using namespace std;
             
             // follow indirection for pointers only
             NSRange range = NSMakeRange(indirectAddress - section->addr + section->offset + imageOffset, 0);
-            uint32_t targetAddress = [self read_uint32:range lastReadHex:&lastReadHex];
+            uint32_t targetAddress = [dataController read_uint32:range lastReadHex:&lastReadHex];
             [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA:targetAddress])];
             symbolName = [NSString stringWithFormat:@"[%@->%@]",
                           [self findSymbolAtRVA:indirectAddress],symbolName];
@@ -1243,7 +1243,7 @@ using namespace std;
       NSColor * color = nil;
       
       // read indirect symbol index
-      uint32_t indirectIndex = [self read_uint32:range lastReadHex:&lastReadHex];
+      uint32_t indirectIndex = [dataController read_uint32:range lastReadHex:&lastReadHex];
       
       if ((indirectIndex & (INDIRECT_SYMBOL_LOCAL | INDIRECT_SYMBOL_ABS)) == 0)
       {
@@ -1281,7 +1281,7 @@ using namespace std;
             
             // follow indirection for pointers only
             NSRange range = NSMakeRange(indirectAddress - section_64->addr + section_64->offset + imageOffset, 0);
-            uint64_t targetAddress = [self read_uint64:range lastReadHex:&lastReadHex];
+            uint64_t targetAddress = [dataController read_uint64:range lastReadHex:&lastReadHex];
             [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA64:targetAddress])];
             symbolName = [NSString stringWithFormat:@"[%@->%@]",
                           [self findSymbolAtRVA64:indirectAddress],symbolName];
@@ -1359,13 +1359,13 @@ using namespace std;
     NSUInteger bookmark = node.details.rowCount;
     NSString * symbolName = NSSTRING(strtab + [self getSymbolByIndex:dylib_table_of_contents->symbol_index]->n_un.n_strx); 
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Symbol"
                            :symbolName];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module"
@@ -1410,13 +1410,13 @@ using namespace std;
     NSUInteger bookmark = node.details.rowCount;
     NSString * symbolName = NSSTRING(strtab + [self getSymbol64ByIndex:dylib_table_of_contents->symbol_index]->n_un.n_strx); 
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Symbol"
                            :symbolName];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module"
@@ -1450,61 +1450,61 @@ using namespace std;
     NSUInteger bookmark = node.details.rowCount;
     NSString * moduleName = NSSTRING(strtab + dylib_module->module_name); 
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module"
                            :moduleName];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Defined Symbols Index"
                            :[NSString stringWithFormat:@"%u", dylib_module->iextdefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Defined Symbols Number"
                            :[NSString stringWithFormat:@"%u", dylib_module->nextdefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext References Index"
                            :[NSString stringWithFormat:@"%u", dylib_module->irefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext References Number"
                            :[NSString stringWithFormat:@"%u", dylib_module->nrefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Local Symbols Index"
                            :[NSString stringWithFormat:@"%u", dylib_module->ilocalsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Local Symbols Number"
                            :[NSString stringWithFormat:@"%u", dylib_module->nlocalsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Relocs Index"
                            :[NSString stringWithFormat:@"%u", dylib_module->iextrel]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Relocs Number"
                            :[NSString stringWithFormat:@"%u", dylib_module->nextrel]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Init Pointers Index"
@@ -1513,7 +1513,7 @@ using namespace std;
     [node.details appendRow:@"":@"":@"Term Pointers Index"
                            :[NSString stringWithFormat:@"%u", (dylib_module->iinit_iterm >> 16) & 0xffff]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Init Pointers Number"
@@ -1522,13 +1522,13 @@ using namespace std;
     [node.details appendRow:@"":@"":@"Term Pointers Number"
                            :[NSString stringWithFormat:@"%u", (dylib_module->ninit_nterm >> 16) & 0xffff]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module Info Address"
                            :[NSString stringWithFormat:@"0x%X", dylib_module->objc_module_info_addr]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module Info Size"
@@ -1562,61 +1562,61 @@ using namespace std;
     NSUInteger bookmark = node.details.rowCount;
     NSString * moduleName = NSSTRING(strtab + dylib_module_64->module_name); 
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module"
                            :moduleName];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Defined Symbols Index"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->iextdefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Defined Symbols Number"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->nextdefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext References Index"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->irefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext References Number"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->nrefsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Local Symbols Index"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->ilocalsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Local Symbols Number"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->nlocalsym]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Relocs Index"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->iextrel]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Ext Relocs Number"
                            :[NSString stringWithFormat:@"%u", dylib_module_64->nextrel]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Init Pointers Index"
@@ -1625,7 +1625,7 @@ using namespace std;
     [node.details appendRow:@"":@"":@"Term Pointers Index"
                            :[NSString stringWithFormat:@"%u", (dylib_module_64->iinit_iterm >> 16) & 0xffff]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Init Pointers Number"
@@ -1634,13 +1634,13 @@ using namespace std;
     [node.details appendRow:@"":@"":@"Term Pointers Number"
                            :[NSString stringWithFormat:@"%u", (dylib_module_64->ninit_nterm >> 16) & 0xffff]];
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module Info Address"
                            :[NSString stringWithFormat:@"0x%llX", dylib_module_64->objc_module_info_addr]];
     
-    [self read_uint64:range lastReadHex:&lastReadHex];
+    [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Module Info Size"
@@ -1670,7 +1670,7 @@ using namespace std;
   {
     MATCH_STRUCT(twolevel_hint, NSMaxRange(range))
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Subimage"
@@ -1717,7 +1717,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {    
-    uint8_t kind = [self read_uint8:range lastReadHex:&lastReadHex];
+    uint8_t kind = [dataController read_uint8:range lastReadHex:&lastReadHex];
     
     if (kind == 0) // terminator
     {
@@ -1756,7 +1756,7 @@ using namespace std;
     uint64_t offset = 0;
     do
     {
-      offset = [self read_uleb128:range lastReadHex:&lastReadHex];
+      offset = [dataController read_uleb128:range lastReadHex:&lastReadHex];
       address += offset;
       
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1794,7 +1794,7 @@ using namespace std;
   
   while (NSMaxRange(range) < location + length)
   {    
-    uint64_t offset = [self read_uleb128:range lastReadHex:&lastReadHex];
+    uint64_t offset = [dataController read_uleb128:range lastReadHex:&lastReadHex];
     address += offset;
     
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1827,19 +1827,19 @@ using namespace std;
     MATCH_STRUCT(data_in_code_entry, NSMaxRange(range))
     dices.push_back(data_in_code_entry);
     
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Offset"
                            :[self findSymbolAtRVA:[self fileOffsetToRVA:data_in_code_entry->offset + imageOffset]]];
 
-    [self read_uint16:range lastReadHex:&lastReadHex];
+    [dataController read_uint16:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Length"
                            :[NSString stringWithFormat:@"%u", (uint32_t)data_in_code_entry->length]];
 
-    [self read_uint16:range lastReadHex:&lastReadHex];
+    [dataController read_uint16:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Kind"

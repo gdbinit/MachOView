@@ -151,12 +151,12 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 #define READ_USE_ENCODING(format,range,hexstr) \
-  ((format & 0xf) == DW_EH_PE_udata2 || (format & 0xf) == DW_EH_PE_sdata2) ? [self read_uint16:range lastReadHex:&hexstr] : \
-  ((format & 0xf) == DW_EH_PE_udata4 || (format & 0xf) == DW_EH_PE_sdata4) ? [self read_uint32:range lastReadHex:&hexstr] : \
-  ((format & 0xf) == DW_EH_PE_udata8 || (format & 0xf) == DW_EH_PE_sdata8) ? [self read_uint64:range lastReadHex:&hexstr] : \
-  (format & 0xf) == DW_EH_PE_uleb128 ? [self read_uleb128:range lastReadHex:&hexstr] : \
-  (format & 0xf) == DW_EH_PE_sleb128 ? [self read_sleb128:range lastReadHex:&hexstr] : \
-  ([self is64bit] == NO) ? [self read_uint32:range lastReadHex:&hexstr] : [self read_uint64:range lastReadHex:&hexstr]
+  ((format & 0xf) == DW_EH_PE_udata2 || (format & 0xf) == DW_EH_PE_sdata2) ? [dataController read_uint16:range lastReadHex:&hexstr] : \
+  ((format & 0xf) == DW_EH_PE_udata4 || (format & 0xf) == DW_EH_PE_sdata4) ? [dataController read_uint32:range lastReadHex:&hexstr] : \
+  ((format & 0xf) == DW_EH_PE_udata8 || (format & 0xf) == DW_EH_PE_sdata8) ? [dataController read_uint64:range lastReadHex:&hexstr] : \
+  (format & 0xf) == DW_EH_PE_uleb128 ? [dataController read_uleb128:range lastReadHex:&hexstr] : \
+  (format & 0xf) == DW_EH_PE_sleb128 ? [dataController read_sleb128:range lastReadHex:&hexstr] : \
+  ([self is64bit] == NO) ? [dataController read_uint32:range lastReadHex:&hexstr] : [dataController read_uint64:range lastReadHex:&hexstr]
 
 //-----------------------------------------------------------------------------
 - (NSString *)guessSymbolUsingEncoding:(uint8_t)format atOffset:(uint32_t)offset withValue:(uint32_t &)value
@@ -232,7 +232,7 @@ using namespace std;
   // A 4 byte unsigned value indicating the length in bytes of the CIE structure, not including the Length field itself. 
   // If Length contains the value 0xffffffff, then the length is contained in the Extended Length field. 
   // If Length contains the value 0, then this CIE shall be considered a terminator and processing shall end.
-  uint32_t CIE_length = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t CIE_length = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"CIE Length"
@@ -245,7 +245,7 @@ using namespace std;
   //CIE ID (Required)
   // A 4 byte unsigned value that is used to distinguish CIE records from FDE records. 
   // This value shall always be 0, which indicates this record is a CIE.
-  uint32_t CIE_ID = [self read_uint32:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  uint32_t CIE_ID = [dataController read_uint32:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"CIE ID"
@@ -253,7 +253,7 @@ using namespace std;
   
   //Version (Required)
   // Version assigned to the call frame information structure. This value shall be 1.
-  uint8_t CIE_version = [self read_uint8:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  uint8_t CIE_version = [dataController read_uint8:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"CIE Version"
@@ -262,7 +262,7 @@ using namespace std;
   //Augmentation String (Required)
   // This value is a NUL terminated string that identifies the augmentation to the CIE or to the FDEs associated with this CIE. 
   // A zero length string indicates that no augmentation data is present. 
-  NSString * CIE_augmentationStr = [self read_string:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  NSString * CIE_augmentationStr = [dataController read_string:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Augmentation String"
@@ -275,7 +275,7 @@ using namespace std;
   //Code Alignment Factor (Required)
   // An unsigned LEB128 encoded value that is factored out of all advance location instructions that are associated with this CIE or its FDEs.
   // This value shall be multiplied by the delta argument of an adavance location instruction to obtain the new location value.
-  uint64_t CIE_codeAlignFactor = [self read_uleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  uint64_t CIE_codeAlignFactor = [dataController read_uleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Code Alignment Factor"
@@ -284,14 +284,14 @@ using namespace std;
   //Data Alignment Factor (Required)
   // A signed LEB128 encoded value that is factored out of all offset instructions that are associated with this CIE or its FDEs. 
   // This value shall be multiplied by the register offset argument of an offset instruction to obtain the new offset value.
-  int64_t CIE_dataAlignFactor = [self read_sleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  int64_t CIE_dataAlignFactor = [dataController read_sleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Data Alignment Factor"
                          :[NSString stringWithFormat:@"%qd", CIE_dataAlignFactor]];
   
   //Return Address Register	(Required)
-  uint8_t CIE_returnAddressRegister = [self read_uint8:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+  uint8_t CIE_returnAddressRegister = [dataController read_uint8:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Return Address Register"
@@ -304,7 +304,7 @@ using namespace std;
     //Augmentation Data Length (Optional)
     // An unsigned LEB128 encoded value indicating the length in bytes of the Augmentation Data. 
     // This field is only present if the Augmentation String contains the character 'z'.
-    uint64_t CIE_augmentationLength = [self read_uleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
+    uint64_t CIE_augmentationLength = [dataController read_uleb128:range lastReadHex:&lastReadHex]; CIE_length -= range.length;
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Augmentation Length"
@@ -324,7 +324,7 @@ using namespace std;
           // The argument in the Augmentation Data of the CIE is 1-byte and represents the pointer encoding used for the argument in the Augmentation Data of the FDE, which is the address of a language-specific data area (LSDA). 
           // The size of the LSDA pointer is specified by the pointer encoding used.
         {
-          LSDA_encoding = [self read_uint8:range lastReadHex:&lastReadHex];
+          LSDA_encoding = [dataController read_uint8:range lastReadHex:&lastReadHex];
           [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                                  :lastReadHex
                                  :@"LSDA Encoding in FDE"
@@ -339,7 +339,7 @@ using namespace std;
           // The size of the personality routine pointer is specified by the pointer encoding used.
         {
           // personality routine encoding
-          uint8_t PR_encoding = [self read_uint8:range lastReadHex:&lastReadHex];
+          uint8_t PR_encoding = [dataController read_uint8:range lastReadHex:&lastReadHex];
           [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                                  :lastReadHex
                                  :@"Personality Encoding"
@@ -359,7 +359,7 @@ using namespace std;
           // This character may only be present if 'z' is the first character of the string. 
           // If present, The Augmentation Data shall include a 1 byte argument that represents the pointer encoding for the address pointers used in the FDE.
         {
-          Pointer_encoding = [self read_uint8:range lastReadHex:&lastReadHex];
+          Pointer_encoding = [dataController read_uint8:range lastReadHex:&lastReadHex];
           [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                                  :lastReadHex
                                  :@"Pointer Encoding in FDE"
@@ -375,7 +375,7 @@ using namespace std;
   
   //Initial Instructions (Required)
   // Initial set of Call Frame Instructions.
-  [self read_bytes:range length:CIE_length lastReadHex:&lastReadHex];
+  [dataController read_bytes:range length:CIE_length lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Initial Instructions"
@@ -397,7 +397,7 @@ using namespace std;
     // A 4 byte unsigned value indicating the length in bytes of the CIE structure, not including the Length field itself. 
     // If Length contains the value 0xffffffff, then the length is contained the Extended Length field. 
     // If Length contains the value 0, then this CIE shall be considered a terminator and processing shall end.
-    uint32_t FDE_length = [self read_uint32:range lastReadHex:&lastReadHex];
+    uint32_t FDE_length = [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"FDE Length"
@@ -410,7 +410,7 @@ using namespace std;
     //CIE Pointer	(Required)
     // A 4 byte unsigned value that when subtracted from the offset of the current FDE yields the offset of the start of the associated CIE. 
     // This value shall never be 0.
-    uint32_t FDE_CIEvalue = [self read_uint32:range lastReadHex:&lastReadHex]; FDE_length -= range.length;
+    uint32_t FDE_CIEvalue = [dataController read_uint32:range lastReadHex:&lastReadHex]; FDE_length -= range.length;
     
     // we ran out of FDE records and started to process the forthcoming CIE !! 
     // rollback until the begining of the CIE
@@ -454,7 +454,7 @@ using namespace std;
       //Augmentation Data Length	(Optional)
       // An unsigned LEB128 encoded value indicating the length in bytes of the Augmentation Data. 
       // This field is only present if the Augmentation String in the associated CIE contains the character 'z'.
-      uint64_t FDE_augmentationLength = [self read_uleb128:range lastReadHex:&lastReadHex]; FDE_length -= range.length;
+      uint64_t FDE_augmentationLength = [dataController read_uleb128:range lastReadHex:&lastReadHex]; FDE_length -= range.length;
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"Augmentation Length"
@@ -482,7 +482,7 @@ using namespace std;
     
     //Call Frame Instructions	(Required)
     // A set of Call Frame Instructions.
-    [self read_bytes:range length:FDE_length lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:FDE_length lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Call Frame Instructions"
@@ -547,13 +547,13 @@ using namespace std;
   NSString * lastReadHex;
   
   //===================== LSDA Header =======================
-  uint8_t LPStartFormat = [self read_uint8:range lastReadHex:&lastReadHex];
+  uint8_t LPStartFormat = [dataController read_uint8:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"@LPStart format"
                          :[self getNameForEncoding:LPStartFormat]];
   
-  uint8_t typeTableFormat = [self read_uint8:range lastReadHex:&lastReadHex];
+  uint8_t typeTableFormat = [dataController read_uint8:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"@TType format"
@@ -562,7 +562,7 @@ using namespace std;
   uint32_t typeTableBaseLocation = 0;
   if (typeTableFormat != DW_EH_PE_omit)
   {
-    uint64_t typeTableBaseOffset = [self read_uleb128:range lastReadHex:&lastReadHex];
+    uint64_t typeTableBaseOffset = [dataController read_uleb128:range lastReadHex:&lastReadHex];
     typeTableBaseLocation = NSMaxRange(range) + typeTableBaseOffset;
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -571,13 +571,13 @@ using namespace std;
                                                    [NSString stringWithFormat:@"0x%qX",[self fileOffsetToRVA64:typeTableBaseLocation]]];
   }
     
-  uint8_t callSiteFormat = [self read_uint8:range lastReadHex:&lastReadHex];
+  uint8_t callSiteFormat = [dataController read_uint8:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"call-site format"
                          :[self getNameForEncoding:callSiteFormat]];
   
-  uint64_t callSiteTableLength = [self read_uleb128:range lastReadHex:&lastReadHex];
+  uint64_t callSiteTableLength = [dataController read_uleb128:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"call-site table length"
@@ -610,7 +610,7 @@ using namespace std;
                            :@"landing pad"
                            :landingPad == 0 ? @"0x0" : [NSString stringWithFormat:@"0x%qX", eh_frame_begin + landingPad]];
     
-    uint64_t action = [self read_uleb128:range lastReadHex:&lastReadHex];
+    uint64_t action = [dataController read_uleb128:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"action"
@@ -638,7 +638,7 @@ using namespace std;
     {
       actions.erase (currentAction);
       
-      int64_t index = [self read_sleb128:range lastReadHex:&lastReadHex]; currentAction += range.length; 
+      int64_t index = [dataController read_sleb128:range lastReadHex:&lastReadHex]; currentAction += range.length;
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"Type Filter"
@@ -653,7 +653,7 @@ using namespace std;
         exceptionSpecs.insert(index);
       }
     
-      int64_t nextAction = [self read_sleb128:range lastReadHex:&lastReadHex]; currentAction += range.length; 
+      int64_t nextAction = [dataController read_sleb128:range lastReadHex:&lastReadHex]; currentAction += range.length;
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"Next Action"
@@ -683,7 +683,7 @@ using namespace std;
       // note: they are SLEB128 entries
       for (;;)
       {
-        index = [self read_sleb128:range lastReadHex:&lastReadHex];
+        index = [dataController read_sleb128:range lastReadHex:&lastReadHex];
         if (index == 0)
         {
           break;
@@ -720,7 +720,7 @@ using namespace std;
     range = NSMakeRange (typeTableBaseLocation, 0);
     while (NSMaxRange(range) < location + length)
     {
-      int64_t index = [self read_sleb128:range lastReadHex:&lastReadHex];
+      int64_t index = [dataController read_sleb128:range lastReadHex:&lastReadHex];
       [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"Exception Spec"
@@ -746,7 +746,7 @@ using namespace std;
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
 
-  uint32_t version = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t version = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Unwind Section Version"
@@ -754,7 +754,7 @@ using namespace std;
   
   NSAssert1(version == UNWIND_SECTION_VERSION, @"unsupported unwind section version (%u)", version);
   
-  uint32_t commonEncodingsArraySectionOffset = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t commonEncodingsArraySectionOffset = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Common Enc Array Sect Offset"
@@ -762,13 +762,13 @@ using namespace std;
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]
                             : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + commonEncodingsArraySectionOffset]];
   
-  uint32_t commonEncodingsArrayCount = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t commonEncodingsArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Common Enc Array Count"
                          :[NSString stringWithFormat:@"%u", commonEncodingsArrayCount]];
 
-  uint32_t personalityArraySectionOffset = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t personalityArraySectionOffset = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Personality Array Sect Offset"
@@ -776,13 +776,13 @@ using namespace std;
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]
                             : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + personalityArraySectionOffset]];
 
-  uint32_t personalityArrayCount = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t personalityArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Personality Array Count"
                          :[NSString stringWithFormat:@"%u", personalityArrayCount]];
 
-  uint32_t indexSectionOffset = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t indexSectionOffset = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Index Section Offset"
@@ -790,7 +790,7 @@ using namespace std;
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + indexSectionOffset]
                             : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + indexSectionOffset]];  
 
-  uint32_t indexCount = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t indexCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Index Count"

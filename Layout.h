@@ -8,7 +8,8 @@
 
 
 #define MATCH_STRUCT(obj,location) \
-  struct obj const * obj = (struct obj *)[self imageAt:(location)];
+  struct obj const * obj = (struct obj *)[self imageAt:(location)]; \
+  if (!obj) [NSException raise:@"null exception" format:@#obj " is null"];
 
 @class MVDataController;
 @class MVArchiver;
@@ -17,7 +18,7 @@
 
 @interface MVLayout : NSObject 
 {
-  MVNode *              rootNode;
+  MVNode *              __weak rootNode;
   MVDataController *    __weak dataController;
   uint32_t              imageOffset;  // absolute physical offset of the image in binary
   uint32_t              imageSize;    // size of the image corresponds to this layout

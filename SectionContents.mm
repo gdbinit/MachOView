@@ -39,7 +39,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    uint32_t ptr = [self read_uint32:range lastReadHex:&lastReadHex];
+    uint32_t ptr = [dataController read_uint32:range lastReadHex:&lastReadHex];
     NSString * symbolName = [NSString stringWithFormat:@"%@->%@",
                              [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]],
                              [self findSymbolAtRVA:ptr]];
@@ -72,7 +72,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    uint64_t ptr = [self read_uint64:range lastReadHex:&lastReadHex];
+    uint64_t ptr = [dataController read_uint64:range lastReadHex:&lastReadHex];
     NSString * symbolName = [NSString stringWithFormat:@"%@->%@",
                              [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location]],
                              [self findSymbolAtRVA64:ptr]];
@@ -105,7 +105,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    NSString * symbolName = [self read_string:range lastReadHex:&lastReadHex];
+    NSString * symbolName = [dataController read_string:range lastReadHex:&lastReadHex];
     
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -147,7 +147,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    NSData * data = [self read_bytes:range length:stride lastReadHex:&lastReadHex];
+    NSData * data = [dataController read_bytes:range length:stride lastReadHex:&lastReadHex];
 
     NSString * literalStr;
     switch (stride)
@@ -209,7 +209,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    [self read_uint32:range lastReadHex:&lastReadHex];
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
     NSString * symbolName = [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -236,7 +236,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    [self read_uint64:range lastReadHex:&lastReadHex];
+    [dataController read_uint64:range lastReadHex:&lastReadHex];
     NSString * symbolName = [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -264,7 +264,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    [self read_bytes:range length:stride lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:stride lastReadHex:&lastReadHex];
     NSString * symbolName = [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -292,7 +292,7 @@ using namespace std;
 
   while (NSMaxRange(range) < location + length)
   {
-    [self read_bytes:range length:stride lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:stride lastReadHex:&lastReadHex];
     NSString * symbolName = [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -448,58 +448,58 @@ static AsmFootPrint const fastStubHelperHelperARM =
                 asmFootPrint:hybridStubHelperHelperX86 
                    lineCount:sizeof(hybridStubHelperHelperX86)/FOOTPRINT_STRIDE])
   {
-    data = [self read_bytes:range length:7 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:7 lastReadHex:&lastReadHex];
     address = *(uint32_t *)((uint8_t *)data.bytes + 2);
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"cmpl  $0x00,_fast_lazy_bind"
                            :[self findSymbolAtRVA:address]];
 
-    [self read_bytes:range length:2 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:2 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"jne  $0x0D"
                            :@""];
 
-    [self read_bytes:range length:4 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:4 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"movl  %eax,4(%esp)"
                            :@""];
 
-    [self read_bytes:range length:1 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:1 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"popl  %eax"
                            :@""];
 
-    [self read_bytes:range length:3 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:3 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"xchgl  (%esp),%eax"
                            :@""];
 
-    data = [self read_bytes:range length:5 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:5 lastReadHex:&lastReadHex];
     address = [self fileOffsetToRVA:NSMaxRange(range) + *(uint32_t *)((uint8_t *)data.bytes + 1)];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"jmpl  dyld_stub_binding_helper"
                            :[self findSymbolAtRVA:address]];
 
-    [self read_bytes:range length:3 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:3 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"addl  $0x04,%esp"
                            :@""];
 
-    data = [self read_bytes:range length:5 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:5 lastReadHex:&lastReadHex];
     address = *(uint32_t *)((uint8_t *)data.bytes + 1);
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"pushl  imageloadercache"
                            :[self findSymbolAtRVA:address]];
 
-    data = [self read_bytes:range length:6 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:6 lastReadHex:&lastReadHex];
     address = *(uint32_t *)((uint8_t *)data.bytes + 2);
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -513,21 +513,21 @@ static AsmFootPrint const fastStubHelperHelperARM =
                      asmFootPrint:fastStubHelperHelperX86 
                         lineCount:sizeof(fastStubHelperHelperX86)/FOOTPRINT_STRIDE])
   {
-    data = [self read_bytes:range length:5 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:5 lastReadHex:&lastReadHex];
     address = *(uint32_t *)((uint8_t *)data.bytes + 1);
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"pushl  imageloadercache"
                            :[self findSymbolAtRVA:address]];
     
-    data = [self read_bytes:range length:6 lastReadHex:&lastReadHex];
+    data = [dataController read_bytes:range length:6 lastReadHex:&lastReadHex];
     address = *(uint32_t *)((uint8_t *)data.bytes + 2);
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"jmp  *_fast_lazy_bind"
                            :[self findSymbolAtRVA:address]];
 
-    [self read_bytes:range length:1 lastReadHex:&lastReadHex];
+    [dataController read_bytes:range length:1 lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"nop"
@@ -643,7 +643,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
         /* XXX: replace this bytes retrieval with Capstone internal data since it already contains this info */
         NSRange range = NSMakeRange(fileOffset,0);
         NSString * lastReadHex;
-        [self read_bytes:range length:cs_insn[i].size lastReadHex:&lastReadHex];
+        [dataController read_bytes:range length:cs_insn[i].size lastReadHex:&lastReadHex];
         /* format the disassembly output using Capstone strings */
         NSString *asm_string = [NSString stringWithFormat:@"%-10s\t%s", cs_insn[i].mnemonic, cs_insn[i].op_str];
         [node.details appendRow:[NSString stringWithFormat:@"%.8X", fileOffset]

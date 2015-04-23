@@ -72,7 +72,7 @@
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
   
-  NSString * signature = [self read_string:range fixlen:8 lastReadHex:&lastReadHex];
+  NSString * signature = [dataController read_string:range fixlen:8 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Signature"
@@ -92,38 +92,38 @@
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
   
-  NSString * name = [self read_string:range fixlen:16 lastReadHex:&lastReadHex];
+  NSString * name = [dataController read_string:range fixlen:16 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Name"
                          :name];
   
-  NSString * time_str = [self read_string:range fixlen:12 lastReadHex:&lastReadHex];
+  NSString * time_str = [dataController read_string:range fixlen:12 lastReadHex:&lastReadHex];
   time_t time = (time_t)[time_str longLongValue];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Time Stamp"
                          :[NSString stringWithFormat:@"%s", ctime(&time)]];
 
-  NSString * user_id_str = [self read_string:range fixlen:6 lastReadHex:&lastReadHex];
+  NSString * user_id_str = [dataController read_string:range fixlen:6 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"UserID"
                          :[NSString stringWithFormat:@"%u",[user_id_str intValue]]];
 
-  NSString * group_id_str = [self read_string:range fixlen:6 lastReadHex:&lastReadHex];
+  NSString * group_id_str = [dataController read_string:range fixlen:6 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"GroupID"
                          :[NSString stringWithFormat:@"%u",[group_id_str intValue]]];
 
-  NSString * mode_str = [self read_string:range fixlen:8 lastReadHex:&lastReadHex];
+  NSString * mode_str = [dataController read_string:range fixlen:8 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Mode"
                          :[NSString stringWithFormat:@"%u",[mode_str intValue]]];
 
-  NSString * size_str = [self read_string:range fixlen:8 lastReadHex:&lastReadHex];
+  NSString * size_str = [dataController read_string:range fixlen:8 lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Size"
@@ -134,11 +134,11 @@
   NSMutableString * padding = [[NSMutableString alloc] initWithCapacity:2];
   for(;;) 
   {
-    [padding appendString:[self read_string:range fixlen:1 lastReadHex:&lastReadHex]];
+    [padding appendString:[dataController read_string:range fixlen:1 lastReadHex:&lastReadHex]];
     [mutableLastReadHex appendString:lastReadHex];
     if (*(CSTRING(padding) + [padding length] - 1) != ' ')
     {
-      [padding appendString:[self read_string:range fixlen:1 lastReadHex:&lastReadHex]];
+      [padding appendString:[dataController read_string:range fixlen:1 lastReadHex:&lastReadHex]];
       [mutableLastReadHex appendString:lastReadHex];
       break;
     }
@@ -152,7 +152,7 @@
   if (NSEqualRanges([name rangeOfString:@"#1/"], NSMakeRange(0,3)))
   {
     uint32_t len = [[name substringFromIndex:3] intValue];
-    NSString * long_name = [self read_string:range fixlen:len lastReadHex:&lastReadHex];
+    NSString * long_name = [dataController read_string:range fixlen:len lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Long Name"
@@ -184,7 +184,7 @@
   NSRange range = NSMakeRange(location,0);
   NSString * lastReadHex;
   
-  uint32_t size = [self read_uint32:range lastReadHex:&lastReadHex];
+  uint32_t size = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Size"
@@ -197,7 +197,7 @@
   
   while (size > 0)
   {
-    uint32_t strx = [self read_uint32:range lastReadHex:&lastReadHex];
+    uint32_t strx = [dataController read_uint32:range lastReadHex:&lastReadHex];
     
     // accumulate search info
     NSUInteger bookmark = node.details.rowCount;
@@ -208,7 +208,7 @@
                            :@"Symbol"
                            :symbolName];
 
-    uint32_t off = [self read_uint32:range lastReadHex:&lastReadHex];
+    uint32_t off = [dataController read_uint32:range lastReadHex:&lastReadHex];
     
     MVObjectInfo * objectInfo = [objectInfoMap objectForKey:[NSNumber numberWithUnsignedLong:off + imageOffset]];
     
@@ -250,10 +250,10 @@
   // skip symbol and string table for now
   uint32_t symtabOffset = NSMaxRange(symtabHeaderNode.dataRange);
   NSRange range = NSMakeRange(symtabOffset,0);
-  uint32_t symtabSize = [self read_uint32:range lastReadHex:&lastReadHex] + sizeof(uint32_t);
+  uint32_t symtabSize = [dataController read_uint32:range lastReadHex:&lastReadHex] + sizeof(uint32_t);
   uint32_t strtabOffset = symtabOffset + symtabSize;
   range = NSMakeRange(strtabOffset,0);  
-  uint32_t strtabSize = [self read_uint32:range lastReadHex:&lastReadHex] + sizeof(uint32_t);
+  uint32_t strtabSize = [dataController read_uint32:range lastReadHex:&lastReadHex] + sizeof(uint32_t);
   
   // read headers
 
