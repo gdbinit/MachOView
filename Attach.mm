@@ -103,6 +103,7 @@ get_image_size(mach_vm_address_t address, pid_t pid, uint64_t *vmaddr_slide)
   if (readmem((mach_vm_offset_t*)loadcmds, address+mach_header_size, header.sizeofcmds, pid, &region_info))
   {
     NSLog(@"Can't read load commands");
+    free(loadcmds);
     return -1;
   }
   
