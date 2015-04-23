@@ -338,41 +338,35 @@ enum ViewType
     threadCount = 0;
     
     NSNotificationCenter * nc = [NSNotificationCenter defaultCenter];
+    typeof(self) __weak weakSelf = self;
     
     /*
-    [nc addObserver:self 
+    [nc addObserver:weakSelf
            selector:@selector(handleDataTreeWillChange:) 
                name:MVDataTreeWillChangeNotification
              object:nil]; 
     
-    [nc addObserver:self 
+    [nc addObserver:weakSelf
            selector:@selector(handleDataTreeDidChange:) 
                name:MVDataTreeDidChangeNotification
              object:nil]; 
     */
-    [nc addObserver:self 
+    [nc addObserver:weakSelf
            selector:@selector(handleDataTreeChanged:) 
                name:MVDataTreeChangedNotification
              object:nil]; 
     
-    [nc addObserver:self 
+    [nc addObserver:weakSelf
            selector:@selector(handleDataTableChanged:) 
                name:MVDataTableChangedNotification
              object:nil]; 
 
-    [nc addObserver:self 
+    [nc addObserver:weakSelf 
            selector:@selector(handleThreadStateChanged:) 
                name:MVThreadStateChangedNotification
              object:nil];
   }
   return self;
-}
-
-//----------------------------------------------------------------------------
-- (void)dealloc
-{
-  NSNotificationCenter * nc = [NSNotificationCenter defaultCenter];
-  [nc removeObserver:self];
 }
 
 //----------------------------------------------------------------------------
@@ -706,6 +700,8 @@ enum ViewType
 //----------------------------------------------------------------------------
 - (void)canCloseDocumentWithDelegate:(id)delegate shouldCloseSelector:(SEL)shouldCloseSelector contextInfo:(void *)contextInfo
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   for (MVLayout * layout in dataController.layouts)
   {
     [layout.backgroundThread cancel];
