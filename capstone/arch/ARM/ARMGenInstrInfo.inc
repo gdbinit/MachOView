@@ -2814,21 +2814,21 @@ enum {
 
 #define nullptr 0
 
-static uint16_t ImplicitList1[] = { ARM_CPSR, 0 };
-static uint16_t ImplicitList2[] = { ARM_SP, 0 };
-static uint16_t ImplicitList3[] = { ARM_LR, 0 };
-static uint16_t ImplicitList4[] = { ARM_FPSCR_NZCV, 0 };
-static uint16_t ImplicitList5[] = { ARM_R7, ARM_LR, ARM_SP, 0 };
-static uint16_t ImplicitList6[] = { ARM_R0, ARM_R1, ARM_R2, ARM_R3, ARM_R4, ARM_R5, ARM_R6, ARM_R7, ARM_R8, ARM_R9, ARM_R10, ARM_R11, ARM_R12, ARM_LR, ARM_CPSR, ARM_Q0, ARM_Q1, ARM_Q2, ARM_Q3, ARM_Q4, ARM_Q5, ARM_Q6, ARM_Q7, ARM_Q8, ARM_Q9, ARM_Q10, ARM_Q11, ARM_Q12, ARM_Q13, ARM_Q14, ARM_Q15, 0 };
-static uint16_t ImplicitList7[] = { ARM_R0, ARM_R1, ARM_R2, ARM_R3, ARM_R4, ARM_R5, ARM_R6, ARM_R7, ARM_R8, ARM_R9, ARM_R10, ARM_R11, ARM_R12, ARM_LR, ARM_CPSR, 0 };
-static uint16_t ImplicitList8[] = { ARM_R0, ARM_R12, ARM_LR, ARM_CPSR, 0 };
-static uint16_t ImplicitList9[] = { ARM_FPSCR, 0 };
-static uint16_t ImplicitList10[] = { ARM_R4, 0 };
-static uint16_t ImplicitList11[] = { ARM_R4, ARM_SP, 0 };
-static uint16_t ImplicitList12[] = { ARM_ITSTATE, 0 };
-static uint16_t ImplicitList13[] = { ARM_R0, ARM_R1, ARM_R2, ARM_R3, ARM_R4, ARM_R5, ARM_R6, ARM_R7, ARM_R8, ARM_R9, ARM_R10, ARM_R11, ARM_R12, ARM_LR, ARM_CPSR, ARM_Q0, ARM_Q1, ARM_Q2, ARM_Q3, ARM_Q8, ARM_Q9, ARM_Q10, ARM_Q11, ARM_Q12, ARM_Q13, ARM_Q14, ARM_Q15, 0 };
-static uint16_t ImplicitList14[] = { ARM_PC, 0 };
-static uint16_t ImplicitList15[] = { ARM_R0, ARM_R1, ARM_R2, ARM_R3, ARM_R4, ARM_R5, ARM_R6, ARM_R7, ARM_R12, ARM_CPSR, 0 };
+#define ImplicitList1 0
+#define ImplicitList2 0
+#define ImplicitList3 0
+#define ImplicitList4 0
+#define ImplicitList5 0
+#define ImplicitList6 0
+#define ImplicitList7 0
+#define ImplicitList8 0
+#define ImplicitList9 0
+#define ImplicitList10 0
+#define ImplicitList11 0
+#define ImplicitList12 0
+#define ImplicitList13 0
+#define ImplicitList14 0
+#define ImplicitList15 0
 
 static MCOperandInfo OperandInfo2[] = { { -1, 0, MCOI_OPERAND_IMMEDIATE, 0 }, };
 static MCOperandInfo OperandInfo3[] = { { -1, 0, MCOI_OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI_OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI_OPERAND_IMMEDIATE, 0 }, };

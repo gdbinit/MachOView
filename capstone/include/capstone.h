@@ -9,9 +9,13 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <stdio.h>
 #include <stdarg.h>
+#if defined(CAPSTONE_HAS_OSXKERNEL)
+#include <libkern/libkern.h>
+#else
 #include <stdlib.h>
+#include <stdio.h>
+#endif
 
 #include "platform.h"
 
@@ -24,7 +28,11 @@ extern "C" {
 #define CAPSTONE_EXPORT
 #endif
 #else
+#ifdef __GNUC__
+#define CAPSTONE_EXPORT __attribute__((visibility("default")))
+#else
 #define CAPSTONE_EXPORT
+#endif
 #endif
 
 #ifdef __GNUC__

@@ -3,9 +3,14 @@
 #if defined (WIN32) || defined (WIN64) || defined (_WIN32) || defined (_WIN64)
 #pragma warning(disable:4996)
 #endif
+#if defined(CAPSTONE_HAS_OSXKERNEL)
+#include <libkern/libkern.h>
+#else
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#endif
+
 #include <string.h>
 #include <capstone.h>
 
@@ -363,7 +368,7 @@ cs_err cs_option(csh ud, cs_opt_type type, size_t value)
 		default:
 			break;
 		case CS_OPT_DETAIL:
-			handle->detail = value;
+			handle->detail = (cs_opt_value)value;
 			return CS_ERR_OK;
 		case CS_OPT_SKIPDATA:
 			handle->skipdata = (value == CS_OPT_ON);
@@ -447,6 +452,12 @@ size_t cs_disasm(csh ud, const uint8_t *buffer, size_t size, uint64_t offset, si
 
 	total_size = sizeof(cs_insn) * cache_size;
 	total = cs_mem_malloc(total_size);
+	if (total == NULL) {
+		// insufficient memory
+		handle->errnum = CS_ERR_MEM;
+		return 0;
+	}
+
 	insn_cache = total;
 
 	while (size > 0) {

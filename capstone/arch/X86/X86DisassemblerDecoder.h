@@ -19,7 +19,12 @@
 #ifndef CS_X86_DISASSEMBLERDECODER_H
 #define CS_X86_DISASSEMBLERDECODER_H
 
+#if defined(CAPSTONE_HAS_OSXKERNEL)
+#include <libkern/libkern.h>
+#else
 #include <stdio.h>
+#endif
+#include <stdint.h>
 
 #include "X86DisassemblerDecoderCommon.h"
 
@@ -361,7 +366,14 @@
   ENTRY(CR5)          \
   ENTRY(CR6)          \
   ENTRY(CR7)          \
-  ENTRY(CR8)
+  ENTRY(CR8)          \
+  ENTRY(CR9)          \
+  ENTRY(CR10)          \
+  ENTRY(CR11)          \
+  ENTRY(CR12)          \
+  ENTRY(CR13)          \
+  ENTRY(CR14)          \
+  ENTRY(CR15)
 
 #define ALL_EA_BASES  \
   EA_BASES_16BIT      \
@@ -601,9 +613,6 @@ typedef struct InternalInstruction {
 
   /* The type of the vector extension prefix */
   VectorExtensionType vectorExtensionType;
-  /* The location where a mandatory prefix would have to be (i.e., right before
-     the opcode, or right before the REX prefix if one is present) */
-  uint64_t necessaryPrefixLocation;
 
   /* Sizes of various critical pieces of data, in bytes */
   uint8_t registerSize;

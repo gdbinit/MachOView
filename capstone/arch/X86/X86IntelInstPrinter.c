@@ -17,10 +17,16 @@
 
 #ifdef CAPSTONE_HAS_X86
 
+#if !defined(CAPSTONE_HAS_OSXKERNEL)
 #include <ctype.h>
-#include "../../inttypes.h"
+#endif
+#include "../../myinttypes.h"
+#if defined(CAPSTONE_HAS_OSXKERNEL)
+#include <libkern/libkern.h>
+#else
 #include <stdio.h>
 #include <stdlib.h>
+#endif
 #include <string.h>
 
 #include "../../utils.h"
@@ -58,6 +64,21 @@ static void set_mem_access(MCInst *MI, bool status)
 static void printopaquemem(MCInst *MI, unsigned OpNo, SStream *O)
 {
 	SStream_concat0(O, "ptr ");
+
+	switch(MI->csh->mode) {
+		case CS_MODE_16:
+			MI->x86opsize = 2;
+			break;
+		case CS_MODE_32:
+			MI->x86opsize = 4;
+			break;
+		case CS_MODE_64:
+			MI->x86opsize = 8;
+			break;
+		default:	// never reach
+			break;
+	}
+
 	printMemReference(MI, OpNo, O);
 }
 
@@ -70,25 +91,15 @@ static void printi8mem(MCInst *MI, unsigned OpNo, SStream *O)
 
 static void printi16mem(MCInst *MI, unsigned OpNo, SStream *O)
 {
-	if (MI->Opcode == X86_BOUNDS16rm) {
-		SStream_concat0(O, "dword ptr ");
-		MI->x86opsize = 4;
-	} else {
-		SStream_concat0(O, "word ptr ");
-		MI->x86opsize = 2;
-	}
+	MI->x86opsize = 2;
+	SStream_concat0(O, "word ptr ");
 	printMemReference(MI, OpNo, O);
 }
 
 static void printi32mem(MCInst *MI, unsigned OpNo, SStream *O)
 {
-	if (MI->Opcode == X86_BOUNDS32rm) {
-		SStream_concat0(O, "qword ptr ");
-		MI->x86opsize = 8;
-	} else {
-		SStream_concat0(O, "dword ptr ");
-		MI->x86opsize = 4;
-	}
+	MI->x86opsize = 4;
+	SStream_concat0(O, "dword ptr ");
 	printMemReference(MI, OpNo, O);
 }
 
@@ -165,7 +176,7 @@ static void printf512mem(MCInst *MI, unsigned OpNo, SStream *O)
 
 static void printSSECC(MCInst *MI, unsigned Op, SStream *OS)
 {
-	int64_t Imm = MCOperand_getImm(MCInst_getOperand(MI, Op)) & 0xf;
+	int64_t Imm = MCOperand_getImm(MCInst_getOperand(MI, Op)) & 7;
 	switch (Imm) {
 		default: break;	// never reach
 		case    0: SStream_concat0(OS, "eq"); op_addSseCC(MI, X86_SSE_CC_EQ); break;
@@ -471,7 +482,7 @@ static void printInstruction(MCInst *MI, SStream *O, MCRegisterInfo *MRI);
 void X86_Intel_printInst(MCInst *MI, SStream *O, void *Info)
 {
 	char *mnem;
-	x86_reg reg;
+	x86_reg reg, reg2;
 
 	// Try to print any aliases first.
 	mnem = printAliasInstr(MI, O, Info);
@@ -491,7 +502,18 @@ void X86_Intel_printInst(MCInst *MI, SStream *O, void *Info)
 			MI->flat_insn->detail->x86.operands[0].type = X86_OP_REG;
 			MI->flat_insn->detail->x86.operands[0].reg = reg;
 			MI->flat_insn->detail->x86.operands[0].size = MI->csh->regsize_map[reg];
+			MI->flat_insn->detail->x86.operands[1].size = MI->csh->regsize_map[reg];
 			MI->flat_insn->detail->x86.op_count++;
+		} else {
+			if (X86_insn_reg_intel2(MCInst_getOpcode(MI), &reg, &reg2)) {
+				MI->flat_insn->detail->x86.operands[0].type = X86_OP_REG;
+				MI->flat_insn->detail->x86.operands[0].reg = reg;
+				MI->flat_insn->detail->x86.operands[0].size = MI->csh->regsize_map[reg];
+				MI->flat_insn->detail->x86.operands[1].type = X86_OP_REG;
+				MI->flat_insn->detail->x86.operands[1].reg = reg2;
+				MI->flat_insn->detail->x86.operands[1].size = MI->csh->regsize_map[reg2];
+				MI->flat_insn->detail->x86.op_count = 2;
+			}
 		}
 	}
 

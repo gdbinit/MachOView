@@ -16,7 +16,7 @@
 
 #ifdef CAPSTONE_HAS_ARM64
 
-#include "../../inttypes.h"
+#include "../../myinttypes.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -333,7 +333,8 @@ static bool printSysAlias(MCInst *MI, SStream *O)
 	unsigned CnVal = (unsigned)MCOperand_getImm(Cn);
 	unsigned CmVal = (unsigned)MCOperand_getImm(Cm);
 	unsigned Op2Val = (unsigned)MCOperand_getImm(Op2);
-	unsigned insn_id, op_ic = 0, op_dc = 0, op_at = 0, op_tlbi = 0;
+	unsigned insn_id = ARM64_INS_INVALID;
+	unsigned op_ic = 0, op_dc = 0, op_at = 0, op_tlbi = 0;
 
 	if (CnVal == 7) {
 		switch (CmVal) {
@@ -605,12 +606,16 @@ static void printOperand(MCInst *MI, unsigned OpNo, SStream *O)
 			}
 		}
 	} else if (MCOperand_isImm(Op)) {
-		int imm = (int)MCOperand_getImm(Op);
-		printInt32Bang(O, imm);
+		int64_t imm = MCOperand_getImm(Op);
 
+		if (MI->Opcode == AArch64_ADR) {
+			imm += MI->address;
+			printUInt64Bang(O, imm);
+		} else
+			printUInt64Bang(O, imm);
 		if (MI->csh->detail) {
 			if (MI->csh->doing_mem) {
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].mem.disp = imm;
+				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].mem.disp = (int32_t)imm;
 			} else {
 				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
 				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = imm;
@@ -1238,10 +1243,11 @@ static void printAlignedLabel(MCInst *MI, unsigned OpNum, SStream *O)
 	// If the label has already been resolved to an immediate offset (say, when
 	// we're running the disassembler), just print the immediate.
 	if (MCOperand_isImm(Op)) {
-		printInt64Bang(O, MCOperand_getImm(Op) << 2);
+		uint64_t imm = (MCOperand_getImm(Op) << 2) + MI->address;
+		printUInt64Bang(O, imm);
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
-			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = (int)MCOperand_getImm(Op) << 2;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = imm;
 			MI->flat_insn->detail->arm64.op_count++;
 		}
 		return;

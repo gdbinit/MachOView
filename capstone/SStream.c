@@ -3,12 +3,16 @@
 
 #include <stdint.h>
 #include <stdarg.h>
+#if defined(CAPSTONE_HAS_OSXKERNEL)
+#include <libkern/libkern.h>
+#else
 #include <stdio.h>
+#endif
 #include <string.h>
 
 #include "SStream.h"
 #include "cs_priv.h"
-#include "inttypes.h"
+#include "myinttypes.h"
 #include "utils.h"
 
 #ifdef _MSC_VER
@@ -59,6 +63,14 @@ void printInt64Bang(SStream *O, int64_t val)
 		else
 			SStream_concat(O, "#-%"PRIu64, -val);
 	}
+}
+
+void printUInt64Bang(SStream *O, uint64_t val)
+{
+	if (val > HEX_THRESHOLD)
+		SStream_concat(O, "#0x%"PRIx64, val);
+	else
+		SStream_concat(O, "#%"PRIu64, val);
 }
 
 // print number
