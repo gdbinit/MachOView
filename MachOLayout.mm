@@ -1677,6 +1677,8 @@ struct CompareSectionByName
       section = [self findSectionByName:"__category_list" andSegment:"__OBJC2"];
       if (section == NULL)
         section = [self findSectionByName:"__objc_catlist" andSegment:"__DATA"];
+      if (section == NULL)
+        section = [self findSectionByName:"__objc_catlist" andSegment:"__DATA_CONST"];
       if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
       {
         [self createObjC2PointerListNode:sectionNode
@@ -1689,6 +1691,8 @@ struct CompareSectionByName
       section = [self findSectionByName:"__class_list" andSegment:"__OBJC2"];
       if (section == NULL)
         section = [self findSectionByName:"__objc_classlist" andSegment:"__DATA"];
+      if (section == NULL)
+        section = [self findSectionByName:"__objc_classlist" andSegment:"__DATA_CONST"];
       if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
       {
         [self createObjC2PointerListNode:sectionNode 
@@ -1725,6 +1729,8 @@ struct CompareSectionByName
       section = [self findSectionByName:"__protocol_list" andSegment:"__OBJC2"];
       if (section == NULL)
         section = [self findSectionByName:"__objc_protolist" andSegment:"__DATA"];
+      if (section == NULL)
+        section = [self findSectionByName:"__objc_protolist" andSegment:"__DATA_CONST"];
       if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
       {
         [self createObjC2PointerListNode:sectionNode 
@@ -1749,6 +1755,8 @@ struct CompareSectionByName
     section = [self findSectionByName:"__image_info" andSegment:"__OBJC"];
     if (section == NULL)
       section = [self findSectionByName:"__objc_imageinfo" andSegment:"__DATA"];
+    if (section == NULL)
+      section = [self findSectionByName:"__objc_imageinfo" andSegment:"__DATA_CONST"];
     if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection:section]]))
     {
       [self createObjCImageInfoNode:sectionNode 
@@ -1803,6 +1811,8 @@ struct CompareSectionByName
     section_64 = [self findSection64ByName:"__class_list" andSegment:"__OBJC2"];
     if (section_64 == NULL)
       section_64 = [self findSection64ByName:"__objc_classlist" andSegment:"__DATA"];
+    if (section_64 == NULL)
+      section_64 = [self findSection64ByName:"__objc_classlist" andSegment:"__DATA_CONST"];
     if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection64:section_64]]))
     {
       [self createObjC2Pointer64ListNode:sectionNode 
@@ -1839,6 +1849,8 @@ struct CompareSectionByName
     section_64 = [self findSection64ByName:"__category_list" andSegment:"__OBJC2"];
     if (section_64 == NULL)
       section_64 = [self findSection64ByName:"__objc_catlist" andSegment:"__DATA"];
+    if (section_64 == NULL)
+        section_64 = [self findSection64ByName:"__objc_catlist" andSegment:"__DATA_CONST"];
     if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection64:section_64]]))
     {
       [self createObjC2Pointer64ListNode:sectionNode 
@@ -1851,6 +1863,8 @@ struct CompareSectionByName
     section_64 = [self findSection64ByName:"__protocol_list" andSegment:"__OBJC2"];
     if (section_64 == NULL)
       section_64 = [self findSection64ByName:"__objc_protolist" andSegment:"__DATA"];
+    if (section_64 == NULL)
+      section_64 = [self findSection64ByName:"__objc_protolist" andSegment:"__DATA_CONST"];
     if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection64:section_64]]))
     {
       [self createObjC2Pointer64ListNode:sectionNode 
@@ -1874,6 +1888,8 @@ struct CompareSectionByName
     section_64 = [self findSection64ByName:"__image_info" andSegment:"__OBJC"];
     if (section_64 == NULL)
       section_64 = [self findSection64ByName:"__objc_imageinfo" andSegment:"__DATA"];
+    if (section_64 == NULL)
+      section_64 = [self findSection64ByName:"__objc_imageinfo" andSegment:"__DATA_CONST"];
     if ((sectionNode = [self findNodeByUserInfo:[self userInfoForSection64:section_64]]))
     {
       [self createObjCImageInfoNode:sectionNode 
