@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBuildDate</key>
-	<string>Thu Apr 23 12:18:08 WEST 2015</string>
+	<string>Thu May  5 09:43:26 CST 2016</string>
 	<key>CFBuildNumber</key>
-	<string>9121</string>
+	<string>9123</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -32,7 +32,7 @@
 	<key>CFBundleIconFile</key>
 	<string>redApple.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -44,7 +44,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>9121</string>
+	<string>9123</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersion</key>
