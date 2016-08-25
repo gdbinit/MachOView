@@ -827,9 +827,10 @@ using namespace std;
         nameToStore = (nameToStore != nil 
                        ? [nameToStore stringByAppendingFormat:@"(%@)", symbolName] 
                        : [NSString stringWithFormat:@"0x%X (%@)", nlist->n_value, symbolName]);
-        
-        [symbolNames setObject:nameToStore
-                        forKey:[NSNumber numberWithUnsignedLong:nlist->n_value]];
+        if(nameToStore){
+             [symbolNames setObject:nameToStore
+                              forKey:[NSNumber numberWithUnsignedLong:nlist->n_value]];
+        }
       }
     } 
     else
@@ -841,8 +842,10 @@ using namespace std;
       
       // fill in lookup table with undefined sybols (key equals (-1) * index)
       uint32_t key = *symbols.begin() - nlist - 1;
-      [symbolNames setObject:symbolName
-                      forKey:[NSNumber numberWithUnsignedLong:key]];
+      if(symbolName){
+        [symbolNames setObject:symbolName
+                            forKey:[NSNumber numberWithUnsignedLong:key]];
+      }
     }
 
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,
@@ -991,9 +994,10 @@ using namespace std;
         nameToStore = (nameToStore != nil 
                        ? [nameToStore stringByAppendingFormat:@"(%@)", symbolName] 
                        : [NSString stringWithFormat:@"0x%qX (%@)", nlist_64->n_value, symbolName]);
-        
-        [symbolNames setObject:nameToStore
-                        forKey:[NSNumber numberWithUnsignedLongLong:nlist_64->n_value]];
+        if(nameToStore){
+          [symbolNames setObject:nameToStore
+                              forKey:[NSNumber numberWithUnsignedLongLong:nlist_64->n_value]];
+        }
       }
     } 
     else
@@ -1005,8 +1009,10 @@ using namespace std;
       
       // fill in lookup table with undefined sybols (key equals (-1) * index)
       uint64_t key = *symbols_64.begin() - nlist_64 - 1;
-      [symbolNames setObject:symbolName
-                      forKey:[NSNumber numberWithUnsignedLongLong:key]];
+      if(symbolName){
+        [symbolNames setObject:symbolName
+                            forKey:[NSNumber numberWithUnsignedLongLong:key]];
+      }
     }
     
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,
@@ -1174,10 +1180,11 @@ using namespace std;
             symbolName = [NSString stringWithFormat:@"[0x%X->LOCAL ABSOLUTE]",indirectAddress];
           }
         }
-
-        // fill in lookup table with special indirect sybols
-        [symbolNames setObject:symbolName
-                        forKey:[NSNumber numberWithUnsignedLong:indirectAddress]];
+        if(symbolName){
+          // fill in lookup table with special indirect sybols
+          [symbolNames setObject:symbolName
+                              forKey:[NSNumber numberWithUnsignedLong:indirectAddress]];
+        }
       }
         
       [node.details appendRow:@"":@"":@"Section"
@@ -1303,9 +1310,11 @@ using namespace std;
           }
         }
         
+        if(symbolName){
         // fill in lookup table with special indirect sybols
-        [symbolNames setObject:symbolName
-                        forKey:[NSNumber numberWithUnsignedLongLong:indirectAddress]];
+          [symbolNames setObject:symbolName
+                              forKey:[NSNumber numberWithUnsignedLongLong:indirectAddress]];
+        }
       }
       
       [node.details appendRow:@"":@"":@"Section"
