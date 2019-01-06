@@ -685,7 +685,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_TEMP_DIR = "$(inherited)";
@@ -726,9 +725,7 @@
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx10.9;
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
 			name = Debug;
@@ -737,7 +734,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_TEMP_DIR = "$(inherited)";
@@ -781,10 +777,8 @@
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx10.9;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
-				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
 			};
 			name = Release;
@@ -793,6 +787,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -818,6 +813,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				CODE_SIGN_IDENTITY = "";
