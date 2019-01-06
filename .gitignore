@@ -1,5 +1,9 @@
-.svn/*
-build/*
+.svn/
+.DS_Store
+xcuserdata/
+build/
+Pods/
+.idea/
 English.lproj/.svn/all-wcprops
 English.lproj/.svn/entries
 English.lproj/.svn/text-base/InfoPlist.strings.svn-base
