@@ -31,3 +31,11 @@ The whole Mach-O parsing code needs to be reviewed and made more robust.
 
 Enjoy,
 fG!
+
+Note:
+This repo is frozen in time and there are kinda active forks out there.
+The main problem of this codebase is that the Mach-O parser has quite some problems
+and needs a significant overhaul to make it more robust and secure.
+I do have much better code but it's under NDAs etc and I don't have energy to reinvent
+the wheel once again. Secure executable binary parsing is a ton of work in C/C++.
+It's possible but it's is exhausting.
