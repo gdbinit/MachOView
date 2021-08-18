@@ -74,6 +74,7 @@ using namespace std;
     case LC_DYLIB_CODE_SIGN_DRS:  return @"LC_DYLIB_CODE_SIGN_DRS";
     case LC_LINKER_OPTION:        return @"LC_LINKER_OPTION";
     case LC_LINKER_OPTIMIZATION_HINT: return @"LC_LINKER_OPTIMIZATION_HINT";
+    case LC_BUILD_VERSION:        return @"LC_BUILD_VERSION";
   }
 }
 
@@ -1875,6 +1876,116 @@ using namespace std;
   return node;
 }
 
+- (NSString *)platformDescription:(uint32_t)platform {
+  switch (platform) {
+    case PLATFORM_MACOS: return @"macOS";
+    case PLATFORM_IOS: return @"iOS";
+    case PLATFORM_TVOS: return @"tvOS";
+    case PLATFORM_WATCHOS: return @"watchOS";
+    case PLATFORM_BRIDGEOS: return @"brigeOS";
+    case PLATFORM_MACCATALYST: return @"Mac Catalyst";
+    case PLATFORM_IOSSIMULATOR: return @"iOS Simulator";
+    case PLATFORM_TVOSSIMULATOR: return @"tvOS Simulator";
+    case PLATFORM_WATCHOSSIMULATOR: return @"watchOS Simulator";
+    case PLATFORM_DRIVERKIT: return @"DriverKit";
+    default: return @"Unknown";
+  }
+}
+
+- (NSString *)toolDescription:(uint32_t)tool {
+  switch (tool) {
+    case TOOL_CLANG: return @"clang";
+    case TOOL_SWIFT: return @"swiftc";
+    case TOOL_LD: return @"ld";
+    default: return @"unknown";
+  }
+}
+
+//-----------------------------------------------------------------------------
+- (MVNode *)createBuildVersionNode:(MVNode *)parent
+                           caption:(NSString *)caption
+                          location:(uint32_t)location
+               version_min_command:(struct build_version_command const *)build_version_command
+{
+  MVNodeSaver nodeSaver;
+  MVNode * node = [parent insertChildWithDetails:caption location:location length:build_version_command->cmdsize saver:nodeSaver];
+
+  NSRange range = NSMakeRange(location,0);
+  NSString * lastReadHex;
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command"
+                         :[self getNameForCommand:build_version_command->cmd]];
+
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command Size"
+                         :[NSString stringWithFormat:@"%u", build_version_command->cmdsize]];
+
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+                              MVUnderlineAttributeName,@"YES",nil];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  NSString *platform = [self platformDescription:build_version_command->platform];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Platform"
+                         :[NSString stringWithFormat:@"%@ (%u)", platform, build_version_command->platform]];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Minimum OS Version"
+                         :[NSString stringWithFormat:@"%u.%u.%u",
+                           (build_version_command->minos >> 16),
+                           ((build_version_command->minos >> 8) & 0xff),
+                           (build_version_command->minos & 0xff)]];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Build SDK Version"
+                         :[NSString stringWithFormat:@"%u.%u.%u",
+                           (build_version_command->sdk >> 16),
+                           ((build_version_command->sdk >> 8) & 0xff),
+                           (build_version_command->sdk & 0xff)]];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Number of tools entries"
+                         :[NSString stringWithFormat:@"%u", build_version_command->ntools]];
+  [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+
+  for (uint32_t i = 0; i < build_version_command->ntools; i++) {
+    NSData *bytes = [dataController read_bytes:range length:sizeof(build_tool_version) lastReadHex:&lastReadHex];
+    struct build_tool_version tool_version;
+    [bytes getBytes:&tool_version];
+
+    NSString *tool = [self toolDescription:tool_version.tool];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Tool"
+                           :[NSString stringWithFormat:@"%@ (%u)", tool, tool_version.tool]];
+
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                           :lastReadHex
+                           :@"Tool Version"
+                           :[NSString stringWithFormat:@"%u.%u.%u",
+                             (tool_version.version >> 16),
+                             ((tool_version.version >> 8) & 0xff),
+                             (tool_version.version & 0xff)]];
+    [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+  }
+
+  return node;
+}
+
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCMainNode:(MVNode *)parent
                      caption:(NSString *)caption
@@ -2402,6 +2513,14 @@ using namespace std;
                                     caption:caption
                                    location:location
                       linker_option_command:linker_option_command];
+    } break;
+    case LC_BUILD_VERSION:
+    {
+      MATCH_STRUCT(build_version_command, location);
+      node = [self createBuildVersionNode:parent
+                                  caption:caption
+                                 location:location
+                      version_min_command:build_version_command];
     } break;
     default:
       [self createDataNode:parent 
