@@ -450,25 +450,27 @@ enum ViewType
 {
   if ([notification object] == dataController)
   {
-    NSString * threadState = [[notification userInfo] objectForKey:MVStatusUserInfoKey];
-    if ([threadState isEqualToString:MVStatusTaskStarted] == YES)
-    {
-      if (OSAtomicIncrement32(&threadCount) == 1)
+    dispatch_async(dispatch_get_main_queue(), ^{
+      NSString * threadState = [[notification userInfo] objectForKey:MVStatusUserInfoKey];
+      if ([threadState isEqualToString:MVStatusTaskStarted] == YES)
       {
-        [progressIndicator setUsesThreadedAnimation:YES];
-        [progressIndicator startAnimation:nil];
-        [stopButton setHidden:NO];
+        if (OSAtomicIncrement32(&threadCount) == 1)
+        {
+          [progressIndicator setUsesThreadedAnimation:YES];
+          [progressIndicator startAnimation:nil];
+          [stopButton setHidden:NO];
+        }
       }
-    }
-    else if ([threadState isEqualToString:MVStatusTaskTerminated] == YES)
-    {
-      if (OSAtomicDecrement32(&threadCount) == 0)
+      else if ([threadState isEqualToString:MVStatusTaskTerminated] == YES)
       {
-        [progressIndicator stopAnimation:nil]; 
-        [statusText setStringValue:@""];
-        [stopButton setHidden:YES];
+        if (OSAtomicDecrement32(&threadCount) == 0)
+        {
+          [progressIndicator stopAnimation:nil];
+          [statusText setStringValue:@""];
+          [stopButton setHidden:YES];
+        }
       }
-    }
+    });
   }
 }
 
