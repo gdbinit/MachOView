@@ -15,6 +15,7 @@
 #import "Common.h"
 #import "Document.h"
 #import "DataController.h"
+#import "DataSources.h"
 #import "Layout.h"
 #include <unistd.h>
 
@@ -49,6 +50,9 @@
 
 
 //============================================================================
+@interface MVTable()<NSMenuItemValidation>
+@end
+
 @implementation MVTableView
 
 //----------------------------------------------------------------------------
@@ -129,6 +133,30 @@
     // We lose focus so re-establish
     [[self window] makeFirstResponder:self];
   }
+}
+
+- (void)copy:(NSMenuItem *)menuItem {
+  MVDataSourceDetails *ds = self.dataSource;
+  if (![ds isKindOfClass:[MVDataSourceDetails class]]) {
+    assert(0);
+    return;
+  }
+  
+  MVDocument * document = [[[self window] windowController] document];
+  MVNode * selectedNode = document.dataController.selectedNode;
+  
+  [[NSPasteboard generalPasteboard] clearContents];
+  if (selectedNode.details) {
+    [[NSPasteboard generalPasteboard] setString:[ds fullDetailData:self] forType:NSPasteboardTypeString];
+  } else {
+    [[NSPasteboard generalPasteboard] setString:[ds fullBinaryData:self] forType:NSPasteboardTypeString];
+  }
+}
+
+#pragma-mark NSMenuItemValidation
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+  return YES;
 }
 
 @end
@@ -455,18 +483,22 @@ enum ViewType
     {
       if (OSAtomicIncrement32(&threadCount) == 1)
       {
-        [progressIndicator setUsesThreadedAnimation:YES];
-        [progressIndicator startAnimation:nil];
-        [stopButton setHidden:NO];
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [progressIndicator setUsesThreadedAnimation:YES];
+          [progressIndicator startAnimation:nil];
+          [stopButton setHidden:NO];
+        });
       }
     }
     else if ([threadState isEqualToString:MVStatusTaskTerminated] == YES)
     {
       if (OSAtomicDecrement32(&threadCount) == 0)
       {
-        [progressIndicator stopAnimation:nil]; 
-        [statusText setStringValue:@""];
-        [stopButton setHidden:YES];
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [progressIndicator stopAnimation:nil];
+          [statusText setStringValue:@""];
+          [stopButton setHidden:YES];
+        });
       }
     }
   }

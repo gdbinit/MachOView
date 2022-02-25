@@ -13,5 +13,7 @@ extern NSString * const MVScannerErrorMessage;
 
 
 @interface MVDataSourceDetails : NSObject;
+- (NSString *)fullBinaryData:(NSTableView *)tableView;
+- (NSString *)fullDetailData:(NSTableView *)tableView;
 @end
 
