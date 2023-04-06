@@ -89,6 +89,10 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   return self;
 }
 
+-(NSString *)fullString {
+  return [NSString stringWithFormat:@"%@ %@ %@ %@", offsetStr, dataStr, descriptionStr, valueStr];
+}
+
 //-----------------------------------------------------------------------------
 +(MVColoumns *) coloumnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3
 {
@@ -453,6 +457,22 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 - (NSUInteger)rowCountToDisplay
 {
   return [displayRows count];
+}
+
+- (NSString *)allContents {
+  NSMutableString *str = [NSMutableString new];
+  for(MVRow *row in displayRows) {
+    if (row.coloumns == nil ){
+      [row loadFromFile:swapFile];
+    }
+    [str appendString:row.coloumns.fullString];
+    [str appendString:@"\n"];
+  }
+  return str;
+}
+
+- (void)showAllRows {
+  NSLog(@"%@", [self allContents]);
 }
 
 //----------------------------------------------------------------------------

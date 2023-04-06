@@ -81,6 +81,15 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
 
 #pragma mark NSTableView must-have delegates
 
+- (NSInteger)numberOfBinaryRows:(MVNode *)node {
+  NSInteger numRows = node.dataRange.length / 16;
+  if (node.dataRange.length % 16 != 0)
+  {
+    ++numRows;
+  }
+  return numRows;
+}
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   MVDocument * document = [[[aTableView window] windowController] document];
@@ -89,16 +98,11 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
   // if there is no details, then provide binary dump
   if (selectedNode.details == nil)
   {
-    NSInteger numRows = selectedNode.dataRange.length / 16;
-    if (selectedNode.dataRange.length % 16 != 0)
-    {
-      ++numRows;
-    }
-    return numRows;
+    return [self numberOfBinaryRows:selectedNode];
   }
-
   return selectedNode.details.rowCountToDisplay;
 }
+
 //----------------------------------------------------------------------------
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
@@ -119,87 +123,11 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
   // if it has no details then show binary data at given range
   if (selectedNode.details == nil)
   {
-    NSUInteger offset = selectedNode.dataRange.location + rowIndex * 16;
-    
-    // file offset
-    if (colIndex == OFFSET_COLUMN)
-    {
-      NSString * cellContent = [NSString stringWithFormat:@"%.8lX", offset];
-      if ([document isRVA] == YES)
-      {
-        id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
-        return [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
-      }
-      return cellContent;
-    }
-
-    // binary data
-    uint8_t buffer[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    
-    NSUInteger len = MIN(selectedNode.dataRange.length - rowIndex * 16, (NSUInteger)16);
-    
-    memcpy(buffer, (uint8_t *)[document.dataController.fileData bytes] + offset, len);
-    
-    if (colIndex == DATA_LO_COLUMN)
-    {
-      NSUInteger index = (len > 8 ? 8 : len); 
-            
-      return [[NSString stringWithFormat:@"%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X ", 
-              buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]]
-              substringToIndex:index*3];
-    }
-    
-    if (colIndex == DATA_HI_COLUMN)
-    {
-      NSUInteger index = (len > 8 ? len - 8 : 0);
-      
-      return [[NSString stringWithFormat:@"%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X ", 
-              buffer[8], buffer[9], buffer[10], buffer[11], buffer[12], buffer[13], buffer[14], buffer[15]]
-              substringToIndex:index*3];
-    }
-    
-    // textual data (where possible)
-    for (NSUInteger i = 0; i < len; ++i)
-    {
-      // keep the output in ASCII
-      if (buffer[i] < 32 || buffer[i] > 126)
-      {
-        buffer[i] = '.';
-      }
-    }
-    
-    return NSSTRING(buffer);
+    return [self getBinaryString:rowIndex column:colIndex doc:document];
   }
   
   // if it has descripion then show it
-  MVRow * row = [selectedNode.details getRowToDisplay:rowIndex];
-  if (row != nil)
-  { 
-    NSString * cellContent = [row coloumnAtIndex:colIndex];
-      
-    // special column is the offset column:
-    // if RVA is selected then subtitute the content on the fly
-    if (colIndex == OFFSET_COLUMN && [cellContent length] > 0) 
-    {
-      if ([document isRVA] == YES)
-      {
-        id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
-        cellContent = [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
-      }
-    }
-      
-    // put formatting on display text
-    NSColor * color = [row.attributes objectForKey:MVTextColorAttributeName];
-    if (color != nil)
-    {
-      NSDictionary * attributes = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
-      return [[NSAttributedString alloc] initWithString:cellContent
-                                             attributes:attributes];
-    }
-    return cellContent;
-  }
-  
-  return nil;
+  return [self getDetailString:rowIndex column:colIndex doc:document];
 }
 //----------------------------------------------------------------------------
 
@@ -308,6 +236,128 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
 }
 //----------------------------------------------------------------------------
 
+#pragma mark Utils
 
+- (NSString *)getBinaryString:(NSInteger)rowIndex column:(NSInteger)colIndex doc:(MVDocument *)document {
+  MVNode * selectedNode = document.dataController.selectedNode;
+  NSUInteger offset = selectedNode.dataRange.location + rowIndex * 16;
+  
+  // file offset
+  if (colIndex == OFFSET_COLUMN)
+  {
+    NSString * cellContent = [NSString stringWithFormat:@"%.8lX", offset];
+    if ([document isRVA] == YES)
+    {
+      id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
+      return [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
+    }
+    return cellContent;
+  }
+
+  // binary data
+  uint8_t buffer[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  
+  NSUInteger len = MIN(selectedNode.dataRange.length - rowIndex * 16, (NSUInteger)16);
+  
+  memcpy(buffer, (uint8_t *)[document.dataController.fileData bytes] + offset, len);
+  
+  if (colIndex == DATA_LO_COLUMN)
+  {
+    NSUInteger index = (len > 8 ? 8 : len);
+          
+    return [[NSString stringWithFormat:@"%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X ",
+            buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]]
+            substringToIndex:index*3];
+  }
+  
+  if (colIndex == DATA_HI_COLUMN)
+  {
+    NSUInteger index = (len > 8 ? len - 8 : 0);
+    
+    return [[NSString stringWithFormat:@"%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X ",
+            buffer[8], buffer[9], buffer[10], buffer[11], buffer[12], buffer[13], buffer[14], buffer[15]]
+            substringToIndex:index*3];
+  }
+  
+  // textual data (where possible)
+  for (NSUInteger i = 0; i < len; ++i)
+  {
+    // keep the output in ASCII
+    if (buffer[i] < 32 || buffer[i] > 126)
+    {
+      buffer[i] = '.';
+    }
+  }
+  
+  return NSSTRING(buffer);
+}
+
+- (id)getDetailString:(NSInteger)rowIndex column:(NSInteger)colIndex doc:(MVDocument *)document {
+  MVNode * selectedNode = document.dataController.selectedNode;
+  MVRow * row = [selectedNode.details getRowToDisplay:rowIndex];
+  if (row != nil)
+  {
+    NSString * cellContent = [row coloumnAtIndex:colIndex];
+      
+    // special column is the offset column:
+    // if RVA is selected then subtitute the content on the fly
+    if (colIndex == OFFSET_COLUMN && [cellContent length] > 0)
+    {
+      if ([document isRVA] == YES)
+      {
+        id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
+        cellContent = [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
+      }
+    }
+      
+    // put formatting on display text
+    NSColor * color = [row.attributes objectForKey:MVTextColorAttributeName];
+    if (color != nil)
+    {
+      NSDictionary * attributes = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
+      return [[NSAttributedString alloc] initWithString:cellContent
+                                             attributes:attributes];
+    }
+    return cellContent;
+  }
+  return nil;
+}
+
+- (NSString *)fullBinaryData:(NSTableView *)tableView {
+  MVDocument * document = [[[tableView window] windowController] document];
+  MVNode * selectedNode = document.dataController.selectedNode;
+  
+  NSInteger numRow = [self numberOfBinaryRows:selectedNode];
+  NSMutableString *result = [NSMutableString new];
+  for (NSInteger i = 0; i<numRow; ++i) {
+    [result appendString:
+      [NSString stringWithFormat:@"%@ %@ %@ %@\n",
+      [self getBinaryString:i column:OFFSET_COLUMN doc:document],
+      [self getBinaryString:i column:DATA_LO_COLUMN doc:document],
+      [self getBinaryString:i column:DATA_HI_COLUMN doc:document],
+      [self getBinaryString:i column:VALUE_COLUMN doc:document]
+      ]
+    ];
+  }
+  return result;
+}
+
+- (NSString *)fullDetailData:(NSTableView *)tableView {
+  MVDocument * document = [[[tableView window] windowController] document];
+  MVNode * selectedNode = document.dataController.selectedNode;
+  
+  NSInteger numRow = selectedNode.details.rowCountToDisplay;
+  NSMutableString *result = [NSMutableString new];
+  for (NSInteger i = 0; i<numRow; ++i) {
+    [result appendString:
+      [NSString stringWithFormat:@"%@ %@ %@ %@\n",
+      [self getDetailString:i column:OFFSET_COLUMN doc:document],
+      [self getDetailString:i column:DATA_COLUMN doc:document],
+      [self getDetailString:i column:DESCRIPTION_COLUMN doc:document],
+      [self getDetailString:i column:VALUE_COLUMN doc:document]]
+    ];
+  }
+  return result;
+}
 
 @end

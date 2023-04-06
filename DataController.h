@@ -55,6 +55,7 @@ struct MVNodeSaver;
 @property (nonatomic)   NSString * valueStr;
 
 +(MVColoumns *) coloumnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3;
+-(NSString *)fullString;
 
 @end
 
@@ -95,6 +96,8 @@ struct MVNodeSaver;
 @property (nonatomic)   FILE * swapFile;
 
 - (NSUInteger)          rowCountToDisplay;
+- (NSString *)allContents;
+- (void)showAllRows;
 - (MVRow *)             getRowToDisplay:(NSUInteger)rowIndex;
 
 - (void)                popRow;
