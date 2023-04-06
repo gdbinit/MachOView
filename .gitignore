@@ -38,3 +38,5 @@ otool_disasm/.svn/text-base/symbol.c.svn-base
 otool_disasm/disasm.xcodeproj/.svn/all-wcprops
 otool_disasm/disasm.xcodeproj/.svn/entries
 otool_disasm/disasm.xcodeproj/.svn/text-base/project.pbxproj.svn-base
+
+*.xcodeproj/xcuserdata/
