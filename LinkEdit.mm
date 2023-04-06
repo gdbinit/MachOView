@@ -874,6 +874,9 @@ using namespace std;
     // accumulate search info
     NSUInteger bookmark = node.details.rowCount;
     NSString * symbolName = NSSTRING(strtab + nlist_64->n_un.n_strx);
+    if (symbolName == nil) {
+      continue;
+    }
     NSColor * color = nil;
     
     /* print the symbol nr */
