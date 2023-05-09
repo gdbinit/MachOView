@@ -261,31 +261,32 @@ using namespace std;
                          :@"Flags"
                          :@""];
   
-  switch (section->flags & SECTION_TYPE)
-  {
-    case S_REGULAR:                             [node.details appendRow:@"":@"":@"00000000":@"S_REGULAR"]; break;
-    case S_ZEROFILL:                            [node.details appendRow:@"":@"":@"00000001":@"S_ZEROFILL"]; break;
-    case S_CSTRING_LITERALS:                    [node.details appendRow:@"":@"":@"00000002":@"S_CSTRING_LITERALS"]; break;
-    case S_4BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000003":@"S_4BYTE_LITERALS"]; break;
-    case S_8BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000004":@"S_8BYTE_LITERALS"]; break;
-    case S_LITERAL_POINTERS:                    [node.details appendRow:@"":@"":@"00000005":@"S_LITERAL_POINTERS"]; break;
-    case S_NON_LAZY_SYMBOL_POINTERS:            [node.details appendRow:@"":@"":@"00000006":@"S_NON_LAZY_SYMBOL_POINTERS"]; break;
-    case S_LAZY_SYMBOL_POINTERS:                [node.details appendRow:@"":@"":@"00000007":@"S_LAZY_SYMBOL_POINTERS"]; break;
-    case S_SYMBOL_STUBS:                        [node.details appendRow:@"":@"":@"00000008":@"S_SYMBOL_STUBS"]; break;
-    case S_MOD_INIT_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"00000009":@"S_MOD_INIT_FUNC_POINTERS"]; break;
-    case S_MOD_TERM_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"0000000A":@"S_MOD_TERM_FUNC_POINTERS"]; break;
-    case S_COALESCED:                           [node.details appendRow:@"":@"":@"0000000B":@"S_COALESCED"]; break;
-    case S_GB_ZEROFILL:                         [node.details appendRow:@"":@"":@"0000000C":@"S_GB_ZEROFILL"]; break;
-    case S_INTERPOSING:                         [node.details appendRow:@"":@"":@"0000000D":@"S_INTERPOSING"]; break;
-    case S_16BYTE_LITERALS:                     [node.details appendRow:@"":@"":@"0000000E":@"S_16BYTE_LITERALS"]; break;
-    case S_DTRACE_DOF:                          [node.details appendRow:@"":@"":@"0000000F":@"S_DTRACE_DOF"]; break;
-    case S_LAZY_DYLIB_SYMBOL_POINTERS:          [node.details appendRow:@"":@"":@"00000010":@"S_LAZY_DYLIB_SYMBOL_POINTERS"]; break;
-    case S_THREAD_LOCAL_REGULAR:                [node.details appendRow:@"":@"":@"00000011":@"S_THREAD_LOCAL_REGULAR"]; break;
-    case S_THREAD_LOCAL_ZEROFILL:               [node.details appendRow:@"":@"":@"00000012":@"S_THREAD_LOCAL_ZEROFILL"]; break;
-    case S_THREAD_LOCAL_VARIABLES:              [node.details appendRow:@"":@"":@"00000013":@"S_THREAD_LOCAL_VARIABLES"]; break;
-    case S_THREAD_LOCAL_VARIABLE_POINTERS:      [node.details appendRow:@"":@"":@"00000014":@"S_THREAD_LOCAL_VARIABLE_POINTERS"]; break;
-    case S_THREAD_LOCAL_INIT_FUNCTION_POINTERS: [node.details appendRow:@"":@"":@"00000015":@"S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"]; break;
-  }
+    switch (section->flags & SECTION_TYPE)
+    {
+        case S_REGULAR:                             [node.details appendRow:@"":@"":@"00000000":@"S_REGULAR"]; break;
+        case S_ZEROFILL:                            [node.details appendRow:@"":@"":@"00000001":@"S_ZEROFILL"]; break;
+        case S_CSTRING_LITERALS:                    [node.details appendRow:@"":@"":@"00000002":@"S_CSTRING_LITERALS"]; break;
+        case S_4BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000003":@"S_4BYTE_LITERALS"]; break;
+        case S_8BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000004":@"S_8BYTE_LITERALS"]; break;
+        case S_LITERAL_POINTERS:                    [node.details appendRow:@"":@"":@"00000005":@"S_LITERAL_POINTERS"]; break;
+        case S_NON_LAZY_SYMBOL_POINTERS:            [node.details appendRow:@"":@"":@"00000006":@"S_NON_LAZY_SYMBOL_POINTERS"]; break;
+        case S_LAZY_SYMBOL_POINTERS:                [node.details appendRow:@"":@"":@"00000007":@"S_LAZY_SYMBOL_POINTERS"]; break;
+        case S_SYMBOL_STUBS:                        [node.details appendRow:@"":@"":@"00000008":@"S_SYMBOL_STUBS"]; break;
+        case S_MOD_INIT_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"00000009":@"S_MOD_INIT_FUNC_POINTERS"]; break;
+        case S_MOD_TERM_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"0000000A":@"S_MOD_TERM_FUNC_POINTERS"]; break;
+        case S_COALESCED:                           [node.details appendRow:@"":@"":@"0000000B":@"S_COALESCED"]; break;
+        case S_GB_ZEROFILL:                         [node.details appendRow:@"":@"":@"0000000C":@"S_GB_ZEROFILL"]; break;
+        case S_INTERPOSING:                         [node.details appendRow:@"":@"":@"0000000D":@"S_INTERPOSING"]; break;
+        case S_16BYTE_LITERALS:                     [node.details appendRow:@"":@"":@"0000000E":@"S_16BYTE_LITERALS"]; break;
+        case S_DTRACE_DOF:                          [node.details appendRow:@"":@"":@"0000000F":@"S_DTRACE_DOF"]; break;
+        case S_LAZY_DYLIB_SYMBOL_POINTERS:          [node.details appendRow:@"":@"":@"00000010":@"S_LAZY_DYLIB_SYMBOL_POINTERS"]; break;
+        case S_THREAD_LOCAL_REGULAR:                [node.details appendRow:@"":@"":@"00000011":@"S_THREAD_LOCAL_REGULAR"]; break;
+        case S_THREAD_LOCAL_ZEROFILL:               [node.details appendRow:@"":@"":@"00000012":@"S_THREAD_LOCAL_ZEROFILL"]; break;
+        case S_THREAD_LOCAL_VARIABLES:              [node.details appendRow:@"":@"":@"00000013":@"S_THREAD_LOCAL_VARIABLES"]; break;
+        case S_THREAD_LOCAL_VARIABLE_POINTERS:      [node.details appendRow:@"":@"":@"00000014":@"S_THREAD_LOCAL_VARIABLE_POINTERS"]; break;
+        case S_THREAD_LOCAL_INIT_FUNCTION_POINTERS: [node.details appendRow:@"":@"":@"00000015":@"S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"]; break;
+        case S_INIT_FUNC_OFFSETS:                   [node.details appendRow:@"":@"":@"00000016":@"S_INIT_FUNC_OFFSETS"]; break;
+    }
   
   if (section->flags & S_ATTR_PURE_INSTRUCTIONS)   [node.details appendRow:@"":@"":@"80000000":@"S_ATTR_PURE_INSTRUCTIONS"];
   if (section->flags & S_ATTR_NO_TOC)              [node.details appendRow:@"":@"":@"40000000":@"S_ATTR_NO_TOC"];
@@ -493,31 +494,32 @@ using namespace std;
                          :@"Flags"
                          :@""];
   
-  switch (section_64->flags & SECTION_TYPE)
-  {
-    case S_REGULAR:                             [node.details appendRow:@"":@"":@"00000000":@"S_REGULAR"]; break;
-    case S_ZEROFILL:                            [node.details appendRow:@"":@"":@"00000001":@"S_ZEROFILL"]; break;
-    case S_CSTRING_LITERALS:                    [node.details appendRow:@"":@"":@"00000002":@"S_CSTRING_LITERALS"]; break;
-    case S_4BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000003":@"S_4BYTE_LITERALS"]; break;
-    case S_8BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000004":@"S_8BYTE_LITERALS"]; break;
-    case S_LITERAL_POINTERS:                    [node.details appendRow:@"":@"":@"00000005":@"S_LITERAL_POINTERS"]; break;
-    case S_NON_LAZY_SYMBOL_POINTERS:            [node.details appendRow:@"":@"":@"00000006":@"S_NON_LAZY_SYMBOL_POINTERS"]; break;
-    case S_LAZY_SYMBOL_POINTERS:                [node.details appendRow:@"":@"":@"00000007":@"S_LAZY_SYMBOL_POINTERS"]; break;
-    case S_SYMBOL_STUBS:                        [node.details appendRow:@"":@"":@"00000008":@"S_SYMBOL_STUBS"]; break;
-    case S_MOD_INIT_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"00000009":@"S_MOD_INIT_FUNC_POINTERS"]; break;
-    case S_MOD_TERM_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"0000000A":@"S_MOD_TERM_FUNC_POINTERS"]; break;
-    case S_COALESCED:                           [node.details appendRow:@"":@"":@"0000000B":@"S_COALESCED"]; break;
-    case S_GB_ZEROFILL:                         [node.details appendRow:@"":@"":@"0000000C":@"S_GB_ZEROFILL"]; break;
-    case S_INTERPOSING:                         [node.details appendRow:@"":@"":@"0000000D":@"S_INTERPOSING"]; break;
-    case S_16BYTE_LITERALS:                     [node.details appendRow:@"":@"":@"0000000E":@"S_16BYTE_LITERALS"]; break;
-    case S_DTRACE_DOF:                          [node.details appendRow:@"":@"":@"0000000F":@"S_DTRACE_DOF"]; break;
-    case S_LAZY_DYLIB_SYMBOL_POINTERS:          [node.details appendRow:@"":@"":@"00000010":@"S_LAZY_DYLIB_SYMBOL_POINTERS"]; break;
-    case S_THREAD_LOCAL_REGULAR:                [node.details appendRow:@"":@"":@"00000011":@"S_THREAD_LOCAL_REGULAR"]; break;
-    case S_THREAD_LOCAL_ZEROFILL:               [node.details appendRow:@"":@"":@"00000012":@"S_THREAD_LOCAL_ZEROFILL"]; break;
-    case S_THREAD_LOCAL_VARIABLES:              [node.details appendRow:@"":@"":@"00000013":@"S_THREAD_LOCAL_VARIABLES"]; break;
-    case S_THREAD_LOCAL_VARIABLE_POINTERS:      [node.details appendRow:@"":@"":@"00000014":@"S_THREAD_LOCAL_VARIABLE_POINTERS"]; break;
-    case S_THREAD_LOCAL_INIT_FUNCTION_POINTERS: [node.details appendRow:@"":@"":@"00000015":@"S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"]; break;
-  }
+    switch (section_64->flags & SECTION_TYPE)
+    {
+        case S_REGULAR:                             [node.details appendRow:@"":@"":@"00000000":@"S_REGULAR"]; break;
+        case S_ZEROFILL:                            [node.details appendRow:@"":@"":@"00000001":@"S_ZEROFILL"]; break;
+        case S_CSTRING_LITERALS:                    [node.details appendRow:@"":@"":@"00000002":@"S_CSTRING_LITERALS"]; break;
+        case S_4BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000003":@"S_4BYTE_LITERALS"]; break;
+        case S_8BYTE_LITERALS:                      [node.details appendRow:@"":@"":@"00000004":@"S_8BYTE_LITERALS"]; break;
+        case S_LITERAL_POINTERS:                    [node.details appendRow:@"":@"":@"00000005":@"S_LITERAL_POINTERS"]; break;
+        case S_NON_LAZY_SYMBOL_POINTERS:            [node.details appendRow:@"":@"":@"00000006":@"S_NON_LAZY_SYMBOL_POINTERS"]; break;
+        case S_LAZY_SYMBOL_POINTERS:                [node.details appendRow:@"":@"":@"00000007":@"S_LAZY_SYMBOL_POINTERS"]; break;
+        case S_SYMBOL_STUBS:                        [node.details appendRow:@"":@"":@"00000008":@"S_SYMBOL_STUBS"]; break;
+        case S_MOD_INIT_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"00000009":@"S_MOD_INIT_FUNC_POINTERS"]; break;
+        case S_MOD_TERM_FUNC_POINTERS:              [node.details appendRow:@"":@"":@"0000000A":@"S_MOD_TERM_FUNC_POINTERS"]; break;
+        case S_COALESCED:                           [node.details appendRow:@"":@"":@"0000000B":@"S_COALESCED"]; break;
+        case S_GB_ZEROFILL:                         [node.details appendRow:@"":@"":@"0000000C":@"S_GB_ZEROFILL"]; break;
+        case S_INTERPOSING:                         [node.details appendRow:@"":@"":@"0000000D":@"S_INTERPOSING"]; break;
+        case S_16BYTE_LITERALS:                     [node.details appendRow:@"":@"":@"0000000E":@"S_16BYTE_LITERALS"]; break;
+        case S_DTRACE_DOF:                          [node.details appendRow:@"":@"":@"0000000F":@"S_DTRACE_DOF"]; break;
+        case S_LAZY_DYLIB_SYMBOL_POINTERS:          [node.details appendRow:@"":@"":@"00000010":@"S_LAZY_DYLIB_SYMBOL_POINTERS"]; break;
+        case S_THREAD_LOCAL_REGULAR:                [node.details appendRow:@"":@"":@"00000011":@"S_THREAD_LOCAL_REGULAR"]; break;
+        case S_THREAD_LOCAL_ZEROFILL:               [node.details appendRow:@"":@"":@"00000012":@"S_THREAD_LOCAL_ZEROFILL"]; break;
+        case S_THREAD_LOCAL_VARIABLES:              [node.details appendRow:@"":@"":@"00000013":@"S_THREAD_LOCAL_VARIABLES"]; break;
+        case S_THREAD_LOCAL_VARIABLE_POINTERS:      [node.details appendRow:@"":@"":@"00000014":@"S_THREAD_LOCAL_VARIABLE_POINTERS"]; break;
+        case S_THREAD_LOCAL_INIT_FUNCTION_POINTERS: [node.details appendRow:@"":@"":@"00000015":@"S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"]; break;
+        case S_INIT_FUNC_OFFSETS:                   [node.details appendRow:@"":@"":@"00000016":@"S_INIT_FUNC_OFFSETS"]; break;
+    }
   
   if (section_64->flags & S_ATTR_PURE_INSTRUCTIONS)   [node.details appendRow:@"":@"":@"80000000":@"S_ATTR_PURE_INSTRUCTIONS"];
   if (section_64->flags & S_ATTR_NO_TOC)              [node.details appendRow:@"":@"":@"40000000":@"S_ATTR_NO_TOC"];
