@@ -49,9 +49,9 @@
 
 /*
  * Structure of the __.SYMDEF table of contents for an archive.
- * __.SYMDEF begins with a long giving the size in bytes of the ranlib
+ * __.SYMDEF begins with a uint32_t giving the size in bytes of the ranlib
  * structures which immediately follow, and then continues with a string
- * table consisting of a long giving the number of bytes of strings which
+ * table consisting of a uint32_t giving the number of bytes of strings which
  * follow and then the strings themselves.  The ran_strx fields index the
  * string table whose first byte is numbered 0.
  */

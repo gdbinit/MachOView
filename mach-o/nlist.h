@@ -296,6 +296,18 @@ struct nlist_64 {
  */
 #define N_SYMBOL_RESOLVER  0x0100 
 
+/*
+ * The N_ALT_ENTRY bit of the n_desc field indicates that the
+ * symbol is pinned to the previous content.
+ */
+#define N_ALT_ENTRY 0x0200
+
+/*
+ * The N_COLD_FUNC bit of the n_desc field indicates that the symbol is used
+ * infrequently and the linker should order it towards the end of the section.
+ */
+#define N_COLD_FUNC 0x0400
+
 #ifndef __STRICT_BSD__
 #ifdef __cplusplus
 extern "C" {

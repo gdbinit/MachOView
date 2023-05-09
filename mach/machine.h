@@ -84,6 +84,7 @@ typedef integer_t	cpu_threadtype_t;
  */
 #define	CPU_ARCH_MASK	0xff000000		/* mask for architecture bits */
 #define CPU_ARCH_ABI64	0x01000000		/* 64 bit ABI */
+#define CPU_ARCH_ABI64_32       0x02000000      /* ABI for 64-bit hardware with 32-bit types; LP32 */
 
 /*
  *	Machine types known by all.
@@ -107,6 +108,7 @@ typedef integer_t	cpu_threadtype_t;
 #define CPU_TYPE_HPPA           ((cpu_type_t) 11)
 #define CPU_TYPE_ARM		((cpu_type_t) 12)
 #define CPU_TYPE_ARM64          (CPU_TYPE_ARM | CPU_ARCH_ABI64)
+#define CPU_TYPE_ARM64_32       (CPU_TYPE_ARM | CPU_ARCH_ABI64_32)
 #define CPU_TYPE_MC88000	((cpu_type_t) 13)
 #define CPU_TYPE_SPARC		((cpu_type_t) 14)
 #define CPU_TYPE_I860		((cpu_type_t) 15)
@@ -114,6 +116,11 @@ typedef integer_t	cpu_threadtype_t;
 /* skip				((cpu_type_t) 17)	*/
 #define CPU_TYPE_POWERPC		((cpu_type_t) 18)
 #define CPU_TYPE_POWERPC64		(CPU_TYPE_POWERPC | CPU_ARCH_ABI64)
+/* skip				((cpu_type_t) 19)	*/
+/* skip				((cpu_type_t) 20 */
+/* skip				((cpu_type_t) 21 */
+/* skip				((cpu_type_t) 22 */
+/* skip				((cpu_type_t) 23 */
 
 /*
  *	Machine subtypes (these are defined here, instead of in a machine
@@ -126,7 +133,14 @@ typedef integer_t	cpu_threadtype_t;
  */
 #define CPU_SUBTYPE_MASK	0xff000000	/* mask for feature flags */
 #define CPU_SUBTYPE_LIB64	0x80000000	/* 64 bit libraries */
+#define CPU_SUBTYPE_PTRAUTH_ABI 0x80000000      /* pointer authentication with versioned ABI */
 
+/*
+ *      When selecting a slice, ANY will pick the slice with the best
+ *      grading for the selected cpu_type_t, unlike the "ALL" subtypes,
+ *      which are the slices that can run on any hardware for that cpu type.
+ */
+#define CPU_SUBTYPE_ANY         ((cpu_subtype_t) -1)
 
 /*
  *	Object files that are hand-crafted to run on any
@@ -231,6 +245,7 @@ typedef integer_t	cpu_threadtype_t;
 #define CPU_SUBTYPE_X86_ALL		((cpu_subtype_t)3)
 #define CPU_SUBTYPE_X86_64_ALL		((cpu_subtype_t)3)
 #define CPU_SUBTYPE_X86_ARCH1		((cpu_subtype_t)4)
+#define CPU_SUBTYPE_X86_64_H            ((cpu_subtype_t)8)      /* Haswell feature subset */
 
 
 #define CPU_THREADTYPE_INTEL_HTT	((cpu_threadtype_t) 1)
@@ -306,22 +321,32 @@ typedef integer_t	cpu_threadtype_t;
 #define CPU_SUBTYPE_ARM_V6              ((cpu_subtype_t) 6)
 #define CPU_SUBTYPE_ARM_V5TEJ           ((cpu_subtype_t) 7)
 #define CPU_SUBTYPE_ARM_XSCALE		((cpu_subtype_t) 8)
-#define CPU_SUBTYPE_ARM_V7		((cpu_subtype_t) 9)
+#define CPU_SUBTYPE_ARM_V7              ((cpu_subtype_t) 9)  /* ARMv7-A and ARMv7-R */
 #define CPU_SUBTYPE_ARM_V7F		((cpu_subtype_t) 10) /* Cortex A9 */
 #define CPU_SUBTYPE_ARM_V7S		((cpu_subtype_t) 11) /* Swift */
-#define CPU_SUBTYPE_ARM_V7K		((cpu_subtype_t) 12) /* Kirkwood40 */
+#define CPU_SUBTYPE_ARM_V7K             ((cpu_subtype_t) 12)
+#define CPU_SUBTYPE_ARM_V8              ((cpu_subtype_t) 13)
 #define CPU_SUBTYPE_ARM_V6M		((cpu_subtype_t) 14) /* Not meant to be run under xnu */
 #define CPU_SUBTYPE_ARM_V7M		((cpu_subtype_t) 15) /* Not meant to be run under xnu */
 #define CPU_SUBTYPE_ARM_V7EM		((cpu_subtype_t) 16) /* Not meant to be run under xnu */
-
-#define CPU_SUBTYPE_ARM_V8		((cpu_subtype_t) 13)
+#define CPU_SUBTYPE_ARM_V8M             ((cpu_subtype_t) 17) /* Not meant to be run under xnu */
 
 /*
  *  ARM64 subtypes
  */
 #define CPU_SUBTYPE_ARM64_ALL           ((cpu_subtype_t) 0)
 #define CPU_SUBTYPE_ARM64_V8            ((cpu_subtype_t) 1)
+#define CPU_SUBTYPE_ARM64E              ((cpu_subtype_t) 2)
 
+/* CPU subtype feature flags for ptrauth on arm64e platforms */
+#define CPU_SUBTYPE_ARM64_PTR_AUTH_MASK 0x0f000000
+#define CPU_SUBTYPE_ARM64_PTR_AUTH_VERSION(x) (((x) & CPU_SUBTYPE_ARM64_PTR_AUTH_MASK) >> 24)
+
+/*
+ *  ARM64_32 subtypes
+ */
+#define CPU_SUBTYPE_ARM64_32_ALL        ((cpu_subtype_t) 0)
+#define CPU_SUBTYPE_ARM64_32_V8 ((cpu_subtype_t) 1)
 
 #endif /* !__ASSEMBLER__ */
 
@@ -341,31 +366,47 @@ typedef integer_t	cpu_threadtype_t;
 #define CPUFAMILY_POWERPC_G4		0x77c184ae
 #define CPUFAMILY_POWERPC_G5		0xed76d8aa
 #define CPUFAMILY_INTEL_6_13		0xaa33392b
-#define CPUFAMILY_INTEL_YONAH		0x73d67300
-#define CPUFAMILY_INTEL_MEROM		0x426f69ef
 #define CPUFAMILY_INTEL_PENRYN		0x78ea4fbc
 #define CPUFAMILY_INTEL_NEHALEM		0x6b5a4cd2
 #define CPUFAMILY_INTEL_WESTMERE	0x573b5eec
 #define CPUFAMILY_INTEL_SANDYBRIDGE	0x5490b78c
 #define CPUFAMILY_INTEL_IVYBRIDGE	0x1f65e835
 #define CPUFAMILY_INTEL_HASWELL		0x10b282dc
+#define CPUFAMILY_INTEL_BROADWELL       0x582ed09c
+#define CPUFAMILY_INTEL_SKYLAKE         0x37fc219f
+#define CPUFAMILY_INTEL_KABYLAKE        0x0f817246
+#define CPUFAMILY_INTEL_ICELAKE         0x38435547
+#define CPUFAMILY_INTEL_COMETLAKE       0x1cf8a03e
 #define CPUFAMILY_ARM_9			0xe73283ae
 #define CPUFAMILY_ARM_11		0x8ff620d8
 #define CPUFAMILY_ARM_XSCALE		0x53b005f5
 #define CPUFAMILY_ARM_12		0xbd1b0ae9
 #define CPUFAMILY_ARM_13		0x0cc90e64
 #define CPUFAMILY_ARM_14		0x96077ef1
+#define CPUFAMILY_ARM_15                0xa8511bca
 #define CPUFAMILY_ARM_SWIFT 		0x1e2d6381
 #define CPUFAMILY_ARM_CYCLONE		0x37a09642
+#define CPUFAMILY_ARM_TYPHOON           0x2c91a47e
+#define CPUFAMILY_ARM_TWISTER           0x92fb37c8
+#define CPUFAMILY_ARM_HURRICANE         0x67ceee93
+#define CPUFAMILY_ARM_MONSOON_MISTRAL   0xe81e7ef6
+#define CPUFAMILY_ARM_VORTEX_TEMPEST    0x07d34b9f
+#define CPUFAMILY_ARM_LIGHTNING_THUNDER 0x462504d2
+#define CPUFAMILY_ARM_FIRESTORM_ICESTORM 0x1b588bb3
+#define CPUFAMILY_ARM_BLIZZARD_AVALANCHE 0xda33d83d
+#define CPUFAMILY_ARM_EVEREST_SAWTOOTH  0x8765edea
+
+/* Described in rdar://64125549 */
+#define CPUSUBFAMILY_UNKNOWN            0
+#define CPUSUBFAMILY_ARM_HP             1
+#define CPUSUBFAMILY_ARM_HG             2
+#define CPUSUBFAMILY_ARM_M              3
+#define CPUSUBFAMILY_ARM_HS             4
+#define CPUSUBFAMILY_ARM_HC_HD          5
 
 /* The following synonyms are deprecated: */
-#define CPUFAMILY_INTEL_6_14	CPUFAMILY_INTEL_YONAH
-#define CPUFAMILY_INTEL_6_15	CPUFAMILY_INTEL_MEROM
 #define CPUFAMILY_INTEL_6_23	CPUFAMILY_INTEL_PENRYN
 #define CPUFAMILY_INTEL_6_26	CPUFAMILY_INTEL_NEHALEM
-
-#define CPUFAMILY_INTEL_CORE	CPUFAMILY_INTEL_YONAH
-#define CPUFAMILY_INTEL_CORE2	CPUFAMILY_INTEL_MEROM
 
 
 #endif	/* _MACH_MACHINE_H_ */
