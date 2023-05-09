@@ -951,125 +951,145 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 -(NSString *)getMachine:(cpu_type_t)cputype
 {
-  switch (cputype)
-  {
-    default:                  return @"???"; 
-    case CPU_TYPE_I386:       return @"X86";
-    case CPU_TYPE_POWERPC:    return @"PPC";
-    case CPU_TYPE_X86_64:     return @"X86_64";
-    case CPU_TYPE_POWERPC64:  return @"PPC64";
-    case CPU_TYPE_ARM:        return @"ARM";  
-    case CPU_TYPE_ARM64:      return @"ARM64";
-  }
+    switch (cputype)
+    {
+        default:                  return @"???";
+        case CPU_TYPE_I386:       return @"X86";
+        case CPU_TYPE_POWERPC:    return @"PPC";
+        case CPU_TYPE_X86_64:     return @"X86_64";
+        case CPU_TYPE_POWERPC64:  return @"PPC64";
+        case CPU_TYPE_ARM:        return @"ARM";
+        case CPU_TYPE_ARM64:      return @"ARM64";
+        case CPU_TYPE_ARM64_32:   return @"ARM64_32";
+    }
 }
 
 //----------------------------------------------------------------------------
 -(NSString *)getARMCpu:(cpu_subtype_t)cpusubtype
 {
-  switch (cpusubtype)
-  {
-    default:                      return @"???"; 
-    case CPU_SUBTYPE_ARM_ALL:     return @"ARM_ALL";
-    case CPU_SUBTYPE_ARM_V4T:     return @"ARM_V4T";
-    case CPU_SUBTYPE_ARM_V6:      return @"ARM_V6";
-    case CPU_SUBTYPE_ARM_V5TEJ:   return @"ARM_V5TEJ";
-    case CPU_SUBTYPE_ARM_XSCALE:  return @"ARM_XSCALE";
-    case CPU_SUBTYPE_ARM_V7:      return @"ARM_V7";
-    case CPU_SUBTYPE_ARM_V7F:     return @"ARM_V7F";
-    case CPU_SUBTYPE_ARM_V7K:     return @"ARM_V7K";
-    case CPU_SUBTYPE_ARM_V7S:     return @"ARM_V7S";
-    case CPU_SUBTYPE_ARM_V8:      return @"ARM_V8";
-  }
+    switch (cpusubtype & ~CPU_SUBTYPE_MASK)
+    {
+        default:                      return @"???";
+        case CPU_SUBTYPE_ARM_ALL:     return @"ARM_ALL";
+        case CPU_SUBTYPE_ARM_V4T:     return @"ARM_V4T";
+        case CPU_SUBTYPE_ARM_V6:      return @"ARM_V6";
+        case CPU_SUBTYPE_ARM_V5TEJ:   return @"ARM_V5TEJ";
+        case CPU_SUBTYPE_ARM_XSCALE:  return @"ARM_XSCALE";
+        case CPU_SUBTYPE_ARM_V7:      return @"ARM_V7";
+        case CPU_SUBTYPE_ARM_V7F:     return @"ARM_V7F";
+        case CPU_SUBTYPE_ARM_V7S:     return @"ARM_V7S";
+        case CPU_SUBTYPE_ARM_V7K:     return @"ARM_V7K";
+        case CPU_SUBTYPE_ARM_V8:      return @"ARM_V8";
+        case CPU_SUBTYPE_ARM_V6M:     return @"ARM_V6M";
+        case CPU_SUBTYPE_ARM_V7M:     return @"ARM_V7M";
+        case CPU_SUBTYPE_ARM_V7EM:    return @"ARM_V7EM";
+        case CPU_SUBTYPE_ARM_V8M:     return @"ARM_V8M";
+    }
 }
 
 //----------------------------------------------------------------------------
 -(NSString *)getARM64Cpu:(cpu_subtype_t)cpusubtype
 {
-  switch (cpusubtype)
-  {
-    default:                      return @"???";
-    case CPU_SUBTYPE_ARM64_ALL:   return @"ARM64_ALL";
-    case CPU_SUBTYPE_ARM64_V8:    return @"ARM64_V8";
-  }
+    switch (cpusubtype & ~CPU_SUBTYPE_MASK)
+    {
+        default:                      return @"???";
+        case CPU_SUBTYPE_ARM64_ALL:   return @"ARM64_ALL";
+        case CPU_SUBTYPE_ARM64_V8:    return @"ARM64_V8";
+        case CPU_SUBTYPE_ARM64E:      return @"ARM64E";
+    }
 }
 
 //----------------------------------------------------------------------------
 -(BOOL)isSupportedMachine:(NSString *)machine
 {
-  return ([machine isEqualToString:@"X86"] == YES ||
-          [machine isEqualToString:@"X86_64"] == YES ||
-          [machine isEqualToString:@"ARM"] == YES ||
-          [machine isEqualToString:@"ARM64"] == YES);
+    return ([machine isEqualToString:@"X86"] == YES ||
+            [machine isEqualToString:@"X86_64"] == YES ||
+            [machine isEqualToString:@"ARM"] == YES ||
+            [machine isEqualToString:@"ARM64"] == YES ||
+            [machine isEqualToString:@"ARM64_32"] == YES);
+}
+
+//----------------------------------------------------------------------------
+-(NSString *)getFileType:(uint32_t)filetype
+{
+    switch (filetype) {
+        case MH_OBJECT:
+            return @"Object ";
+        case MH_EXECUTE:
+            return @"Executable ";
+        case MH_FVMLIB:
+            return @"Fixed VM Shared Library";
+        case MH_CORE:
+            return @"Core";
+        case MH_PRELOAD:
+            return @"Preloaded Executable";
+        case MH_DYLIB:
+            return @"Shared Library ";
+        case MH_DYLINKER:
+            return @"Dynamic Link Editor";
+        case MH_BUNDLE:
+            return @"Bundle";
+        case MH_DYLIB_STUB:
+            return @"Shared Library Stub";
+        case MH_DSYM:
+            return @"Debug Symbols";
+        case MH_KEXT_BUNDLE:
+            return @"Kernel Extension";
+        case MH_FILESET:
+            return @"File Set";
+        case MH_GPU_EXECUTE:
+            return @"GPU Program";
+        case MH_GPU_DYLIB:
+            return @"GPU Support Functions";
+        default:
+            return @"?????";
+    }
 }
 
 //----------------------------------------------------------------------------
 -(void)createMachOLayout:(MVNode *)node
              mach_header:(struct mach_header const *)mach_header
 {
-  NSString * machine = [self getMachine:mach_header->cputype];
+    NSString * machine = [self getMachine:mach_header->cputype];
   
-  node.caption = [NSString stringWithFormat:@"%@ (%@)",
-                  mach_header->filetype == MH_OBJECT      ? @"Object " :
-                  mach_header->filetype == MH_EXECUTE     ? @"Executable " :
-                  mach_header->filetype == MH_FVMLIB      ? @"Fixed VM Shared Library" :
-                  mach_header->filetype == MH_CORE        ? @"Core" :
-                  mach_header->filetype == MH_PRELOAD     ? @"Preloaded Executable" :
-                  mach_header->filetype == MH_DYLIB       ? @"Shared Library " : 
-                  mach_header->filetype == MH_DYLINKER    ? @"Dynamic Link Editor" :
-                  mach_header->filetype == MH_BUNDLE      ? @"Bundle" : 
-                  mach_header->filetype == MH_DYLIB_STUB  ? @"Shared Library Stub" : 
-                  mach_header->filetype == MH_DSYM        ? @"Debug Symbols" : 
-                  mach_header->filetype == MH_KEXT_BUNDLE ? @"Kernel Extension" : @"?????",
-                  [machine isEqualToString:@"ARM"] == YES ? [self getARMCpu:mach_header->cpusubtype] : machine];
+    node.caption = [NSString stringWithFormat:@"%@ (%@)",
+                    [self getFileType:mach_header->filetype],
+                    [machine isEqualToString:@"ARM"] == YES ? [self getARMCpu:mach_header->cpusubtype] : machine];
   
-  MachOLayout * layout = [MachOLayout layoutWithDataController:self rootNode:node];
+    MachOLayout * layout = [MachOLayout layoutWithDataController:self rootNode:node];
                           
-  [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
+    [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
   
-  if ([self isSupportedMachine:machine])
-  {
-    [layouts addObject:layout];
-  }
-  else
-  {
-    // there is no detail to extract
-    [layout.archiver halt];
-  }
+    if ([self isSupportedMachine:machine]) {
+        [layouts addObject:layout];
+    }
+    else {
+        // there is no detail to extract
+        [layout.archiver halt];
+    }
 }
 
 //----------------------------------------------------------------------------
 -(void)createMachO64Layout:(MVNode *)node
             mach_header_64:(struct mach_header_64 const *)mach_header_64
 {
-  NSString * machine = [self getMachine:mach_header_64->cputype];
-
-  node.caption = [NSString stringWithFormat:@"%@ (%@)",
-                  mach_header_64->filetype == MH_OBJECT      ? @"Object " :
-                  mach_header_64->filetype == MH_EXECUTE     ? @"Executable " :
-                  mach_header_64->filetype == MH_FVMLIB      ? @"Fixed VM Shared Library" :
-                  mach_header_64->filetype == MH_CORE        ? @"Core" :
-                  mach_header_64->filetype == MH_PRELOAD     ? @"Preloaded Executable" :
-                  mach_header_64->filetype == MH_DYLIB       ? @"Shared Library " :
-                  mach_header_64->filetype == MH_DYLINKER    ? @"Dynamic Link Editor" :
-                  mach_header_64->filetype == MH_BUNDLE      ? @"Bundle" :
-                  mach_header_64->filetype == MH_DYLIB_STUB  ? @"Shared Library Stub" :
-                  mach_header_64->filetype == MH_DSYM        ? @"Debug Symbols" :
-                  mach_header_64->filetype == MH_KEXT_BUNDLE ? @"Kernel Extension" : @"?????",
-                  [machine isEqualToString:@"ARM64"] == YES ? [self getARM64Cpu:mach_header_64->cpusubtype] : machine];
+    NSString * machine = [self getMachine:mach_header_64->cputype];
+        
+    node.caption = [NSString stringWithFormat:@"%@ (%@)",
+                    [self getFileType:mach_header_64->filetype],
+                    [machine isEqualToString:@"ARM64"] == YES ? [self getARM64Cpu:mach_header_64->cpusubtype] : machine];
   
-  MachOLayout * layout = [MachOLayout layoutWithDataController:self rootNode:node];
+    MachOLayout * layout = [MachOLayout layoutWithDataController:self rootNode:node];
 
-  [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
+    [node.userInfo setObject:layout forKey:MVLayoutUserInfoKey];
 
-  if ([self isSupportedMachine:machine])
-  {
-    [layouts addObject:layout];
-  }
-  else
-  {
-    // there is no detail to extract
-    [layout.archiver halt];
-  }
+    if ([self isSupportedMachine:machine]) {
+        [layouts addObject:layout];
+    }
+    else {
+        // there is no detail to extract
+        [layout.archiver halt];
+    }
 }
 
 //----------------------------------------------------------------------------
