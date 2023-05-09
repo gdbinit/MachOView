@@ -165,11 +165,15 @@ using namespace std;
       } break;
         
       default:
-      case sizeof(long double): 
-      {
-        long double num = *(long double *)[data bytes]; 
-        literalStr = [NSString stringWithFormat:@"%.16Lg", num];
-      } break;
+#if !defined (__arm64__)
+        // it's 8 for both cases in arm64
+        case sizeof(long double):
+#endif
+        {
+          long double num = *(long double *)[data bytes];
+          literalStr = [NSString stringWithFormat:@"%.16Lg", num];
+          break;
+        }
     }
     
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
