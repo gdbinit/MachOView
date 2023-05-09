@@ -47,7 +47,7 @@
     {
       NSLog(@"mktemp failed!");
       free(swapFilePath);
-      return NO;
+      return nil;
     }
       
     NSString *swapPath = [NSString stringWithFormat:@"%s.%@", swapFilePath, [[dataController fileName] lastPathComponent]];
