@@ -2116,19 +2116,20 @@ struct CompareSectionByName
   
   if (mach_header->cputype == CPU_TYPE_ARM)
   {
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_ALL)   [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_ARM_ALL"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V4T)   [node.details appendRow:@"":@"":@"00000005":@"CPU_SUBTYPE_ARM_V4T"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6)    [node.details appendRow:@"":@"":@"00000006":@"CPU_SUBTYPE_ARM_V6"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V5TEJ) [node.details appendRow:@"":@"":@"00000007":@"CPU_SUBTYPE_ARM_V5TEJ"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_XSCALE)[node.details appendRow:@"":@"":@"00000008":@"CPU_SUBTYPE_ARM_XSCALE"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7)    [node.details appendRow:@"":@"":@"00000009":@"CPU_SUBTYPE_ARM_V7"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F)   [node.details appendRow:@"":@"":@"0000000A":@"CPU_SUBTYPE_ARM_V7F (Cortex A9)"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S)   [node.details appendRow:@"":@"":@"0000000B":@"CPU_SUBTYPE_ARM_V7S (Swift)"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K)   [node.details appendRow:@"":@"":@"0000000C":@"CPU_SUBTYPE_ARM_V7K (Kirkwood40)"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6M)   [node.details appendRow:@"":@"":@"0000000E":@"CPU_SUBTYPE_ARM_V6M"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7M)   [node.details appendRow:@"":@"":@"0000000F":@"CPU_SUBTYPE_ARM_V7M"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7EM)  [node.details appendRow:@"":@"":@"00000010":@"CPU_SUBTYPE_ARM_V7EM"];
-    if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V8)    [node.details appendRow:@"":@"":@"0000000D":@"CPU_SUBTYPE_ARM_V8"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_ALL)   [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_ARM_ALL"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V4T)   [node.details appendRow:@"":@"":@"00000005":@"CPU_SUBTYPE_ARM_V4T"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6)    [node.details appendRow:@"":@"":@"00000006":@"CPU_SUBTYPE_ARM_V6"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V5TEJ) [node.details appendRow:@"":@"":@"00000007":@"CPU_SUBTYPE_ARM_V5TEJ"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_XSCALE)[node.details appendRow:@"":@"":@"00000008":@"CPU_SUBTYPE_ARM_XSCALE"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7)    [node.details appendRow:@"":@"":@"00000009":@"CPU_SUBTYPE_ARM_V7"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7F)   [node.details appendRow:@"":@"":@"0000000A":@"CPU_SUBTYPE_ARM_V7F (Cortex A9)"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7S)   [node.details appendRow:@"":@"":@"0000000B":@"CPU_SUBTYPE_ARM_V7S (Swift)"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7K)   [node.details appendRow:@"":@"":@"0000000C":@"CPU_SUBTYPE_ARM_V7K (Kirkwood4)"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V8)    [node.details appendRow:@"":@"":@"0000000D":@"CPU_SUBTYPE_ARM_V8"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V6M)   [node.details appendRow:@"":@"":@"0000000E":@"CPU_SUBTYPE_ARM_V6M"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7M)   [node.details appendRow:@"":@"":@"0000000F":@"CPU_SUBTYPE_ARM_V7M"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V7EM)  [node.details appendRow:@"":@"":@"00000010":@"CPU_SUBTYPE_ARM_V7EM"];
+      if ((mach_header->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM_V8M)   [node.details appendRow:@"":@"":@"00000011":@"CPU_SUBTYPE_ARM_V8M"];
   }
   else if (mach_header->cputype == CPU_TYPE_I386)
   {
@@ -2155,8 +2156,11 @@ struct CompareSectionByName
                           mach_header->filetype == MH_BUNDLE ? @"MH_BUNDLE" :
                           mach_header->filetype == MH_DYLIB_STUB ? @"MH_DYLIB_STUB" :
                           mach_header->filetype == MH_DSYM ? @"MH_DSYM" : 
-                          mach_header->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" : @"???"];
-  
+                          mach_header->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" :
+                          mach_header->filetype == MH_FILESET ? @"MH_FILESET" :
+                          mach_header->filetype == MH_GPU_EXECUTE ? @"MH_GPU_EXECUTE" :
+                          mach_header->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" : @"???"];
+
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
@@ -2175,32 +2179,36 @@ struct CompareSectionByName
                          :@"Flags"
                          :@""];
   
-  if (mach_header->flags & MH_NOUNDEFS)                [node.details appendRow:@"":@"":@"00000001":@"MH_NOUNDEFS"];
-  if (mach_header->flags & MH_INCRLINK)                [node.details appendRow:@"":@"":@"00000002":@"MH_INCRLINK"];
-  if (mach_header->flags & MH_DYLDLINK)                [node.details appendRow:@"":@"":@"00000004":@"MH_DYLDLINK"];
-  if (mach_header->flags & MH_BINDATLOAD)              [node.details appendRow:@"":@"":@"00000008":@"MH_BINDATLOAD"];
-  if (mach_header->flags & MH_PREBOUND)                [node.details appendRow:@"":@"":@"00000010":@"MH_PREBOUND"];
-  if (mach_header->flags & MH_SPLIT_SEGS)              [node.details appendRow:@"":@"":@"00000020":@"MH_SPLIT_SEGS"];
-  if (mach_header->flags & MH_LAZY_INIT)               [node.details appendRow:@"":@"":@"00000040":@"MH_LAZY_INIT"];
-  if (mach_header->flags & MH_TWOLEVEL)                [node.details appendRow:@"":@"":@"00000080":@"MH_TWOLEVEL"];
-  if (mach_header->flags & MH_FORCE_FLAT)              [node.details appendRow:@"":@"":@"00000100":@"MH_FORCE_FLAT"];
-  if (mach_header->flags & MH_NOMULTIDEFS)             [node.details appendRow:@"":@"":@"00000200":@"MH_NOMULTIDEFS"];
-  if (mach_header->flags & MH_NOFIXPREBINDING)         [node.details appendRow:@"":@"":@"00000400":@"MH_NOFIXPREBINDING"];
-  if (mach_header->flags & MH_PREBINDABLE)             [node.details appendRow:@"":@"":@"00000800":@"MH_PREBINDABLE"];
-  if (mach_header->flags & MH_ALLMODSBOUND)            [node.details appendRow:@"":@"":@"00001000":@"MH_ALLMODSBOUND"];
-  if (mach_header->flags & MH_SUBSECTIONS_VIA_SYMBOLS) [node.details appendRow:@"":@"":@"00002000":@"MH_SUBSECTIONS_VIA_SYMBOLS"];
-  if (mach_header->flags & MH_CANONICAL)               [node.details appendRow:@"":@"":@"00004000":@"MH_CANONICAL"];
-  if (mach_header->flags & MH_WEAK_DEFINES)            [node.details appendRow:@"":@"":@"00008000":@"MH_WEAK_DEFINES"];
-  if (mach_header->flags & MH_BINDS_TO_WEAK)           [node.details appendRow:@"":@"":@"00010000":@"MH_BINDS_TO_WEAK"];
-  if (mach_header->flags & MH_ALLOW_STACK_EXECUTION)   [node.details appendRow:@"":@"":@"00020000":@"MH_ALLOW_STACK_EXECUTION"];
-  if (mach_header->flags & MH_ROOT_SAFE)               [node.details appendRow:@"":@"":@"00040000":@"MH_ROOT_SAFE"];
-  if (mach_header->flags & MH_SETUID_SAFE)             [node.details appendRow:@"":@"":@"00080000":@"MH_SETUID_SAFE"];
-  if (mach_header->flags & MH_NO_REEXPORTED_DYLIBS)    [node.details appendRow:@"":@"":@"00100000":@"MH_NO_REEXPORTED_DYLIBS"];
-  if (mach_header->flags & MH_PIE)                     [node.details appendRow:@"":@"":@"00200000":@"MH_PIE"];
-  if (mach_header->flags & MH_DEAD_STRIPPABLE_DYLIB)   [node.details appendRow:@"":@"":@"00400000":@"MH_DEAD_STRIPPABLE_DYLIB"];
-  if (mach_header->flags & MH_HAS_TLV_DESCRIPTORS)     [node.details appendRow:@"":@"":@"00800000":@"MH_HAS_TLV_DESCRIPTORS"];
-  if (mach_header->flags & MH_NO_HEAP_EXECUTION)       [node.details appendRow:@"":@"":@"01000000":@"MH_NO_HEAP_EXECUTION"];
-  
+    if (mach_header->flags & MH_NOUNDEFS)                [node.details appendRow:@"":@"":@"00000001":@"MH_NOUNDEFS"];
+    if (mach_header->flags & MH_INCRLINK)                [node.details appendRow:@"":@"":@"00000002":@"MH_INCRLINK"];
+    if (mach_header->flags & MH_DYLDLINK)                [node.details appendRow:@"":@"":@"00000004":@"MH_DYLDLINK"];
+    if (mach_header->flags & MH_BINDATLOAD)              [node.details appendRow:@"":@"":@"00000008":@"MH_BINDATLOAD"];
+    if (mach_header->flags & MH_PREBOUND)                [node.details appendRow:@"":@"":@"00000010":@"MH_PREBOUND"];
+    if (mach_header->flags & MH_SPLIT_SEGS)              [node.details appendRow:@"":@"":@"00000020":@"MH_SPLIT_SEGS"];
+    if (mach_header->flags & MH_LAZY_INIT)               [node.details appendRow:@"":@"":@"00000040":@"MH_LAZY_INIT"];
+    if (mach_header->flags & MH_TWOLEVEL)                [node.details appendRow:@"":@"":@"00000080":@"MH_TWOLEVEL"];
+    if (mach_header->flags & MH_FORCE_FLAT)              [node.details appendRow:@"":@"":@"00000100":@"MH_FORCE_FLAT"];
+    if (mach_header->flags & MH_NOMULTIDEFS)             [node.details appendRow:@"":@"":@"00000200":@"MH_NOMULTIDEFS"];
+    if (mach_header->flags & MH_NOFIXPREBINDING)         [node.details appendRow:@"":@"":@"00000400":@"MH_NOFIXPREBINDING"];
+    if (mach_header->flags & MH_PREBINDABLE)             [node.details appendRow:@"":@"":@"00000800":@"MH_PREBINDABLE"];
+    if (mach_header->flags & MH_ALLMODSBOUND)            [node.details appendRow:@"":@"":@"00001000":@"MH_ALLMODSBOUND"];
+    if (mach_header->flags & MH_SUBSECTIONS_VIA_SYMBOLS) [node.details appendRow:@"":@"":@"00002000":@"MH_SUBSECTIONS_VIA_SYMBOLS"];
+    if (mach_header->flags & MH_CANONICAL)               [node.details appendRow:@"":@"":@"00004000":@"MH_CANONICAL"];
+    if (mach_header->flags & MH_WEAK_DEFINES)            [node.details appendRow:@"":@"":@"00008000":@"MH_WEAK_DEFINES"];
+    if (mach_header->flags & MH_BINDS_TO_WEAK)           [node.details appendRow:@"":@"":@"00010000":@"MH_BINDS_TO_WEAK"];
+    if (mach_header->flags & MH_ALLOW_STACK_EXECUTION)   [node.details appendRow:@"":@"":@"00020000":@"MH_ALLOW_STACK_EXECUTION"];
+    if (mach_header->flags & MH_ROOT_SAFE)               [node.details appendRow:@"":@"":@"00040000":@"MH_ROOT_SAFE"];
+    if (mach_header->flags & MH_SETUID_SAFE)             [node.details appendRow:@"":@"":@"00080000":@"MH_SETUID_SAFE"];
+    if (mach_header->flags & MH_NO_REEXPORTED_DYLIBS)    [node.details appendRow:@"":@"":@"00100000":@"MH_NO_REEXPORTED_DYLIBS"];
+    if (mach_header->flags & MH_PIE)                     [node.details appendRow:@"":@"":@"00200000":@"MH_PIE"];
+    if (mach_header->flags & MH_DEAD_STRIPPABLE_DYLIB)   [node.details appendRow:@"":@"":@"00400000":@"MH_DEAD_STRIPPABLE_DYLIB"];
+    if (mach_header->flags & MH_HAS_TLV_DESCRIPTORS)     [node.details appendRow:@"":@"":@"00800000":@"MH_HAS_TLV_DESCRIPTORS"];
+    if (mach_header->flags & MH_NO_HEAP_EXECUTION)       [node.details appendRow:@"":@"":@"01000000":@"MH_NO_HEAP_EXECUTION"];
+    if (mach_header->flags & MH_APP_EXTENSION_SAFE)      [node.details appendRow:@"":@"":@"02000000":@"MH_APP_EXTENSION_SAFE"];
+    if (mach_header->flags & MH_NLIST_OUTOFSYNC_WITH_DYLDINFO)      [node.details appendRow:@"":@"":@"04000000":@"MH_NLIST_OUTOFSYNC_WITH_DYLDINFO"];
+    if (mach_header->flags & MH_SIM_SUPPORT)             [node.details appendRow:@"":@"":@"08000000":@"MH_SIM_SUPPORT"];
+    if (mach_header->flags & MH_DYLIB_IN_CACHE)          [node.details appendRow:@"":@"":@"80000000":@"MH_DYLIB_IN_CACHE"];
+
   return node;
 }
 //-----------------------------------------------------------------------------
@@ -2230,7 +2238,8 @@ struct CompareSectionByName
                          :mach_header_64->cputype == CPU_TYPE_ANY ? @"CPU_TYPE_ANY" :
                           mach_header_64->cputype == CPU_TYPE_POWERPC64 ? @"CPU_TYPE_POWERPC64" :
                           mach_header_64->cputype == CPU_TYPE_X86_64 ? @"CPU_TYPE_X86_64" :
-                          mach_header_64->cputype == CPU_TYPE_ARM64 ? @"CPU_TYPE_ARM64" : @"???"];
+                          mach_header_64->cputype == CPU_TYPE_ARM64 ? @"CPU_TYPE_ARM64" :
+                          mach_header_64->cputype == CPU_TYPE_ARM64_32 ? @"CPU_TYPE_ARM64_32" : @"???"];
   
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -2246,11 +2255,17 @@ struct CompareSectionByName
   }
   else if (mach_header_64->cputype == CPU_TYPE_ARM64)
   {
-    if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_ALL)  [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_ARM64_ALL"];
-    if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_V8)   [node.details appendRow:@"":@"":@"00000001":@"CPU_SUBTYPE_ARM64_V8"];
+      if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_ALL) {
+          [node.details appendRow:@"":@"":@"00000000":@"CPU_SUBTYPE_ARM64_ALL"];
+      }
+      else if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64_V8) {
+          [node.details appendRow:@"":@"":@"00000001":@"CPU_SUBTYPE_ARM64_V8"];
+      }
+      else if ((mach_header_64->cpusubtype & ~CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64E) {
+          [node.details appendRow:@"":@"":@"00000002":@"CPU_SUBTYPE_ARM64E"];
+      }
   }
 
-  
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
@@ -2265,7 +2280,10 @@ struct CompareSectionByName
                           mach_header_64->filetype == MH_BUNDLE ? @"MH_BUNDLE" :
                           mach_header_64->filetype == MH_DYLIB_STUB ? @"MH_DYLIB_STUB" :
                           mach_header_64->filetype == MH_DSYM ? @"MH_DSYM" : 
-                          mach_header_64->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" : @"???"];
+                          mach_header_64->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" :
+                          mach_header_64->filetype == MH_FILESET ? @"MH_FILESET" :
+                          mach_header_64->filetype == MH_GPU_EXECUTE ? @"MH_GPU_EXECUTE" :
+                          mach_header_64->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" : @"???"];
   
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -2285,32 +2303,36 @@ struct CompareSectionByName
                          :@"Flags"
                          :@""];
   
-  if (mach_header_64->flags & MH_NOUNDEFS)               [node.details appendRow:@"":@"":@"00000001":@"MH_NOUNDEFS"];
-  if (mach_header_64->flags & MH_INCRLINK)               [node.details appendRow:@"":@"":@"00000002":@"MH_INCRLINK"];
-  if (mach_header_64->flags & MH_DYLDLINK)               [node.details appendRow:@"":@"":@"00000004":@"MH_DYLDLINK"];
-  if (mach_header_64->flags & MH_BINDATLOAD)             [node.details appendRow:@"":@"":@"00000008":@"MH_BINDATLOAD"];
-  if (mach_header_64->flags & MH_PREBOUND)               [node.details appendRow:@"":@"":@"00000010":@"MH_PREBOUND"];
-  if (mach_header_64->flags & MH_SPLIT_SEGS)             [node.details appendRow:@"":@"":@"00000020":@"MH_SPLIT_SEGS"];
-  if (mach_header_64->flags & MH_LAZY_INIT)              [node.details appendRow:@"":@"":@"00000040":@"MH_LAZY_INIT"];
-  if (mach_header_64->flags & MH_TWOLEVEL)               [node.details appendRow:@"":@"":@"00000080":@"MH_TWOLEVEL"];
-  if (mach_header_64->flags & MH_FORCE_FLAT)             [node.details appendRow:@"":@"":@"00000100":@"MH_FORCE_FLAT"];
-  if (mach_header_64->flags & MH_NOMULTIDEFS)            [node.details appendRow:@"":@"":@"00000200":@"MH_NOMULTIDEFS"];
-  if (mach_header_64->flags & MH_NOFIXPREBINDING)        [node.details appendRow:@"":@"":@"00000400":@"MH_NOFIXPREBINDING"];
-  if (mach_header_64->flags & MH_PREBINDABLE)            [node.details appendRow:@"":@"":@"00000800":@"MH_PREBINDABLE"];
-  if (mach_header_64->flags & MH_ALLMODSBOUND)           [node.details appendRow:@"":@"":@"00001000":@"MH_ALLMODSBOUND"];
-  if (mach_header_64->flags & MH_SUBSECTIONS_VIA_SYMBOLS)[node.details appendRow:@"":@"":@"00002000":@"MH_SUBSECTIONS_VIA_SYMBOLS"];
-  if (mach_header_64->flags & MH_CANONICAL)              [node.details appendRow:@"":@"":@"00004000":@"MH_CANONICAL"];
-  if (mach_header_64->flags & MH_WEAK_DEFINES)           [node.details appendRow:@"":@"":@"00008000":@"MH_WEAK_DEFINES"];
-  if (mach_header_64->flags & MH_BINDS_TO_WEAK)          [node.details appendRow:@"":@"":@"00010000":@"MH_BINDS_TO_WEAK"];
-  if (mach_header_64->flags & MH_ALLOW_STACK_EXECUTION)  [node.details appendRow:@"":@"":@"00020000":@"MH_ALLOW_STACK_EXECUTION"];
-  if (mach_header_64->flags & MH_ROOT_SAFE)              [node.details appendRow:@"":@"":@"00040000":@"MH_ROOT_SAFE"];
-  if (mach_header_64->flags & MH_SETUID_SAFE)            [node.details appendRow:@"":@"":@"00080000":@"MH_SETUID_SAFE"];
-  if (mach_header_64->flags & MH_NO_REEXPORTED_DYLIBS)   [node.details appendRow:@"":@"":@"00100000":@"MH_NO_REEXPORTED_DYLIBS"];
-  if (mach_header_64->flags & MH_PIE)                    [node.details appendRow:@"":@"":@"00200000":@"MH_PIE"];
-  if (mach_header_64->flags & MH_DEAD_STRIPPABLE_DYLIB)  [node.details appendRow:@"":@"":@"00400000":@"MH_DEAD_STRIPPABLE_DYLIB"];
-  if (mach_header_64->flags & MH_HAS_TLV_DESCRIPTORS)    [node.details appendRow:@"":@"":@"00800000":@"MH_HAS_TLV_DESCRIPTORS"];
-  if (mach_header_64->flags & MH_NO_HEAP_EXECUTION)      [node.details appendRow:@"":@"":@"01000000":@"MH_NO_HEAP_EXECUTION"];                                  
-  
+    if (mach_header_64->flags & MH_NOUNDEFS)               [node.details appendRow:@"":@"":@"00000001":@"MH_NOUNDEFS"];
+    if (mach_header_64->flags & MH_INCRLINK)               [node.details appendRow:@"":@"":@"00000002":@"MH_INCRLINK"];
+    if (mach_header_64->flags & MH_DYLDLINK)               [node.details appendRow:@"":@"":@"00000004":@"MH_DYLDLINK"];
+    if (mach_header_64->flags & MH_BINDATLOAD)             [node.details appendRow:@"":@"":@"00000008":@"MH_BINDATLOAD"];
+    if (mach_header_64->flags & MH_PREBOUND)               [node.details appendRow:@"":@"":@"00000010":@"MH_PREBOUND"];
+    if (mach_header_64->flags & MH_SPLIT_SEGS)             [node.details appendRow:@"":@"":@"00000020":@"MH_SPLIT_SEGS"];
+    if (mach_header_64->flags & MH_LAZY_INIT)              [node.details appendRow:@"":@"":@"00000040":@"MH_LAZY_INIT"];
+    if (mach_header_64->flags & MH_TWOLEVEL)               [node.details appendRow:@"":@"":@"00000080":@"MH_TWOLEVEL"];
+    if (mach_header_64->flags & MH_FORCE_FLAT)             [node.details appendRow:@"":@"":@"00000100":@"MH_FORCE_FLAT"];
+    if (mach_header_64->flags & MH_NOMULTIDEFS)            [node.details appendRow:@"":@"":@"00000200":@"MH_NOMULTIDEFS"];
+    if (mach_header_64->flags & MH_NOFIXPREBINDING)        [node.details appendRow:@"":@"":@"00000400":@"MH_NOFIXPREBINDING"];
+    if (mach_header_64->flags & MH_PREBINDABLE)            [node.details appendRow:@"":@"":@"00000800":@"MH_PREBINDABLE"];
+    if (mach_header_64->flags & MH_ALLMODSBOUND)           [node.details appendRow:@"":@"":@"00001000":@"MH_ALLMODSBOUND"];
+    if (mach_header_64->flags & MH_SUBSECTIONS_VIA_SYMBOLS)[node.details appendRow:@"":@"":@"00002000":@"MH_SUBSECTIONS_VIA_SYMBOLS"];
+    if (mach_header_64->flags & MH_CANONICAL)              [node.details appendRow:@"":@"":@"00004000":@"MH_CANONICAL"];
+    if (mach_header_64->flags & MH_WEAK_DEFINES)           [node.details appendRow:@"":@"":@"00008000":@"MH_WEAK_DEFINES"];
+    if (mach_header_64->flags & MH_BINDS_TO_WEAK)          [node.details appendRow:@"":@"":@"00010000":@"MH_BINDS_TO_WEAK"];
+    if (mach_header_64->flags & MH_ALLOW_STACK_EXECUTION)  [node.details appendRow:@"":@"":@"00020000":@"MH_ALLOW_STACK_EXECUTION"];
+    if (mach_header_64->flags & MH_ROOT_SAFE)              [node.details appendRow:@"":@"":@"00040000":@"MH_ROOT_SAFE"];
+    if (mach_header_64->flags & MH_SETUID_SAFE)            [node.details appendRow:@"":@"":@"00080000":@"MH_SETUID_SAFE"];
+    if (mach_header_64->flags & MH_NO_REEXPORTED_DYLIBS)   [node.details appendRow:@"":@"":@"00100000":@"MH_NO_REEXPORTED_DYLIBS"];
+    if (mach_header_64->flags & MH_PIE)                    [node.details appendRow:@"":@"":@"00200000":@"MH_PIE"];
+    if (mach_header_64->flags & MH_DEAD_STRIPPABLE_DYLIB)  [node.details appendRow:@"":@"":@"00400000":@"MH_DEAD_STRIPPABLE_DYLIB"];
+    if (mach_header_64->flags & MH_HAS_TLV_DESCRIPTORS)    [node.details appendRow:@"":@"":@"00800000":@"MH_HAS_TLV_DESCRIPTORS"];
+    if (mach_header_64->flags & MH_NO_HEAP_EXECUTION)      [node.details appendRow:@"":@"":@"01000000":@"MH_NO_HEAP_EXECUTION"];
+    if (mach_header_64->flags & MH_APP_EXTENSION_SAFE)     [node.details appendRow:@"":@"":@"02000000":@"MH_APP_EXTENSION_SAFE"];
+    if (mach_header_64->flags & MH_NLIST_OUTOFSYNC_WITH_DYLDINFO)      [node.details appendRow:@"":@"":@"04000000":@"MH_NLIST_OUTOFSYNC_WITH_DYLDINFO"];
+    if (mach_header_64->flags & MH_SIM_SUPPORT)            [node.details appendRow:@"":@"":@"08000000":@"MH_SIM_SUPPORT"];
+    if (mach_header_64->flags & MH_DYLIB_IN_CACHE)         [node.details appendRow:@"":@"":@"80000000":@"MH_DYLIB_IN_CACHE"];
+    
   uint32_t reserved = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
