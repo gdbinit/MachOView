@@ -177,11 +177,21 @@ using namespace std;
                          :@"Flags"
                          :@""];
   
-  if (segment_command->flags & SG_HIGHVM)              [node.details appendRow:@"":@"":@"00000001":@"SG_HIGHVM"];
-  if (segment_command->flags & SG_FVMLIB)              [node.details appendRow:@"":@"":@"00000002":@"SG_FVMLIB"];
-  if (segment_command->flags & SG_NORELOC)             [node.details appendRow:@"":@"":@"00000004":@"SG_NORELOC"];
-  if (segment_command->flags & SG_PROTECTED_VERSION_1) [node.details appendRow:@"":@"":@"00000008":@"SG_PROTECTED_VERSION_1"];
-  
+    if (segment_command->flags & SG_HIGHVM) {
+        [node.details appendRow:@"":@"":@"00000001":@"SG_HIGHVM"];
+    }
+    if (segment_command->flags & SG_FVMLIB) {
+        [node.details appendRow:@"":@"":@"00000002":@"SG_FVMLIB"];
+    }
+    if (segment_command->flags & SG_NORELOC) {
+        [node.details appendRow:@"":@"":@"00000004":@"SG_NORELOC"];
+    }
+    if (segment_command->flags & SG_PROTECTED_VERSION_1) {
+        [node.details appendRow:@"":@"":@"00000008":@"SG_PROTECTED_VERSION_1"];
+    }
+    if (segment_command->flags & SG_READ_ONLY) {
+        [node.details appendRow:@"" :@"" :@"00000010" :@"SG_READ_ONLY"];
+    }
   return node;
 }
 
@@ -398,11 +408,22 @@ using namespace std;
                          :@"Flags"
                          :@""];
   
-  if (segment_command_64->flags & SG_HIGHVM)              [node.details appendRow:@"":@"":@"00000001":@"SG_HIGHVM"];
-  if (segment_command_64->flags & SG_FVMLIB)              [node.details appendRow:@"":@"":@"00000002":@"SG_FVMLIB"];
-  if (segment_command_64->flags & SG_NORELOC)             [node.details appendRow:@"":@"":@"00000004":@"SG_NORELOC"];
-  if (segment_command_64->flags & SG_PROTECTED_VERSION_1) [node.details appendRow:@"":@"":@"00000008":@"SG_PROTECTED_VERSION_1"];
-  
+    if (segment_command_64->flags & SG_HIGHVM) {
+        [node.details appendRow:@"":@"":@"00000001":@"SG_HIGHVM"];
+    }
+    if (segment_command_64->flags & SG_FVMLIB) {
+        [node.details appendRow:@"":@"":@"00000002":@"SG_FVMLIB"];
+    }
+    if (segment_command_64->flags & SG_NORELOC) {
+        [node.details appendRow:@"":@"":@"00000004":@"SG_NORELOC"];
+    }
+    if (segment_command_64->flags & SG_PROTECTED_VERSION_1) {
+        [node.details appendRow:@"":@"":@"00000008":@"SG_PROTECTED_VERSION_1"];
+    }
+    if (segment_command_64->flags & SG_READ_ONLY) {
+        [node.details appendRow:@"" :@"" :@"00000010" :@"SG_READ_ONLY"];
+    }
+
   return node;
 }
 
