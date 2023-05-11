@@ -693,6 +693,7 @@
 					Info.plist,
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -748,6 +749,7 @@
 					Info.plist,
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = MachOView;
 				SDKROOT = macosx;
 				SKIP_INSTALL = NO;
