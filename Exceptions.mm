@@ -14,6 +14,7 @@
 #import "Exceptions.h"
 #import "ReadWrite.h"
 #import "DataController.h"
+#import <mach-o/compact_unwind_encoding.h>
 
 using namespace std;
 

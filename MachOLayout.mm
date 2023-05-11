@@ -17,6 +17,9 @@
 #import "SectionContents.h"
 #import "ObjC.h"
 #import "CRTFootPrints.h"
+#import <mach-o/loader.h>
+#import <mach-o/nlist.h>
+#import <mach-o/reloc.h>
 
 using namespace std;
 

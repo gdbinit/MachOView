@@ -17,6 +17,7 @@
 #import "DataController.h"
 #import "MachOLayout.h"
 #import "ReadWrite.h"
+#import <mach-o/ranlib.h>
 
 //============================================================================
 @implementation MVObjectInfo

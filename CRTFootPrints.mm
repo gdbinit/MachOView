@@ -13,6 +13,7 @@
 
 #import "CRTFootPrints.h"
 #import "DataController.h"
+#import <mach-o/loader.h>
 
 #define MATCHASM(_pattern) \
   (offset + sizeof(_pattern) < dataLength && \

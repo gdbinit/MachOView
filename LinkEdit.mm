@@ -15,6 +15,12 @@
 #import "LinkEdit.h"
 #import "ReadWrite.h"
 #import "DataController.h"
+#import <mach-o/loader.h>
+#import <mach-o/reloc.h>
+#import <mach-o/arm/reloc.h>
+#import <mach-o/arm64/reloc.h>
+#import <mach-o/x86_64/reloc.h>
+#import <mach-o/nlist.h>
 
 using namespace std;
 

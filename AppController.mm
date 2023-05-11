@@ -12,6 +12,8 @@
 #import "Document.h"
 #import "PreferenceController.h"
 #import "Attach.h"
+#import <mach-o/fat.h>
+#import <mach-o/loader.h>
 
 // counters for statistics
 int64_t nrow_total;  // number of rows (loaded and empty)

@@ -17,6 +17,7 @@
 #import "ReadWrite.h"
 #import "DataController.h"
 #import "capstone.h"
+#import <mach-o/loader.h>
 
 #define TAB_WIDTH 10
 

@@ -15,6 +15,7 @@
 #import "DyldInfo.h"
 #import "ReadWrite.h"
 #import "DataController.h"
+#import <mach-o/loader.h>
 
 using namespace std;
 

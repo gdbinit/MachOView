@@ -11,6 +11,9 @@
 #import "MachOLayout.h"
 #import "FatLayout.h"
 #import "ArchiveLayout.h"
+#import <mach-o/loader.h>
+#import <mach-o/fat.h>
+#import <mach-o/swap.h>
 
 enum {
   MVUnderlineAttributeOrdinal = 1,

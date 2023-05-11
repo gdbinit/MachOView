@@ -17,6 +17,8 @@
 #import "DataController.h"
 #import "MachOLayout.h"
 #import "ReadWrite.h"
+#import <mach-o/fat.h>
+#import <mach-o/swap.h>
 
 using namespace std;
 
