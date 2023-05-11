@@ -31,7 +31,7 @@
 @property(nonatomic,readonly) MVArchiver * archiver;
 
 - (id)                  initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node;
-- (void const *)        imageAt:(uint32_t)location;
+- (void const *)        imageAt:(uint64_t)location;
 - (void)                printException:(NSException *)exception caption:(NSString *)caption;
 - (BOOL)                is64bit;
 - (void)                doMainTasks;
