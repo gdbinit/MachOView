@@ -33,28 +33,26 @@
 //-----------------------------------------------------------------------------
 - (id)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
 {
-  if (self = [super init]) 
-  {
-    dataController = dc;
-    rootNode = node;
-    imageOffset = node.dataRange.location;
-    imageSize = node.dataRange.length;
-    backgroundThread = [[NSThread alloc] initWithTarget:self selector:@selector(doBackgroundTasks) object:nil];
+    if (self = [super init]) {
+        dataController = dc;
+        rootNode = node;
+        imageOffset = node.dataRange.location;
+        imageSize = node.dataRange.length;
+        backgroundThread = [[NSThread alloc] initWithTarget:self selector:@selector(doBackgroundTasks) object:nil];
     
-    const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
-    char *swapFilePath = strdup(tmp);
-    if (mktemp(swapFilePath) == NULL)
-    {
-      NSLog(@"mktemp failed!");
-      free(swapFilePath);
-      return nil;
-    }
+        const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
+        char *swapFilePath = strdup(tmp);
+        if (mkstemp(swapFilePath) == -1) {
+            NSLog(@"mkstemp failed!");
+            free(swapFilePath);
+            return nil;
+        }
       
-    NSString *swapPath = [NSString stringWithFormat:@"%s.%@", swapFilePath, [[dataController fileName] lastPathComponent]];
-    free(swapFilePath);
-    archiver = [MVArchiver archiverWithPath:swapPath];
-  }
-  return self;
+        NSString *swapPath = [NSString stringWithFormat:@"%s.%@", swapFilePath, [[dataController fileName] lastPathComponent]];
+        free(swapFilePath);
+        archiver = [MVArchiver archiverWithPath:swapPath];
+    }
+    return self;
 }
 
 //-----------------------------------------------------------------------------

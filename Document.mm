@@ -515,53 +515,57 @@ enum ViewType
 //----------------------------------------------------------------------------
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
-  // create a temporary copy for patching
-  const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
-  char *tmpFilePath = strdup(tmp);
-  if (mktemp(tmpFilePath) == NULL)
-  {
-    NSLog(@"mktemp failed!");
+    // create a temporary copy for patching
+    const char *tmp = [[MVDocument temporaryDirectory] UTF8String];
+    char *tmpFilePath = strdup(tmp);
+    int fd = mkstemp(tmpFilePath);
+    if (fd < 0) {
+        NSLog(@"mktemp failed!");
+        free(tmpFilePath);
+        return NO;
+    }
+    
+    NSURL * tmpURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:tmpFilePath]];
     free(tmpFilePath);
-    return NO;
-  }
+    
+    // open the original binary for viewing/editing
+    dataController.fileName = [absoluteURL path];
+    dataController.fileData = [NSMutableData dataWithContentsOfURL:absoluteURL
+                                                           options:NSDataReadingMappedIfSafe
+                                                             error:outError];
+    if (*outError) return NO;
+    
+    // copy the file - the original code used NSFileManager but that doesn't work with mkstemp()
+    // [NSFileHandle writeData] is 10.15+ only
+    // https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/RaceConditions.html
+    if (write(fd, [dataController.fileData bytes], [dataController.fileData length]) != (ssize_t)[dataController.fileData length]) {
+        NSLog(@"Write failed: %s", strerror(errno));
+        return NO;
+    }
+    close(fd);
 
-  NSURL * tmpURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:tmpFilePath]];
-  free(tmpFilePath);
-
-  [[NSFileManager defaultManager] copyItemAtURL:absoluteURL
-                                          toURL:tmpURL
-                                          error:outError];
-  if (*outError) return NO;
-
-  // open the copied binary for patching
-  dataController.realData = [NSMutableData dataWithContentsOfURL:tmpURL
-                                                         options:NSDataReadingMappedAlways 
-                                                           error:outError];
-  if (*outError) return NO;
+    // open the copied binary for patching
+    dataController.realData = [NSMutableData dataWithContentsOfURL:tmpURL
+                                                           options:NSDataReadingMappedAlways
+                                                             error:outError];
+    if (*outError) return NO;
   
-  // open the original binary for viewing/editing
-  dataController.fileName = [absoluteURL path];
-  dataController.fileData = [NSMutableData dataWithContentsOfURL:absoluteURL 
-                                                         options:NSDataReadingMappedIfSafe 
-                                                           error:outError];
-  if (*outError) return NO;
-
-  @try 
-  {
-    [dataController createLayouts:dataController.rootNode location:0 length:[dataController.fileData length]];
-  }
-  @catch (NSException * exception) 
-  {
-    *outError = [NSError errorWithDomain:NSCocoaErrorDomain 
-                                    code:NSFileReadUnknownError 
-                                userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                          [[self fileURL] path], NSFilePathErrorKey, 
-                                          [exception reason], NSLocalizedDescriptionKey,
-                                          nil]];
-    return NO;
-  }
+    @try
+    {
+        [dataController createLayouts:dataController.rootNode location:0 length:[dataController.fileData length]];
+    }
+    @catch (NSException * exception)
+    {
+        *outError = [NSError errorWithDomain:NSCocoaErrorDomain
+                                        code:NSFileReadUnknownError
+                                    userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                              [[self fileURL] path], NSFilePathErrorKey,
+                                              [exception reason], NSLocalizedDescriptionKey,
+                                              nil]];
+        return NO;
+    }
                              
-  return YES;                             
+    return YES;                             
 }
 
 //----------------------------------------------------------------------------
