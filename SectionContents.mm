@@ -583,8 +583,8 @@ static AsmFootPrint const fastStubHelperHelperARM =
     size_t disasm_count = 0;
     cs_err cserr;
     /* open capstone */
-    cs_arch target_arch;
-    cs_mode target_mode;
+    cs_arch target_arch = CS_ARCH_ALL;
+    cs_mode target_mode = CS_MODE_LITTLE_ENDIAN;
     switch (mach_header->cputype)
     {
         case CPU_TYPE_I386:
@@ -604,8 +604,8 @@ static AsmFootPrint const fastStubHelperHelperARM =
             target_mode = CS_MODE_ARM;
             break;
         default:
-            NSLog(@"NO CPU FOUND!");
-            break;
+            NSLog(@"No CPU found to disassemble!");
+            return node;
     }
     
     if ( (cserr = cs_open(target_arch, target_mode, &cs_handle)) != CS_ERR_OK )
