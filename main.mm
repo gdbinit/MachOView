@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Mach-O Browser
+//  MachOView
 //
 //  Created by psaghelyi on 10/06/2010.
 //

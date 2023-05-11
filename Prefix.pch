@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'Mach-O Browser' target in the 'Mach-O Browser' project
+// Prefix header for all source files of the 'MachOView' target in the 'MachOView' project
 //
 
 #ifdef __OBJC__
