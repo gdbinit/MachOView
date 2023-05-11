@@ -109,16 +109,6 @@
 		3CCC228C129EE70C0083DAE2 /* CRTFootPrints.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CRTFootPrints.mm; sourceTree = "<group>"; };
 		3CD037C01248F66300DCFC68 /* DyldInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DyldInfo.h; sourceTree = "<group>"; };
 		3CD037C11248F66C00DCFC68 /* DyldInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DyldInfo.mm; sourceTree = "<group>"; };
-		3CDFB35D139F603C00F46F18 /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arch.h; sourceTree = "<group>"; };
-		3CDFB35F139F603C00F46F18 /* reloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reloc.h; sourceTree = "<group>"; };
-		3CDFB360139F603C00F46F18 /* compact_unwind_encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compact_unwind_encoding.h; sourceTree = "<group>"; };
-		3CDFB361139F603C00F46F18 /* fat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fat.h; sourceTree = "<group>"; };
-		3CDFB362139F603C00F46F18 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
-		3CDFB363139F603C00F46F18 /* nlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nlist.h; sourceTree = "<group>"; };
-		3CDFB364139F603C00F46F18 /* ranlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ranlib.h; sourceTree = "<group>"; };
-		3CDFB365139F603C00F46F18 /* reloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reloc.h; sourceTree = "<group>"; };
-		3CDFB366139F603C00F46F18 /* swap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swap.h; sourceTree = "<group>"; };
-		3CDFB368139F603C00F46F18 /* reloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reloc.h; sourceTree = "<group>"; };
 		3CE718B513338F030005C4DA /* ArchiveLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveLayout.h; sourceTree = "<group>"; };
 		3CE718B613338F0E0005C4DA /* ArchiveLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArchiveLayout.mm; sourceTree = "<group>"; };
 		3CE7199D1333A4EF0005C4DA /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layout.h; sourceTree = "<group>"; };
@@ -349,36 +339,10 @@
 		3C78CB26139EE44B006C9591 /* mach-o */ = {
 			isa = PBXGroup;
 			children = (
-				3CDFB35D139F603C00F46F18 /* arch.h */,
-				3CDFB35E139F603C00F46F18 /* arm */,
-				3CDFB360139F603C00F46F18 /* compact_unwind_encoding.h */,
-				3CDFB361139F603C00F46F18 /* fat.h */,
-				3CDFB362139F603C00F46F18 /* loader.h */,
-				3CDFB363139F603C00F46F18 /* nlist.h */,
-				3CDFB364139F603C00F46F18 /* ranlib.h */,
-				3CDFB365139F603C00F46F18 /* reloc.h */,
-				3CDFB366139F603C00F46F18 /* swap.h */,
-				3CDFB367139F603C00F46F18 /* x86_64 */,
 				7B4561BF2A0B0EF900678297 /* thread_status.h */,
 				7B4561C02A0B137A00678297 /* thread_status_arm.h */,
 			);
 			path = "mach-o";
-			sourceTree = "<group>";
-		};
-		3CDFB35E139F603C00F46F18 /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				3CDFB35F139F603C00F46F18 /* reloc.h */,
-			);
-			path = arm;
-			sourceTree = "<group>";
-		};
-		3CDFB367139F603C00F46F18 /* x86_64 */ = {
-			isa = PBXGroup;
-			children = (
-				3CDFB368139F603C00F46F18 /* reloc.h */,
-			);
-			path = x86_64;
 			sourceTree = "<group>";
 		};
 		7B5E71DF19B6829F00843CCE /* capstone */ = {
