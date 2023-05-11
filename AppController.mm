@@ -320,23 +320,21 @@ int64_t nrow_loaded; // number of loaded rows
 //----------------------------------------------------------------------------
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-  NSLog (@"open file: %@", filename);
-  
-  __autoreleasing NSError *error;
+    NSLog (@"open file: %@", filename);
 
-  NSDocumentController * documentController = [NSDocumentController sharedDocumentController];
-  MVDocument * document = [documentController openDocumentWithContentsOfURL:[NSURL fileURLWithPath:filename] 
-                                                                    display:YES 
-                                                                      error:&error];
-
-  // If we can't open the document, present error to the user
-  if (!document) 
-  {
-    [NSApp presentError:error];
-    return NO;
-  }
-  
-  return YES;
+    NSDocumentController * documentController = [NSDocumentController sharedDocumentController];
+    [documentController openDocumentWithContentsOfURL:[NSURL fileURLWithPath:filename]
+                                              display:YES
+                                    completionHandler:^(NSDocument * _Nullable document, BOOL alreadyOpen, NSError * _Nullable error) {
+         // If we can't open the document, present error to the user
+         if (!document) {
+            [NSApp presentError:error];
+         }
+         if (alreadyOpen) {
+             NSLog(@"document was already open!");
+         }
+    }];
+    return YES;
 }
 
 //----------------------------------------------------------------------------
