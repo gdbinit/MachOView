@@ -199,7 +199,7 @@ using namespace std;
 
   if (format & DW_EH_PE_pcrel)
   {
-    value += [self fileOffsetToRVA64:offset];
+    value += [self fileOffsetToRVA:offset];
   }
    
   NSString * symbolName = [self findSymbolAtRVA64:value];
@@ -421,9 +421,7 @@ using namespace std;
       break;
     }
     
-    uint64_t FDE_CIEpointer = ([self is64bit] == NO 
-                                ? [self fileOffsetToRVA:range.location] 
-                                : [self fileOffsetToRVA64:range.location]) - FDE_CIEvalue;
+      uint64_t FDE_CIEpointer = [self fileOffsetToRVA:range.location] - FDE_CIEvalue;
 
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -568,8 +566,7 @@ using namespace std;
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Type Table Base"
-                           :[self is64bit] == NO ? [NSString stringWithFormat:@"0x%X",[self fileOffsetToRVA:typeTableBaseLocation]] : 
-                                                   [NSString stringWithFormat:@"0x%qX",[self fileOffsetToRVA64:typeTableBaseLocation]]];
+                           :[NSString stringWithFormat:@"0x%qX",[self fileOffsetToRVA:typeTableBaseLocation]]];                                                   
   }
     
   uint8_t callSiteFormat = [dataController read_uint8:range lastReadHex:&lastReadHex];
@@ -761,7 +758,7 @@ using namespace std;
                          :@"Common Enc Array Sect Offset"
                          :[self is64bit] == NO 
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + commonEncodingsArraySectionOffset]];
+                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]];
   
   uint32_t commonEncodingsArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -775,7 +772,7 @@ using namespace std;
                          :@"Personality Array Sect Offset"
                          :[self is64bit] == NO 
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + personalityArraySectionOffset]];
+                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]];
 
   uint32_t personalityArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -789,7 +786,7 @@ using namespace std;
                          :@"Index Section Offset"
                          :[self is64bit] == NO 
                             ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + indexSectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA64:range.location] + indexSectionOffset]];  
+                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + indexSectionOffset]];
 
   uint32_t indexCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]

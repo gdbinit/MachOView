@@ -156,73 +156,34 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
-- (uint32_t)fileOffsetToRVA: (uint32_t)offset
+// convert a file offset to the virtual address
+- (uint64_t)fileOffsetToRVA: (uint64_t)offset
 {
-  NSParameterAssert([self is64bit] == NO);
-  
-  SegmentInfoMap::const_iterator segIter = segmentInfo.upper_bound(offset);
-  if (segIter == segmentInfo.begin())
-  {
-    [NSException raise:@"fileOffsetToRVA"
-                format:@"no segment found at offset 0x%X", offset];
-  }
-  --segIter;
-  uint32_t segOffset = segIter->first;
-  uint32_t segAddr = segIter->second.first;
-  return offset - segOffset + segAddr;
-}
-
-//-----------------------------------------------------------------------------
-- (uint64_t)fileOffsetToRVA64: (uint32_t)offset
-{
-  NSParameterAssert([self is64bit] == YES);
-  
-  SegmentInfoMap::const_iterator segIter = segmentInfo.upper_bound(offset);
-  if (segIter == segmentInfo.begin())
-  {
-    [NSException raise:@"fileOffsetToRVA64"
-                format:@"no segment found at offset 0x%X", offset];
-  }
-  --segIter;
-  uint32_t segOffset = segIter->first;
-  uint64_t segAddr = segIter->second.first;
-  return offset - segOffset + segAddr;
+    SegmentInfoMap::const_iterator segIter = segmentInfo.upper_bound(offset);
+    if (segIter == segmentInfo.begin()) {
+        [NSException raise:@"fileOffsetToRVA"
+                    format:@"no segment found at offset 0x%llX", offset];
+    }
+    --segIter;
+    uint64_t segOffset = segIter->first;
+    uint64_t segAddr = segIter->second.first;
+    // XXX: missing overflow checks
+    return offset - segOffset + segAddr;
 }
 
 // ----------------------------------------------------------------------------
-- (uint32_t)RVAToFileOffset: (uint32_t)rva
+- (uint64_t)RVAToFileOffset: (uint64_t)rva
 {
-  NSParameterAssert([self is64bit] == NO);
-  
-  SectionInfoMap::const_iterator sectIter = sectionInfo.upper_bound(rva);
-  if (sectIter == sectionInfo.begin())
-  {
-    [NSException raise:@"RVAToFileOffset"
-                format:@"no section found at address 0x%X", rva];
-  }
-  --sectIter;
-  uint32_t sectOffset = sectIter->second.first;
-  uint32_t fileOffset = sectOffset + (rva - [self fileOffsetToRVA:sectOffset]);
-  NSAssert1(fileOffset < [dataController.fileData length], @"rva is out of range (0x%X)", rva);
-  return fileOffset;
-}
-
-// ----------------------------------------------------------------------------
-- (uint32_t)RVA64ToFileOffset: (uint64_t)rva64
-{
-  NSParameterAssert([self is64bit] == YES);
-  
-  SectionInfoMap::const_iterator sectIter = sectionInfo.upper_bound(rva64);
-  if (sectIter == sectionInfo.begin())
-  {
-    [NSException raise:@"RVA64ToFileOffset"
-                format:@"no section found at address 0x%qX", rva64];
-  }
-  --sectIter;
-  uint32_t sectOffset = sectIter->second.first;
-  uint32_t fileOffset = sectOffset + (rva64 - [self fileOffsetToRVA64:sectOffset]);
-  NSAssert1(fileOffset < [dataController.fileData length], @"rva is out of range (0x%qX)", rva64);
-  return fileOffset;
+    SectionInfoMap::const_iterator sectIter = sectionInfo.upper_bound(rva);
+    if (sectIter == sectionInfo.begin()) {
+        [NSException raise:@"RVAToFileOffset"
+                    format:@"no section found at address 0x%llX", rva];
+    }
+    --sectIter;
+    uint64_t sectOffset = sectIter->second.first;
+    uint64_t fileOffset = sectOffset + (rva - [self fileOffsetToRVA:sectOffset]);
+    NSAssert1(fileOffset < [dataController.fileData length], @"rva is out of range (0x%llX)", rva);
+    return fileOffset;
 }
 
 // ----------------------------------------------------------------------------
@@ -282,9 +243,7 @@ _hex2int(char const * a, uint32_t len)
     return @"";
   }
   
-  return ([self is64bit] == NO 
-          ? [NSString stringWithFormat:@"%.8X",[self fileOffsetToRVA:fileOffset]]
-          : [NSString stringWithFormat:@"%.8qX",[self fileOffsetToRVA64:fileOffset]]);
+    return [NSString stringWithFormat:@"%.8qX",[self fileOffsetToRVA:fileOffset]];
 }
 
 // ----------------------------------------------------------------------------
@@ -1511,7 +1470,7 @@ struct CompareSectionByName
         
         if (cieID == 0)
         {
-          uint64_t CIE_addr = [self fileOffsetToRVA64:location];
+          uint64_t CIE_addr = [self fileOffsetToRVA:location];
           [self createCFINode:sectionNode
                       caption:(lastNodeCaption = [NSString stringWithFormat:@"Call Frame %@", [self findSymbolAtRVA64:CIE_addr]])
                      location:location
@@ -1609,10 +1568,10 @@ struct CompareSectionByName
         uint64_t lsdaAddr = ehFrameIter->first;
         uint64_t frameAddr = ehFrameIter->second;
         
-        uint32_t location = [self RVA64ToFileOffset:lsdaAddr];
+        uint32_t location = [self RVAToFileOffset:lsdaAddr];
         
         uint32_t length = (++ehFrameIter != lsdaInfo.end() 
-                           ? [self RVA64ToFileOffset:ehFrameIter->first]
+                           ? [self RVAToFileOffset:ehFrameIter->first]
                            : section_64->offset + section_64->size) - location;
         
         [self createLSDANode:sectionNode 

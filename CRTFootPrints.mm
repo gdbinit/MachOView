@@ -1370,7 +1370,7 @@ static AsmFootPrint const SDK109Target104X86 = {
 @implementation MachOLayout (CRTFootPrints)
 
 //------------------------------------------------------------------------------
-- (bool) matchAsmAtOffset:(uint32_t)offset 
+- (bool) matchAsmAtOffset:(uint64_t)offset 
              asmFootPrint:(const AsmFootPrint)footprint 
                 lineCount:(NSUInteger)lineCount
 {
@@ -1402,82 +1402,67 @@ static AsmFootPrint const SDK109Target104X86 = {
 //------------------------------------------------------------------------------
 - (void) determineRuntimeVersion
 {
-  if (!dataController) // dataController is weak
-    return;
+    if (!dataController) { // dataController is weak
+        return;
+    }
 
-  if (entryPoint == 0)
-  {
-    return; // not an executable, no entry point, or cannot detect
-  }
+    if (entryPoint == 0) {
+        return; // not an executable, no entry point, or cannot detect
+    }
+
+    // find file offset of the entry point
+    uint64_t offset = [self RVAToFileOffset:entryPoint];
+    NSLog(@"%@: file offset of OEP: 0x%llX", self, offset);
   
-  // find file offset of the entry point
-  uint32_t offset = [self is64bit] == NO 
-                      ? [self RVAToFileOffset:entryPoint] 
-                      : [self RVA64ToFileOffset:entryPoint];
+    uint64_t dataLength = [dataController.fileData length];
   
-  NSLog(@"%@: file offset of OEP: 0x%X", self, offset);
-  
-  uint32_t dataLength = [dataController.fileData length];
-  
-  if (offset >= dataLength)
-  {
-    return;
-  }
+    if (offset >= dataLength) {
+        return;
+    }
   
   // test against footprints
-  if ([self is64bit] == NO)
-  {
-    if (MATCHASM(SDK104Target104X86v1))
-    {
+  if ([self is64bit] == NO) {
+    if (MATCHASM(SDK104Target104X86v1)) {
       NSLog(@"SDK104Target104X86v1 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.4 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK104Target104X86v2))
-    {
+    else if (MATCHASM(SDK104Target104X86v2)) {
       NSLog(@"SDK104Target104X86v2 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.4 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK104Target104X86v3))
-    {
+    else if (MATCHASM(SDK104Target104X86v3)) {
       NSLog(@"SDK104Target104X86v3 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.4 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK104Target104X86v4))
-    {
+    else if (MATCHASM(SDK104Target104X86v4)) {
       NSLog(@"SDK104Target104X86v4 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.4 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK105Target104X86))
-    {
+    else if (MATCHASM(SDK105Target104X86)) {
       NSLog(@"SDK105Target104X86 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.5 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK105Target105X86))
-    {
+    else if (MATCHASM(SDK105Target105X86)) {
       NSLog(@"SDK105Target105X86 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.5 Target10.5]"];
       return;
     }
-    else if (MATCHASM(SDK106Target104X86) || MATCHASM(SDK106Target104X86v2))
-    {
+    else if (MATCHASM(SDK106Target104X86) || MATCHASM(SDK106Target104X86v2)) {
       NSLog(@"SDK106Target104X86 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK106Target105X86))
-    {
+    else if (MATCHASM(SDK106Target105X86)) {
       NSLog(@"SDK106Target105X86 matched");
       
-      for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
-      {
+      for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter) {
         struct load_command const * load_command = *cmdIter;
-        if (load_command->cmd == LC_DYLD_INFO_ONLY)
-        {
+        if (load_command->cmd == LC_DYLD_INFO_ONLY) {
           rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.6]"]; 
           NSLog(@"LC_DYLD_INFO_ONLY  ==> target10.6");
           return;
@@ -1486,43 +1471,35 @@ static AsmFootPrint const SDK109Target104X86 = {
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.5]"];
       return;
     }
-    else if (MATCHASM (SDK109Target104X86))
-    {
+    else if (MATCHASM (SDK109Target104X86)) {
       NSLog(@"SDK109Target104X86 matched");
 
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.9 Target10.4]"];
       return;
     }
   }
-  else
-  {
-    if (MATCHASM(SDK104Target104X86_64))
-    {
+  else {
+    if (MATCHASM(SDK104Target104X86_64)) {
       NSLog(@"SDK104Target104X86_64 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.4 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK105Target104X86_64))
-    {
+    else if (MATCHASM(SDK105Target104X86_64)) {
       NSLog(@"SDK105Target104X86_64 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.5 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK106Target104X86_64))
-    {
+    else if (MATCHASM(SDK106Target104X86_64)) {
       NSLog(@"SDK106Target104X86_64 matched");
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6 Target10.4]"];
       return;
     }
-    else if (MATCHASM(SDK105Target105X86_64))
-    {
+    else if (MATCHASM(SDK105Target105X86_64)) {
       NSLog(@"SDK105Target105X86_64 matched");
       
-      for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter)
-      {
+      for (CommandVector::const_iterator cmdIter = commands.begin(); cmdIter != commands.end(); ++cmdIter) {
         struct load_command const * load_command = *cmdIter;
-        if (load_command->cmd == LC_DYLD_INFO_ONLY)
-        {
+        if (load_command->cmd == LC_DYLD_INFO_ONLY) {
           NSLog(@"LC_DYLD_INFO_ONLY  ==> target10.6");
           rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.6]"]; 
           return;
@@ -1531,9 +1508,7 @@ static AsmFootPrint const SDK109Target104X86 = {
       rootNode.caption = [rootNode.caption stringByAppendingString:@" [SDK10.5]"];
       return;
     }
-    
   }
-  
 }
 //------------------------------------------------------------------------------
 

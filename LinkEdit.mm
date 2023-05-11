@@ -342,7 +342,7 @@ using namespace std;
     //========================================================================
     if (relocation_info->r_extern)
     {
-      uint32_t relocLocation = [self RVA64ToFileOffset:baseAddress + relocation_info->r_address];
+      uint32_t relocLocation = [self RVAToFileOffset:baseAddress + relocation_info->r_address];
       NSRange rangeReloc = NSMakeRange(relocLocation,0);
 
       // target symbol
@@ -363,8 +363,8 @@ using namespace std;
                                 : symbolName];
       
       [symbolNames setObject:[NSString stringWithFormat:@"%@->%@",
-                              [self findSymbolAtRVA64:[self fileOffsetToRVA64:relocLocation]],symbolName]
-                      forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA64:relocLocation]]];
+                              [self findSymbolAtRVA64:[self fileOffsetToRVA:relocLocation]],symbolName]
+                      forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA:relocLocation]]];
 
       // For the x86_64 architecure on Mac OS X it is possible to
       // encode a signed 32-bit expression of the form:
@@ -571,7 +571,7 @@ using namespace std;
                                :@"Section"
                                :[NSString stringWithFormat:@"%u %@", relocation_info->r_symbolnum, sectionName]];
         
-        uint32_t relocLocation = [self RVA64ToFileOffset:baseAddress + relocation_info->r_address];
+        uint32_t relocLocation = [self RVAToFileOffset:baseAddress + relocation_info->r_address];
         NSRange rangeReloc = NSMakeRange(relocLocation,0);
         uint64_t relocValue = 0;
         
@@ -632,8 +632,8 @@ using namespace std;
         [self addRelocAtFileOffset:relocLocation withLength:relocLength andValue:relocValue];
         
         [symbolNames setObject:[NSString stringWithFormat:@"%@->%@",
-                                [self findSymbolAtRVA64:[self fileOffsetToRVA64:relocLocation]],symbolName]
-                        forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA64:relocLocation]]];
+                                [self findSymbolAtRVA64:[self fileOffsetToRVA:relocLocation]],symbolName]
+                        forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA:relocLocation]]];
 
         //NSLog(@"%@ %.16qX --> (%u) %@",[self findSectionContainsRVA64:[self fileOffsetToRVA64:relocLocation]],[self fileOffsetToRVA64:relocLocation],relocLength,[self findSymbolAtRVA64:relocValue]);
       }

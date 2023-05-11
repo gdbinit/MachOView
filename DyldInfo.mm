@@ -402,7 +402,7 @@ using namespace std;
       }
       else
       {
-        relocLocation = [self RVA64ToFileOffset:address];
+        relocLocation = [self RVAToFileOffset:address];
         relocValue = [symbolIndex longLongValue];
       }
       
@@ -869,9 +869,7 @@ using namespace std;
                                      :[NSString stringWithFormat:@"%.8lX", range.location]
                                      :lastReadHex
                                      :@"Next Node"
-                                     :[self is64bit] == NO 
-                                        ? [NSString stringWithFormat:@"0x%X",[self fileOffsetToRVA:location + skip]]
-                                        : [NSString stringWithFormat:@"0x%qX",[self fileOffsetToRVA64:location + skip]]];
+                                     :[NSString stringWithFormat:@"0x%qX",[self fileOffsetToRVA:location + skip]]];
     
     if (childCount == 0)
     {
