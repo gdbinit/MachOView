@@ -2137,7 +2137,7 @@ struct message_ref64
   MVNode * childNode = nil;
   
   // Protocols
-  if (protocol64_t->protocols && (childNode = [self sectionNodeContainsRVA64:protocol64_t->protocols]))
+  if (protocol64_t->protocols && (childNode = [self sectionNodeContainsRVA:protocol64_t->protocols]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->protocols];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->protocols];
@@ -2149,7 +2149,7 @@ struct message_ref64
   }
   
   // Instance Methods
-  if (protocol64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA64:protocol64_t->instanceMethods]))
+  if (protocol64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->instanceMethods]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->instanceMethods];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->instanceMethods];
@@ -2161,7 +2161,7 @@ struct message_ref64
   }
   
   // Class Methods
-  if (protocol64_t->classMethods && (childNode = [self sectionNodeContainsRVA64:protocol64_t->classMethods]))
+  if (protocol64_t->classMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->classMethods]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->classMethods];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->classMethods];
@@ -2173,7 +2173,7 @@ struct message_ref64
   }
   
   // Optional Instance Methods
-  if (protocol64_t->optionalInstanceMethods && (childNode = [self sectionNodeContainsRVA64:protocol64_t->optionalInstanceMethods]))
+  if (protocol64_t->optionalInstanceMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->optionalInstanceMethods]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->optionalInstanceMethods];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->optionalInstanceMethods];
@@ -2185,7 +2185,7 @@ struct message_ref64
   }
   
   // Optional Class Methods
-  if (protocol64_t->optionalClassMethods && (childNode = [self sectionNodeContainsRVA64:protocol64_t->optionalClassMethods]))
+  if (protocol64_t->optionalClassMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->optionalClassMethods]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->optionalClassMethods];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->optionalClassMethods];
@@ -2197,7 +2197,7 @@ struct message_ref64
   }
   
   // Instance Properties
-  if (protocol64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA64:protocol64_t->instanceProperties]))
+  if (protocol64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA:protocol64_t->instanceProperties]))
   {
     uint32_t location = [self RVAToFileOffset:protocol64_t->instanceProperties];
     NSString * caption = [self findSymbolAtRVA64:protocol64_t->instanceProperties];
@@ -2317,7 +2317,7 @@ struct message_ref64
                            :[NSString stringWithFormat:@"list[%qu]",nprot]
                            :[self findSymbolAtRVA64:protocolAddr]];
     
-    MVNode * childNode = [self sectionNodeContainsRVA64:protocolAddr];
+    MVNode * childNode = [self sectionNodeContainsRVA:protocolAddr];
     if (childNode)
     {
       uint32_t location = [self RVAToFileOffset:protocolAddr];
@@ -2759,7 +2759,7 @@ struct message_ref64
   MVNode * childNode = nil;
   
   // Base Methods
-  if (class64_ro_t->baseMethods && (childNode = [self sectionNodeContainsRVA64:class64_ro_t->baseMethods]))
+  if (class64_ro_t->baseMethods && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseMethods]))
   {
     uint32_t location = [self RVAToFileOffset:class64_ro_t->baseMethods];
     NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseMethods];
@@ -2771,7 +2771,7 @@ struct message_ref64
   }
   
   // Base Protocols
-  if (class64_ro_t->baseProtocols && (childNode = [self sectionNodeContainsRVA64:class64_ro_t->baseProtocols]))
+  if (class64_ro_t->baseProtocols && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseProtocols]))
   {
     uint32_t location = [self RVAToFileOffset:class64_ro_t->baseProtocols];
     NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseProtocols];
@@ -2783,7 +2783,7 @@ struct message_ref64
   }
   
   // Instance Variables
-  if (class64_ro_t->ivars && (childNode = [self sectionNodeContainsRVA64:class64_ro_t->ivars]))
+  if (class64_ro_t->ivars && (childNode = [self sectionNodeContainsRVA:class64_ro_t->ivars]))
   {
     uint32_t location = [self RVAToFileOffset:class64_ro_t->ivars];
     NSString * caption = [self findSymbolAtRVA64:class64_ro_t->ivars];
@@ -2795,7 +2795,7 @@ struct message_ref64
   }
   
   // Base Properties
-  if (class64_ro_t->baseProperties && (childNode = [self sectionNodeContainsRVA64:class64_ro_t->baseProperties]))
+  if (class64_ro_t->baseProperties && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseProperties]))
   {
     uint32_t location = [self RVAToFileOffset:class64_ro_t->baseProperties];
     NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseProperties];
@@ -2945,7 +2945,7 @@ struct message_ref64
   MVNode * childNode = nil;
   
   // readonly data
-  if (class64_t->data && (childNode = [self sectionNodeContainsRVA64:class64_t->data]))
+  if (class64_t->data && (childNode = [self sectionNodeContainsRVA:class64_t->data]))
   {
     uint32_t location = [self RVAToFileOffset:class64_t->data];
     NSString * caption = [self findSymbolAtRVA64:class64_t->data];
@@ -3155,7 +3155,7 @@ struct message_ref64
   MVNode * childNode = nil;
   
   // CLS
-  if (category64_t->cls && (childNode = [self sectionNodeContainsRVA64:category64_t->cls]))
+  if (category64_t->cls && (childNode = [self sectionNodeContainsRVA:category64_t->cls]))
   {
     uint32_t location = [self RVAToFileOffset:category64_t->cls];
     NSString * caption = [self findSymbolAtRVA64:category64_t->cls];
@@ -3167,7 +3167,7 @@ struct message_ref64
   }
   
   // Instance Methods
-  if (category64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA64:category64_t->instanceMethods]))
+  if (category64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA:category64_t->instanceMethods]))
   {
     uint32_t location = [self RVAToFileOffset:category64_t->instanceMethods];
     NSString * caption = [self findSymbolAtRVA64:category64_t->instanceMethods];
@@ -3179,7 +3179,7 @@ struct message_ref64
   }
   
   // Class Methods
-  if (category64_t->classMethods && (childNode = [self sectionNodeContainsRVA64:category64_t->classMethods]))
+  if (category64_t->classMethods && (childNode = [self sectionNodeContainsRVA:category64_t->classMethods]))
   {
     uint32_t location = [self RVAToFileOffset:category64_t->classMethods];
     NSString * caption = [self findSymbolAtRVA64:category64_t->classMethods];
@@ -3191,7 +3191,7 @@ struct message_ref64
   }
   
   // Protocols
-  if (category64_t->protocols && (childNode = [self sectionNodeContainsRVA64:category64_t->protocols]))
+  if (category64_t->protocols && (childNode = [self sectionNodeContainsRVA:category64_t->protocols]))
   {
     uint32_t location = [self RVAToFileOffset:category64_t->protocols];
     NSString * caption = [self findSymbolAtRVA64:category64_t->protocols];
@@ -3203,7 +3203,7 @@ struct message_ref64
   }
   
   // Instance Properties
-  if (category64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA64:category64_t->instanceProperties]))
+  if (category64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA:category64_t->instanceProperties]))
   {
     uint32_t location = [self RVAToFileOffset:category64_t->instanceProperties];
     NSString * caption = [self findSymbolAtRVA64:category64_t->instanceProperties];
@@ -3281,7 +3281,7 @@ struct message_ref64
   for (Pointer64Vector::const_iterator iter = classes->begin(); iter != classes->end(); ++iter)
   {
     uint64_t const & rva64 = *iter;
-    if (rva64 && (node = [self sectionNodeContainsRVA64:rva64]))
+    if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint32_t location = [self RVAToFileOffset:rva64];
       NSString * caption = [self findSymbolAtRVA64:rva64];
@@ -3296,7 +3296,7 @@ struct message_ref64
   for (Pointer64Vector::const_iterator iter = categories->begin(); iter != categories->end(); ++iter)
   {
     uint64_t const & rva64 = *iter;
-    if (rva64 && (node = [self sectionNodeContainsRVA64:rva64]))
+    if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint32_t location = [self RVAToFileOffset:rva64];
       NSString * caption = [self findSymbolAtRVA64:rva64];
@@ -3311,7 +3311,7 @@ struct message_ref64
   for (Pointer64Vector::const_iterator iter = protocols->begin(); iter != protocols->end(); ++iter)
   {
     uint64_t const & rva64 = *iter;
-    if (rva64 && (node = [self sectionNodeContainsRVA64:rva64]))
+    if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint32_t location = [self RVAToFileOffset:rva64];  
       NSString * caption = [self findSymbolAtRVA64:rva64];

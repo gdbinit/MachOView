@@ -72,8 +72,7 @@ typedef std::map<uint64_t,uint64_t>                             ExceptionFrameMa
 - (NSDictionary *)userInfoForSection:(struct section const *)section;
 - (NSDictionary *)userInfoForSection64:(struct section_64 const *)section_64;
 
-- (MVNode *)sectionNodeContainsRVA:(uint32_t)rva;
-- (MVNode *)sectionNodeContainsRVA64:(uint64_t)rva;
+- (MVNode *)sectionNodeContainsRVA:(uint64_t)rva;
 
 - (NSString *)findSectionContainsRVA:(uint64_t)rva;
 

@@ -303,17 +303,10 @@ _hex2int(char const * a, uint32_t len)
 }
 
 //------------------------------------------------------------------------------
-- (MVNode *)sectionNodeContainsRVA:(uint32_t)rva
+- (MVNode *)sectionNodeContainsRVA:(uint64_t)rva
 {
-  NSDictionary * userInfo = [self sectionInfoForRVA:rva];
-  return (userInfo ? [self findNodeByUserInfo:userInfo] : nil);
-}
-
-//------------------------------------------------------------------------------
-- (MVNode *)sectionNodeContainsRVA64:(uint64_t)rva64
-{
-  NSDictionary * userInfo = [self sectionInfoForRVA:rva64];
-  return (userInfo ? [self findNodeByUserInfo:userInfo] : nil);
+    NSDictionary * userInfo = [self sectionInfoForRVA:rva];
+    return (userInfo ? [self findNodeByUserInfo:userInfo] : nil);
 }
 
 //-----------------------------------------------------------------------------
