@@ -63,7 +63,7 @@ using namespace std;
 - (MVNode *)createPointers64Node:(MVNode *)parent
                          caption:(NSString *)caption
                         location:(uint32_t)location
-                          length:(uint32_t)length
+                          length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
@@ -231,7 +231,7 @@ using namespace std;
 - (MVNode *)createIndPointers64Node:(MVNode *)parent
                             caption:(NSString *)caption
                            location:(uint32_t)location
-                             length:(uint32_t)length
+                             length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
@@ -286,7 +286,7 @@ using namespace std;
 - (MVNode *)createIndStubs64Node:(MVNode *)parent
                          caption:(NSString *)caption
                         location:(uint32_t)location
-                          length:(uint32_t)length
+                          length:(uint64_t)length
                           stride:(uint32_t)stride
 {
   MVNodeSaver nodeSaver;

@@ -776,8 +776,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 
 //----------------------------------------------------------------------------
 - (MVNode *)insertChild:(NSString *)_caption
-            location:(uint32_t)location 
-              length:(uint32_t)length
+            location:(uint64_t)location 
+              length:(uint64_t)length
 {
   MVNode * node = [[MVNode alloc] init];
   node.caption = _caption;
@@ -790,8 +790,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 
 //----------------------------------------------------------------------------
 - (MVNode *)insertChildWithDetails:(NSString *)_caption 
-                       location:(uint32_t)location 
-                         length:(uint32_t)length
+                       location:(uint64_t)location
+                         length:(uint64_t)length
                           saver:(MVNodeSaver &)saver
 {
   MVNode * node = [self insertChild:_caption location:location length:length];

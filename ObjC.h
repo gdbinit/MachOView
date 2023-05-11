@@ -22,12 +22,12 @@ typedef std::vector<uint64_t> Pointer64Vector;
 - (MVNode *)createObjCCFStrings64Node:(MVNode *)parent
                               caption:(NSString *)caption
                              location:(uint32_t)location
-                               length:(uint32_t)length;
+                               length:(uint64_t)length;
 
 - (MVNode *)createObjCImageInfoNode:(MVNode *)parent
                             caption:(NSString *)caption
                            location:(uint32_t)location
-                             length:(uint32_t)length;
+                             length:(uint64_t)length;
 
 - (MVNode *)createObjCModulesNode:(MVNode *)parent
                           caption:(NSString *)caption
@@ -53,7 +53,7 @@ typedef std::vector<uint64_t> Pointer64Vector;
 - (MVNode *)createObjC2Pointer64ListNode:(MVNode *)parent
                                  caption:(NSString *)caption
                                 location:(uint32_t)location
-                                  length:(uint32_t)length
+                                  length:(uint64_t)length
                                 pointers:(Pointer64Vector &)pointers;
 
 - (MVNode *)createObjC2MsgRefsNode:(MVNode *)parent
@@ -64,7 +64,7 @@ typedef std::vector<uint64_t> Pointer64Vector;
 - (MVNode *)createObjC2MsgRefs64Node:(MVNode *)parent
                              caption:(NSString *)caption
                             location:(uint32_t)location
-                              length:(uint32_t)length;
+                              length:(uint64_t)length;
 
 -(void)parseObjC2ClassPointers:(PointerVector const *)classes
               CategoryPointers:(PointerVector const *)categories

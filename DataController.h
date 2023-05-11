@@ -130,8 +130,8 @@ struct MVNodeSaver;
 
 - (NSUInteger)          numberOfChildren;
 - (MVNode *)            childAtIndex:(NSUInteger)n;
-- (MVNode *)            insertChild:(NSString *)_caption location:(uint32_t)location length:(uint32_t)length;
-- (MVNode *)            insertChildWithDetails:(NSString *)_caption location:(uint32_t)location length:(uint32_t)length saver:(MVNodeSaver &)saver;
+- (MVNode *)            insertChild:(NSString *)_caption location:(uint64_t)location length:(uint64_t)length;
+- (MVNode *)            insertChildWithDetails:(NSString *)_caption location:(uint64_t)location length:(uint64_t)length saver:(MVNodeSaver &)saver;
 - (MVNode *)            findNodeByUserInfo:(NSDictionary *)uinfo;
 - (void)                openDetails;  // open swap file for reading details on demand
 - (void)                closeDetails; // close swap file

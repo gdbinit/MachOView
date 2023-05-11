@@ -19,7 +19,7 @@
 - (MVNode *)createPointers64Node:(MVNode *)parent
                          caption:(NSString *)caption
                         location:(uint32_t)location
-                          length:(uint32_t)length;
+                          length:(uint64_t)length;
 
 -(MVNode *)createCStringsNode:(MVNode *)parent
                       caption:(NSString *)caption
@@ -40,7 +40,7 @@
 - (MVNode *)createIndPointers64Node:(MVNode *)parent
                             caption:(NSString *)caption
                            location:(uint32_t)location
-                             length:(uint32_t)length;
+                             length:(uint64_t)length;
 
 - (MVNode *)createIndStubsNode:(MVNode *)parent
                        caption:(NSString *)caption
@@ -51,7 +51,7 @@
 - (MVNode *)createIndStubs64Node:(MVNode *)parent
                          caption:(NSString *)caption
                         location:(uint32_t)location
-                          length:(uint32_t)length
+                          length:(uint64_t)length
                           stride:(uint32_t)stride;
 
 - (MVNode *)createStubHelperNode:(MVNode *)parent
