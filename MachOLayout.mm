@@ -283,46 +283,23 @@ _hex2int(char const * a, uint32_t len)
 }
 
 //-----------------------------------------------------------------------------
-- (NSDictionary *)sectionInfoForRVA:(uint32_t)rva
+- (NSDictionary *)sectionInfoForRVA:(uint64_t)rva
 {
-  NSParameterAssert([self is64bit] == NO);
-  SectionInfoMap::iterator iter = sectionInfo.upper_bound(rva);
-  if (iter == sectionInfo.begin())
-  {
-    NSLog(@"warning: no section info found for address 0x%.8X",rva);
-    return nil;
-  }
-  return (--iter)->second.second;
+    SectionInfoMap::iterator iter = sectionInfo.upper_bound(rva);
+    if (iter == sectionInfo.begin()) {
+        NSLog(@"warning: no section info found for address 0x%.8qX",rva);
+        return nil;
+    }
+    return (--iter)->second.second;
 }
 
 //-----------------------------------------------------------------------------
-- (NSDictionary *)sectionInfoForRVA64:(uint64_t)rva64
+- (NSString *)findSectionContainsRVA:(uint64_t)rva
 {
-  NSParameterAssert([self is64bit] == YES);
-  SectionInfoMap::iterator iter = sectionInfo.upper_bound(rva64);
-  if (iter == sectionInfo.begin())
-  {
-    NSLog(@"warning: no section info found for address 0x%.16qX",rva64);
-    return nil;
-  }
-  return (--iter)->second.second;
-}
-//-----------------------------------------------------------------------------
-- (NSString *)findSectionContainsRVA:(uint32_t)rva
-{
-  NSDictionary * userInfo = [self sectionInfoForRVA:rva];
-  return (userInfo ? [NSString stringWithFormat:@"%8s %-16s",
-                      CSTRING([userInfo objectForKey:@"segname"]),
-                      CSTRING([userInfo objectForKey:@"sectname"])] : @"NO SECTION               ");
-}
-
-//-----------------------------------------------------------------------------
-- (NSString *)findSectionContainsRVA64:(uint64_t)rva64
-{
-  NSDictionary * userInfo = [self sectionInfoForRVA64:rva64];
-  return (userInfo ? [NSString stringWithFormat:@"%8s %-16s",
-                      CSTRING([userInfo objectForKey:@"segname"]),
-                      CSTRING([userInfo objectForKey:@"sectname"])] : @"NO SECTION               ");
+    NSDictionary * userInfo = [self sectionInfoForRVA:rva];
+    return (userInfo ? [NSString stringWithFormat:@"%8s %-16s",
+                        CSTRING([userInfo objectForKey:@"segname"]),
+                        CSTRING([userInfo objectForKey:@"sectname"])] : @"NO SECTION               ");
 }
 
 //------------------------------------------------------------------------------
@@ -335,7 +312,7 @@ _hex2int(char const * a, uint32_t len)
 //------------------------------------------------------------------------------
 - (MVNode *)sectionNodeContainsRVA64:(uint64_t)rva64
 {
-  NSDictionary * userInfo = [self sectionInfoForRVA64:rva64];
+  NSDictionary * userInfo = [self sectionInfoForRVA:rva64];
   return (userInfo ? [self findNodeByUserInfo:userInfo] : nil);
 }
 

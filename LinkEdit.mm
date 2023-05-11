@@ -1769,7 +1769,7 @@ using namespace std;
                              :lastReadHex
                              :@"uleb128"
                              :[NSString stringWithFormat:@"%@ %@",
-                               [self is64bit] == NO ? [self findSectionContainsRVA:address] : [self findSectionContainsRVA64:address],
+                               [self findSectionContainsRVA:address],
                                (symbolName = [self is64bit] == NO ? [self findSymbolAtRVA:(uint32_t)address] : [self findSymbolAtRVA64:address])]];
       
       [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil]; 

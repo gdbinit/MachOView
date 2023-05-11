@@ -72,7 +72,7 @@ using namespace std;
              location:(uint32_t)location
 {
   NSString * descStr = [NSString stringWithFormat:@"%@ 0x%qX %@",
-                        [self is64bit] == NO ? [self findSectionContainsRVA:address] : [self findSectionContainsRVA64:address],
+                        [self findSectionContainsRVA:address],
                         address,
                         type == REBASE_TYPE_POINTER ? @"Pointer" :
                         type == REBASE_TYPE_TEXT_ABSOLUTE32 ? @"Abs32  " :
@@ -346,7 +346,7 @@ using namespace std;
             ptrSize:(uint32_t)ptrSize
 {
   NSString * descStr = [NSString stringWithFormat:@"%@ 0x%qX", 
-                        [self is64bit] == NO ? [self findSectionContainsRVA:address] : [self findSectionContainsRVA64:address],
+                        [self findSectionContainsRVA:address],
                         address];
   
   if (nodeType != NodeTypeLazyBind)
@@ -754,7 +754,7 @@ using namespace std;
   //uint64_t address = [self is64bit] == NO ? [self fileOffsetToRVA:offset] : [self fileOffsetToRVA64:offset];
   
   NSString * descStr = [NSString stringWithFormat:@"%@ 0x%qX",
-                        [self is64bit] == NO ? [self findSectionContainsRVA:address] : [self findSectionContainsRVA64:address],
+                        [self findSectionContainsRVA:address],
                         address];
   
   if ((flags & EXPORT_SYMBOL_FLAGS_KIND_MASK) == EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL)

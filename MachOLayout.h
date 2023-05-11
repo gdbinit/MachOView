@@ -75,8 +75,7 @@ typedef std::map<uint64_t,uint64_t>                             ExceptionFrameMa
 - (MVNode *)sectionNodeContainsRVA:(uint32_t)rva;
 - (MVNode *)sectionNodeContainsRVA64:(uint64_t)rva;
 
-- (NSString *)findSectionContainsRVA:(uint32_t)rva;
-- (NSString *)findSectionContainsRVA64:(uint64_t)rva64;
+- (NSString *)findSectionContainsRVA:(uint64_t)rva;
 
 - (NSString *)findSymbolAtRVA:(uint32_t)rva;
 - (NSString *)findSymbolAtRVA64:(uint64_t)rva64;
