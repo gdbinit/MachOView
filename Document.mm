@@ -403,33 +403,27 @@ enum ViewType
 //----------------------------------------------------------------------------
 - (void)handleDataTreeChanged:(NSNotification *)notification
 {
-  if ([notification object] == dataController)
-  {
+  if ([notification object] == dataController) {
     dispatch_async(dispatch_get_main_queue(), ^
     {
       // Update UI here, on the main queue
       NSDictionary * userInfo = [notification userInfo];
-      if (userInfo)
-      {
+      if (userInfo) {
         //refresh the modified node only
         MVNode * node = [userInfo objectForKey:MVNodeUserInfoKey];
       
         // check if the window still exists which contains the leftView to update
-        if ([[self windowControllers] count] == 0)
-        {
+        if ([[self windowControllers] count] == 0) {
           return;
         }
         
-        [leftView reloadItem:node.parent];
+          [self->leftView reloadItem:node.parent];
      
-        if ([leftView isItemExpanded:node.parent])
-        {
-          [leftView reloadItem:node];
-        }
-      }
-      else 
-      {
-        [leftView reloadItem:dataController.rootNode reloadChildren:YES]; 
+          if ([self->leftView isItemExpanded:node.parent]) {
+            [self->leftView reloadItem:node];
+          }
+      } else {
+          [self->leftView reloadItem:self->dataController.rootNode reloadChildren:YES];
       }
     });
   }
@@ -453,18 +447,18 @@ enum ViewType
         if ([threadState isEqualToString:MVStatusTaskStarted] == YES) {
             if (OSAtomicIncrement32(&threadCount) == 1) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [progressIndicator setUsesThreadedAnimation:YES];
-                    [progressIndicator startAnimation:nil];
-                    [stopButton setHidden:NO];
+                    [self->progressIndicator setUsesThreadedAnimation:YES];
+                    [self->progressIndicator startAnimation:nil];
+                    [self->stopButton setHidden:NO];
                 });
             }
         }
         else if ([threadState isEqualToString:MVStatusTaskTerminated] == YES) {
             if (OSAtomicDecrement32(&threadCount) == 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [progressIndicator stopAnimation:nil];
-                    [statusText setStringValue:@""];
-                    [stopButton setHidden:YES];
+                    [self->progressIndicator stopAnimation:nil];
+                    [self->statusText setStringValue:@""];
+                    [self->stopButton setHidden:YES];
                 });
             }
         }

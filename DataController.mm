@@ -1111,7 +1111,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 // create Mach-O layouts based on file headers
 - (void)createLayouts:(MVNode *)parent
              location:(uint32_t)location
-               length:(uint32_t)length
+               length:(uint64_t)length
 {
   uint32_t magic = *(uint32_t*)((uint8_t *)[fileData bytes] + location);
   

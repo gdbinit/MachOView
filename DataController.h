@@ -165,7 +165,7 @@ struct MVNodeSaver;
 -(NSString *)           getMachine:(cpu_type_t)cputype;
 -(NSString *)           getARMCpu:(cpu_subtype_t)cpusubtype;
 
-- (void)                createLayouts:(MVNode *)parent location:(uint32_t)location length:(uint32_t)length;
+- (void)                createLayouts:(MVNode *)parent location:(uint32_t)location length:(uint64_t)length;
 - (void)                updateTreeView: (MVNode *)node;
 - (void)                updateTableView;
 - (void)                updateStatus: (NSString *)status;
