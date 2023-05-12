@@ -193,55 +193,49 @@ using namespace std;
 }
 
 // ----------------------------------------------------------------------------
-static inline
-uint32_t 
-_hex2int(char const * a, uint32_t len)
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winitializer-overrides"
+static const long hextable[] =
 {
-  uint32_t val = 0;
-  
-  for(uint32_t i = 0; i < len; i++)
-  {
-    if(a[i] <= '9')
-    {
-      val += (a[i]-'0')*(1<<(4*(len-1-i)));
+  [0 ... 255] = -1, // bit aligned access into this table is considerably
+  ['0'] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, // faster for most modern processors,
+  ['A'] = 10, 11, 12, 13, 14, 15,       // for the space conscious, reduce to
+  ['a'] = 10, 11, 12, 13, 14, 15        // signed char.
+};
+#pragma clang diagnostic pop
+
+/**
+ * @brief convert a hexidecimal string to a signed long
+ * will not produce or process negative numbers except
+ * to signal error.
+ *
+ * @param hex without decoration, case insensitive.
+ *
+ * @return -1 on error, or result (max (sizeof(long)*8)-1 bits)
+ */
+static inline
+long hexdec(const char *hex) {
+    long ret = 0;
+    while (*hex && ret >= 0) {
+        ret = (ret << 4) | hextable[*hex++];
     }
-    else
-    {
-      val += (a[i]-'7')*(1<<(4*(len-1-i)));
-    }
-  }
-  
-  return val;
+    return ret;
 }
 
 // ----------------------------------------------------------------------------
 // RAW string to RVA string converter for data source
 - (NSString *)convertToRVA: (NSString *)offsetStr
 {
-  uint32_t fileOffset;
+    uint64_t fileOffset = hexdec(CSTRING(offsetStr));
+    NSParameterAssert((long)fileOffset != -1);
   
-  /*
-  BOOL scanResult = [[NSScanner scannerWithString:offsetStr] scanHexInt:&fileOffset];
-  
-  // return empty string if it is out of bounds
-  if (scanResult == NO || segmentInfo.empty() || 
-      fileOffset < segmentInfo.begin()->first || 
-      fileOffset + 1 >= (--segmentInfo.end())->first + (--segmentInfo.end())->second.second)
-  {
-    return @"";
-  }
-  */
-  // _hex2int is supposed to be must faster
-  // note: on problems use the traditional scanner!
-  
-  fileOffset = _hex2int(CSTRING(offsetStr), [offsetStr length]);
-  
-  if (segmentInfo.empty() || 
-      fileOffset < segmentInfo.begin()->first || 
-      fileOffset + 1 >= (--segmentInfo.end())->first + (--segmentInfo.end())->second.second)
-  {
-    return @"";
-  }
+    if (segmentInfo.empty() ||
+        fileOffset < segmentInfo.begin()->first ||
+        fileOffset + 1 >= (--segmentInfo.end())->first + (--segmentInfo.end())->second.second)
+    {
+        return @"";
+    }
   
     return [NSString stringWithFormat:@"%.8qX",[self fileOffsetToRVA:fileOffset]];
 }
