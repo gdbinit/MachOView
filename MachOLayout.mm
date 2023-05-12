@@ -99,11 +99,11 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
-- (NSString *)findSymbolAtRVA:(uint32_t)rva
+- (NSString *)findSymbolAtRVA:(uint64_t)rva
 {
   NSParameterAssert([self is64bit] == NO);
-  NSString * symbolName = [symbolNames objectForKey:[NSNumber numberWithUnsignedLong:rva]];
-  return (symbolName != nil ? symbolName : [NSString stringWithFormat:@"0x%X",rva]);
+  NSString * symbolName = [symbolNames objectForKey:[NSNumber numberWithUnsignedLongLong:rva]];
+  return (symbolName != nil ? symbolName : [NSString stringWithFormat:@"0x%qX",rva]);
 }
 
 //-----------------------------------------------------------------------------

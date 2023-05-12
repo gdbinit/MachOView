@@ -160,7 +160,7 @@ using namespace std;
   ([self is64bit] == NO) ? [dataController read_uint32:range lastReadHex:&hexstr] : [dataController read_uint64:range lastReadHex:&hexstr]
 
 //-----------------------------------------------------------------------------
-- (NSString *)guessSymbolUsingEncoding:(uint8_t)format atOffset:(uint32_t)offset withValue:(uint32_t &)value
+- (NSString *)guessSymbolUsingEncoding:(uint8_t)format atOffset:(uint64_t)offset withValue:(uint32_t &)value
 {
   NSParameterAssert([self is64bit] == NO);
                     
@@ -182,7 +182,7 @@ using namespace std;
 }
 
 //-----------------------------------------------------------------------------
-- (NSString *)guessSymbol64UsingEncoding:(uint8_t)format atOffset:(uint32_t)offset withValue:(uint64_t &)value
+- (NSString *)guessSymbol64UsingEncoding:(uint8_t)format atOffset:(uint64_t)offset withValue:(uint64_t &)value
 {
   NSParameterAssert([self is64bit] == YES);
   
@@ -214,8 +214,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createCFINode:(MVNode *)parent
                 caption:(NSString *)caption
-               location:(uint32_t)location
-                 length:(uint32_t)length
+               location:(uint64_t)location
+                 length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
@@ -534,8 +534,8 @@ using namespace std;
 
 - (MVNode *)createLSDANode:(MVNode *)parent
                  caption:(NSString *)caption
-                location:(uint32_t)location
-                  length:(uint32_t)length
+                location:(uint64_t)location
+                  length:(uint64_t)length
           eh_frame_begin:(uint64_t)eh_frame_begin
               
 {
@@ -558,7 +558,7 @@ using namespace std;
                          :@"@TType format"
                          :[self getNameForEncoding:typeTableFormat]];
   
-  uint32_t typeTableBaseLocation = 0;
+  uint64_t typeTableBaseLocation = 0;
   if (typeTableFormat != DW_EH_PE_omit)
   {
     uint64_t typeTableBaseOffset = [dataController read_uleb128:range lastReadHex:&lastReadHex];
@@ -626,7 +626,7 @@ using namespace std;
   //================== Action record table ================
   if (typeTableFormat != DW_EH_PE_omit)
   {
-    typedef set<int32_t> IndexSet;
+    typedef set<int64_t> IndexSet;
     IndexSet typeIndexes;
     IndexSet exceptionSpecs;
 
@@ -671,7 +671,7 @@ using namespace std;
     // collect additional type indexes from exception specifications
     for (IndexSet::iterator iter = exceptionSpecs.begin(); iter != exceptionSpecs.end(); ++iter)
     {
-      int32_t index = *iter;
+      int64_t index = *iter;
 
       NSRange range = NSMakeRange(typeTableBaseLocation - index - 1, 0);
       
@@ -693,7 +693,7 @@ using namespace std;
     // traverse type filters in reverse order (starting with the catch clauses)
     for (IndexSet::reverse_iterator iter = typeIndexes.rbegin(); iter != typeIndexes.rend(); ++iter)
     {
-      int32_t index = *iter;
+      int64_t index = *iter;
       NSParameterAssert (index > 0);
       
       // Positive value, starting at 1. Index in the types table of the __typeinfo for the catch-clause type. 
@@ -735,7 +735,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createUnwindInfoHeaderNode:(MVNode *)parent
                                caption:(NSString *)caption
-                              location:(uint32_t)location
+                              location:(uint64_t)location
                                 header:(struct unwind_info_section_header const *)unwind_info_section_header
 {
   MVNodeSaver nodeSaver;

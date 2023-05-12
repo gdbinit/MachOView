@@ -11,20 +11,20 @@
 @interface MachOLayout (Exceptions)
 
 - (MVNode *)createCFINode:(MVNode *)parent
-                caption:(NSString *)caption
-               location:(uint32_t)location
-                   length:(uint32_t)length;
+                  caption:(NSString *)caption
+                 location:(uint64_t)location
+                   length:(uint64_t)length;
 
 
 - (MVNode *)createLSDANode:(MVNode *)parent
                  caption:(NSString *)caption
-                location:(uint32_t)location
-                  length:(uint32_t)length
+                location:(uint64_t)location
+                  length:(uint64_t)length
           eh_frame_begin:(uint64_t)eh_frame_begin;
 
 - (MVNode *)createUnwindInfoHeaderNode:(MVNode *)parent
                                caption:(NSString *)caption
-                              location:(uint32_t)location
+                              location:(uint64_t)location
                                 header:(struct unwind_info_section_header const *)unwind_info_section_header;
 
 
