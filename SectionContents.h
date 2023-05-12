@@ -65,9 +65,9 @@
                     length:(uint64_t)length
                     reloff:(uint64_t)reloff
                     nreloc:(uint32_t)nreloc
-                 extreloff:(uint32_t)extreloff
+                 extreloff:(uint64_t)extreloff
                    nextrel:(uint32_t)nextrel
-                 locreloff:(uint32_t)locreloff
+                 locreloff:(uint64_t)locreloff
                    nlocrel:(uint32_t)nlocrel;
 
 @end

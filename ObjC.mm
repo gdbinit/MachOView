@@ -2214,7 +2214,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2ProtocolListNode:(MVNode *)parent
                                 caption:(NSString *)caption
-                               location:(uint32_t)location
+                               location:(uint64_t)location
                               protocols:(struct protocol_list_t const *)protocol_list_t
 {  
   // check for parent
@@ -2275,7 +2275,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2Protocol64ListNode:(MVNode *)parent
                                   caption:(NSString *)caption
-                                 location:(uint32_t)location
+                                 location:(uint64_t)location
                                 protocols:(struct protocol64_list_t const *)protocol64_list_t
 {  
   // check for parent
