@@ -20,8 +20,8 @@
 {
   MVNode *              __weak rootNode;
   MVDataController *    __weak dataController;
-  uint32_t              imageOffset;  // absolute physical offset of the image in binary
-  uint32_t              imageSize;    // size of the image corresponds to this layout
+  uint64_t              imageOffset;  // absolute physical offset of the image in binary
+  uint64_t              imageSize;    // size of the image corresponds to this layout
   NSThread *            backgroundThread;
   MVArchiver *          archiver;
 }

@@ -44,7 +44,7 @@ using namespace std;
 //----------------------------------------------------------------------------
 - (MVNode *)createHeaderNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
+                    location:(uint64_t)location
                   fat_header:(struct fat_header const *)fat_header
 {
   MVNodeSaver nodeSaver;
