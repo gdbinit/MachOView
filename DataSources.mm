@@ -10,6 +10,7 @@
 #import "DataSources.h"
 #import "DataController.h"
 #import "Document.h"
+#import "Layout.h"
 
 NSString * const MVScannerErrorMessage  = @"NSScanner error";
 
@@ -127,8 +128,8 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
       NSString * cellContent = [NSString stringWithFormat:@"%.8lX", offset];
       if ([document isRVA] == YES)
       {
-        id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
-        return [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
+        MVLayout *layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
+        return [layout convertToRVA:cellContent];
       }
       return cellContent;
     }
@@ -183,8 +184,8 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
     {
       if ([document isRVA] == YES)
       {
-        id layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
-        cellContent = [layout performSelector:@selector(convertToRVA:) withObject:cellContent];
+        MVLayout *layout = [selectedNode.userInfo objectForKey:MVLayoutUserInfoKey];
+        cellContent = [layout convertToRVA:cellContent];
       }
     }
       
@@ -206,7 +207,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
   BOOL scanResult;
-  uint32_t fileOffset;
+  uint64_t fileOffset;
 
   NSUInteger colIndex = [[aTableView tableColumns] indexOfObject:aTableColumn];
   MVDocument * document = [[[aTableView window] windowController] document];
@@ -224,8 +225,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
     }
     
     // find out file offset from the offset column
-    scanResult = [[NSScanner scannerWithString:row.columns.offsetStr]
-                                    scanHexInt:&fileOffset];
+    scanResult = [[NSScanner scannerWithString:row.columns.offsetStr] scanHexLongLong:&fileOffset];
     if (scanResult == NO)
     {
       NSAssert(NO, MVScannerErrorMessage);
@@ -258,7 +258,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
       {
         buf[0] = orgstr[s];
         buf[1] = orgstr[s+1];
-        unsigned value = strtoul (buf, NULL, 16);
+        unsigned long value = strtoul (buf, NULL, 16);
         [mdata appendBytes:&value length:sizeof(uint8_t)];
       }
       
