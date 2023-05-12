@@ -41,7 +41,7 @@ struct MVNodeSaver;
 @end
 
 //----------------------------------------------------------------------------
-@interface MVColoumns : NSObject
+@interface MVColumns : NSObject
 {
   NSString *            offsetStr;
   NSString *            dataStr;
@@ -54,29 +54,29 @@ struct MVNodeSaver;
 @property (nonatomic)   NSString * descriptionStr;
 @property (nonatomic)   NSString * valueStr;
 
-+(MVColoumns *) coloumnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3;
++(MVColumns *) columnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3;
 
 @end
 
 //----------------------------------------------------------------------------
 @interface MVRow : NSObject <MVSerializing>
 {
-  MVColoumns *          coloumns;
+  MVColumns *          columns;
   NSDictionary *        attributes;
-  uint32_t              offset;           // for sorting if necessary
-  uint32_t              coloumnsOffset;   // offset of coloumns
-  uint32_t              attributesOffset; // offset of attribues
+  uint32_t              offset;             // for sorting if necessary
+  off_t                 columnsOffset;      // offset of columns
+  off_t                 attributesOffset;   // offset of attribues
   BOOL                  deleted;
-  BOOL                  dirty;            // eg. attributes has changed
+  BOOL                  dirty;              // eg. attributes has changed
 }
 
 @property (nonatomic)   NSDictionary * attributes;
-@property (nonatomic)   MVColoumns * coloumns;
+@property (nonatomic)   MVColumns * columns;
 @property (nonatomic)   uint32_t offset;
 @property (nonatomic)   BOOL deleted;
 @property (nonatomic)   BOOL dirty;
 
--(NSString *)coloumnAtIndex:(NSUInteger)index;
+-(NSString *)columnAtIndex:(NSUInteger)index;
 
 @end
 
@@ -118,7 +118,7 @@ struct MVNodeSaver;
   NSRange               dataRange;
   MVTable *             details;
   NSMutableDictionary * userInfo;
-  uint32_t              detailsOffset;
+  off_t                 detailsOffset;
 }
 
 @property (nonatomic)                   NSString *            caption;
@@ -126,7 +126,7 @@ struct MVNodeSaver;
 @property (nonatomic)                   NSRange               dataRange;
 @property (nonatomic)                   MVTable *             details;
 @property (nonatomic)                   NSMutableDictionary * userInfo;
-@property (nonatomic)                   uint32_t              detailsOffset;
+@property (nonatomic)                   off_t              detailsOffset;
 
 - (NSUInteger)          numberOfChildren;
 - (MVNode *)            childAtIndex:(NSUInteger)n;

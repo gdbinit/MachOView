@@ -58,7 +58,7 @@ NSString * const MVStatusTaskStarted              = @"MVStatusTaskStarted";
 NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 
 //============================================================================
-@implementation MVColoumns
+@implementation MVColumns
 
 @synthesize offsetStr, dataStr, descriptionStr, valueStr; 
 
@@ -93,9 +93,9 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 }
 
 //-----------------------------------------------------------------------------
-+(MVColoumns *) coloumnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3
++(MVColumns *) columnsWithData:(NSString *)col0 :(NSString *)col1 :(NSString *)col2 :(NSString *)col3
 {
-  return [[MVColoumns alloc] initWithData:col0:col1:col2:col3];
+  return [[MVColumns alloc] initWithData:col0:col1:col2:col3];
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //============================================================================
 @implementation MVRow
 
-@synthesize coloumns, attributes, offset, deleted, dirty;
+@synthesize columns, attributes, offset, deleted, dirty;
 
 //-----------------------------------------------------------------------------
 - (id)init 
@@ -136,31 +136,29 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 }
 
 //-----------------------------------------------------------------------------
--(NSString *)coloumnAtIndex:(NSUInteger)index
+-(NSString *)columnAtIndex:(NSUInteger)index
 {
   switch (index)
   {
-    case OFFSET_COLUMN:       return coloumns.offsetStr;
-    case DATA_COLUMN:         return coloumns.dataStr;    
-    case DESCRIPTION_COLUMN:  return coloumns.descriptionStr;
-    case VALUE_COLUMN:        return coloumns.valueStr;
+    case OFFSET_COLUMN:       return columns.offsetStr;
+    case DATA_COLUMN:         return columns.dataStr;
+    case DESCRIPTION_COLUMN:  return columns.descriptionStr;
+    case VALUE_COLUMN:        return columns.valueStr;
   }
   return nil;
 }
 
 //-----------------------------------------------------------------------------
--(void)replaceColoumnAtIndex:(NSUInteger)index withString:(NSString *)str
+-(void)replaceColumnAtIndex:(NSUInteger)index withString:(NSString *)str
 {
-  coloumnsOffset = 0;
-  
-  
-  switch (index)
-  {
-    case OFFSET_COLUMN:       coloumns.offsetStr = str; break;
-    case DATA_COLUMN:         coloumns.dataStr = str;  break;
-    case DESCRIPTION_COLUMN:  coloumns.descriptionStr = str; break;
-    case VALUE_COLUMN:        coloumns.valueStr = str; break;
-  }
+    columnsOffset = 0;
+    switch (index)
+    {
+        case OFFSET_COLUMN:       columns.offsetStr = str; break;
+        case DATA_COLUMN:         columns.dataStr = str;  break;
+        case DESCRIPTION_COLUMN:  columns.descriptionStr = str; break;
+        case VALUE_COLUMN:        columns.valueStr = str; break;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -306,89 +304,82 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 - (void)saveToFile:(FILE *)pFile
 {
-  // dont need to seek, we always append new items
-  //fseek(pFile, 0, SEEK_END);
-  
-  if (coloumnsOffset == 0) // isSaved == NO
-  {
-    uint32_t filePos = ftell(pFile);
-    [self writeString:coloumns.offsetStr toFile:(FILE *)pFile];
-    [self writeString:coloumns.dataStr toFile:(FILE *)pFile];
-    [self writeString:coloumns.descriptionStr toFile:(FILE *)pFile];
-    [self writeString:coloumns.valueStr toFile:(FILE *)pFile];
-    coloumnsOffset = filePos;
-  }
-  
-  if (dirty)
-  {
-    // reload the attributes if they are out of cache 
-    if (attributesOffset > 0)
-    {
-      // import new items
-      NSMutableDictionary * _attributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
-      
-      // load old attributes
-      fseek(pFile, attributesOffset, SEEK_SET);
-      [self loadAttributesFromFile:pFile];
-      fseek(pFile, 0, SEEK_END);
-      
-      // extend stored attributes with loaded items
-      [_attributes addEntriesFromDictionary:attributes];
-      
-      // store extended attributes
-      attributes = _attributes;
+    // dont need to seek, we always append new items
+    if (columnsOffset == 0) { // isSaved == NO
+        off_t filePos = ftello(pFile);
+        if (filePos == -1) {
+            NSLog(@"MVRow saveToFile: ftello failed: %s", strerror(errno));
+        }
+        [self writeString:columns.offsetStr toFile:(FILE *)pFile];
+        [self writeString:columns.dataStr toFile:(FILE *)pFile];
+        [self writeString:columns.descriptionStr toFile:(FILE *)pFile];
+        [self writeString:columns.valueStr toFile:(FILE *)pFile];
+        columnsOffset = filePos;
     }
+  
+    if (dirty) {
+        // reload the attributes if they are out of cache
+        if (attributesOffset > 0) {
+            // import new items
+            NSMutableDictionary * _attributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
+            // load old attributes
+            if (fseeko(pFile, attributesOffset, SEEK_SET) == -1) {
+                NSLog(@"MVRow saveToFile: fseeko SEEK_SET failed: %s", strerror(errno));
+            }
+            [self loadAttributesFromFile:pFile];
+            if (fseeko(pFile, 0, SEEK_END) == -1) {
+                NSLog(@"MVRow saveToFile: fseeko SEEK_END failed: %s", strerror(errno));
+            }
+            // extend stored attributes with loaded items
+            [_attributes addEntriesFromDictionary:attributes];
+            // store extended attributes
+            attributes = _attributes;
+        }
     
-    uint32_t filePos = ftell(pFile);
-    [self saveAttributestoFile:(FILE *)pFile];
-    dirty = NO;
-    attributesOffset = filePos;
-  }
+        off_t filePos = ftello(pFile);
+        if (filePos == -1) {
+            NSLog(@"MVRow saveToFile: ftello failed: %s", strerror(errno));
+        }
+        [self saveAttributestoFile:(FILE *)pFile];
+        dirty = NO;
+        attributesOffset = filePos;
+    }
 }
 
 //----------------------------------------------------------------------------
 - (void)loadFromFile:(FILE *)pFile
 {
-  if (coloumns == nil)
-  {
-    NSParameterAssert(coloumnsOffset != 0);
+    if (columns == nil) {
+        NSParameterAssert(columnsOffset != 0);
     
-    if (fseek(pFile, coloumnsOffset, SEEK_SET) == 0)
-    {
-      coloumns = [[MVColoumns alloc] init];
-      
-      coloumns.offsetStr = [self readStringFromFile:pFile];
-      coloumns.dataStr = [self readStringFromFile:pFile];
-      coloumns.descriptionStr = [self readStringFromFile:pFile];
-      coloumns.valueStr = [self readStringFromFile:pFile];
+        if (fseeko(pFile, columnsOffset, SEEK_SET) == 0) {
+            columns = [[MVColumns alloc] init];
+            columns.offsetStr = [self readStringFromFile:pFile];
+            columns.dataStr = [self readStringFromFile:pFile];
+            columns.descriptionStr = [self readStringFromFile:pFile];
+            columns.valueStr = [self readStringFromFile:pFile];
+        } else {
+            NSLog(@"*** reading error (columns) '%s'",strerror(errno));
+            NSParameterAssert(0);
+            return;
+        }
     }
-    else 
-    {
-      NSLog(@"*** reading error (coloumns) '%s'",strerror(errno));
-      NSParameterAssert(0);
-      return;
-    }
-  }
   
-  if (attributes == nil && attributesOffset > 0)
-  {
-    if (fseek(pFile, attributesOffset, SEEK_SET) == 0)
-    {
-      [self loadAttributesFromFile:pFile];
+    if (attributes == nil && attributesOffset > 0) {
+        if (fseeko(pFile, attributesOffset, SEEK_SET) == 0) {
+            [self loadAttributesFromFile:pFile];
+        } else {
+            NSLog(@"*** reading error (attributes) '%s'",strerror(errno));
+            NSParameterAssert(0);
+        }
     }
-    else
-    {
-      NSLog(@"*** reading error (attributes) '%s'",strerror(errno));
-      NSParameterAssert(0);
-    }
-  }
 }
 
 //----------------------------------------------------------------------------
 - (void)saveIndexToFile:(FILE *)pFile
 {
   fwrite(&offset, sizeof(uint32_t), 1, pFile);
-  fwrite(&coloumnsOffset, sizeof(uint32_t), 1, pFile);
+  fwrite(&columnsOffset, sizeof(uint32_t), 1, pFile);
   fwrite(&attributesOffset, sizeof(uint32_t), 1, pFile);
   fwrite(&deleted, sizeof(BOOL), 1, pFile);
 }
@@ -397,7 +388,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 - (void)loadIndexFromFile:(FILE *)pFile
 {
   fread(&offset, sizeof(uint32_t), 1, pFile);
-  fread(&coloumnsOffset, sizeof(uint32_t), 1, pFile);
+  fread(&columnsOffset, sizeof(uint32_t), 1, pFile);
   fread(&attributesOffset, sizeof(uint32_t), 1, pFile);
   fread(&deleted, sizeof(BOOL), 1, pFile);
 }
@@ -405,15 +396,15 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 -(BOOL) isSaved
 {
-  return (coloumnsOffset > 0);
+  return (columnsOffset > 0);
 }
 
 //----------------------------------------------------------------------------
 -(void) clear
 {
-  if (coloumnsOffset > 0) // isSaved == YES
+  if (columnsOffset > 0) // isSaved == YES
   {
-    coloumns = nil;
+    columns = nil;
 
     if (dirty == NO)
     {
@@ -476,7 +467,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     {
       row = nil;
     }
-    else if (row.coloumns == nil)
+    else if (row.columns == nil)
     {
       [row loadFromFile:swapFile];
     }
@@ -489,7 +480,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 - (void)insertRowWithOffset:(uint32_t)offset :(id)col0 :(id)col1 :(id)col2 :(id)col3
 {
   MVRow * row = [[MVRow alloc] init];
-  row.coloumns = [MVColoumns coloumnsWithData:col0:col1:col2:col3];
+  row.columns = [MVColumns columnsWithData:col0:col1:col2:col3];
   row.offset = offset;
   
   [tableLock lock];
@@ -509,7 +500,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 - (void)updateCellContentTo:(id)object atRow:(NSUInteger)rowIndex andCol:(NSUInteger)colIndex
 {
   MVRow * row = [rows objectAtIndex:rowIndex];
-  [row replaceColoumnAtIndex:colIndex withString:object];
+  [row replaceColumnAtIndex:colIndex withString:object];
   [rows replaceObjectAtIndex:rowIndex withObject:row];
 
   [archiver addObjectToSave:row];
@@ -642,7 +633,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
     displayRows = [[NSMutableArray alloc] init];
     for (MVRow * row in rows)
     {
-      if (row.coloumns == nil)
+      if (row.columns == nil)
       {
         [row loadFromFile:swapFile];
       }
@@ -875,25 +866,26 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //-----------------------------------------------------------------------------
 - (void)saveToFile:(FILE *)pFile
 {
-  MVLayout * layout = [userInfo objectForKey:MVLayoutUserInfoKey];
-  [layout.dataController updateStatus:MVStatusTaskStarted];
+    MVLayout * layout = [userInfo objectForKey:MVLayoutUserInfoKey];
+    [layout.dataController updateStatus:MVStatusTaskStarted];
   
-  uint32_t filePos = ftell(pFile);
-  details.swapFile = pFile;
-  [details saveIndexes];
-  detailsOffset = filePos; 
+    off_t filePos = ftello(pFile);
+    // XXX: error check
+    if (filePos == -1) {
+        NSLog(@"MVNode saveToFile: ftello failed: %s", strerror(errno));
+    }
+    details.swapFile = pFile;
+    [details saveIndexes];
+    detailsOffset = filePos;
+    // clear the * prefix
+    [layout.dataController updateTreeView:self];
+    // update the details table
+    if (self == layout.dataController.selectedNode) {
+        [self openDetails];
+        [details applyFilter:nil];
+    }
   
-  // clear the * prefix 
-  [layout.dataController updateTreeView:self];
-  
-  // update the details table
-  if (self == layout.dataController.selectedNode)
-  {
-    [self openDetails];
-    [details applyFilter:nil];
-  }
-  
-  [layout.dataController updateStatus:MVStatusTaskTerminated];
+    [layout.dataController updateStatus:MVStatusTaskTerminated];
 }
 	
 //-----------------------------------------------------------------------------

@@ -638,7 +638,7 @@ enum ViewType
         return;
       }
       
-      NSString * cellContent = [row coloumnAtIndex:colIndex];
+      NSString * cellContent = [row columnAtIndex:colIndex];
       if ([cellContent length] == 0)
       {
         return;
@@ -780,7 +780,7 @@ enum ViewType
         return;
       }
       
-      NSUInteger len = [row.coloumns.dataStr length];
+      NSUInteger len = [row.columns.dataStr length];
       
       [aCell setFormatter:len > 16
        ? [MVRightFormatter leftAlignedFormatterWithLength:len] 
@@ -822,7 +822,7 @@ enum ViewType
     }
       
     NSUInteger colIndex = [[aTableView tableColumns] indexOfObject:aTableColumn];
-    NSString * cellContent = [row coloumnAtIndex:colIndex];
+    NSString * cellContent = [row columnAtIndex:colIndex];
     
     // try to find C,C++ symbol prologue
     NSUInteger start = [cellContent rangeOfString:@"_Z"].location;

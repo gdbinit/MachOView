@@ -175,7 +175,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
   MVRow * row = [selectedNode.details getRowToDisplay:rowIndex];
   if (row != nil)
   { 
-    NSString * cellContent = [row coloumnAtIndex:colIndex];
+    NSString * cellContent = [row columnAtIndex:colIndex];
       
     // special column is the offset column:
     // if RVA is selected then subtitute the content on the fly
@@ -224,7 +224,7 @@ NSString * const MVScannerErrorMessage  = @"NSScanner error";
     }
     
     // find out file offset from the offset column
-    scanResult = [[NSScanner scannerWithString:row.coloumns.offsetStr]
+    scanResult = [[NSScanner scannerWithString:row.columns.offsetStr]
                                     scanHexInt:&fileOffset];
     if (scanResult == NO)
     {
