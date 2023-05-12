@@ -6,6 +6,8 @@
  *
  */
 
+#include <atomic>
+
 @class MVDataController;
 
 @interface MVOutlineView : NSOutlineView
@@ -37,7 +39,7 @@
   IBOutlet NSSegmentedControl *   offsetModeSwitch;
   IBOutlet NSButton *             stopButton;
   MVDataController *              dataController;
-  int32_t                         threadCount;
+  std::atomic<std::int32_t>       threadCount;
 }
 @property (nonatomic,readonly) MVDataController * dataController;
 

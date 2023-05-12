@@ -445,7 +445,7 @@ enum ViewType
     if ([notification object] == dataController) {
         NSString * threadState = [[notification userInfo] objectForKey:MVStatusUserInfoKey];
         if ([threadState isEqualToString:MVStatusTaskStarted] == YES) {
-            if (OSAtomicIncrement32(&threadCount) == 1) {
+            if (++threadCount == 1) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self->progressIndicator setUsesThreadedAnimation:YES];
                     [self->progressIndicator startAnimation:nil];
@@ -454,7 +454,7 @@ enum ViewType
             }
         }
         else if ([threadState isEqualToString:MVStatusTaskTerminated] == YES) {
-            if (OSAtomicDecrement32(&threadCount) == 0) {
+            if (--threadCount == 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self->progressIndicator stopAnimation:nil];
                     [self->statusText setStringValue:@""];
