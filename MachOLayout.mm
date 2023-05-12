@@ -1374,7 +1374,7 @@ struct CompareSectionByName
     
     @try
     {
-      uint32_t location = section->offset + imageOffset;
+      uint64_t location = section->offset + imageOffset;
       do
       {
         NSRange range = NSMakeRange(location,0);
@@ -1383,7 +1383,7 @@ struct CompareSectionByName
         
         if (cieID == 0)
         {
-          uint32_t CIE_addr = [self fileOffsetToRVA:location];
+          uint64_t CIE_addr = [self fileOffsetToRVA:location];
           [self createCFINode:sectionNode
                       caption:(lastNodeCaption = [NSString stringWithFormat:@"Call Frame %@", [self findSymbolAtRVA:CIE_addr]])
                      location:location
@@ -1431,7 +1431,7 @@ struct CompareSectionByName
     
     @try
     {
-      uint32_t location = section_64->offset + imageOffset;
+      uint64_t location = section_64->offset + imageOffset;
       do
       {
         NSRange range = NSMakeRange(location,0);
@@ -1484,12 +1484,12 @@ struct CompareSectionByName
     {
       for (ExceptionFrameMap::iterator ehFrameIter = lsdaInfo.begin(); ehFrameIter != lsdaInfo.end();)
       {
-        uint32_t lsdaAddr = ehFrameIter->first;
-        uint32_t frameAddr = ehFrameIter->second;
+        uint64_t lsdaAddr = ehFrameIter->first;
+        uint64_t frameAddr = ehFrameIter->second;
         
-        uint32_t location = [self RVAToFileOffset:lsdaAddr];
+        uint64_t location = [self RVAToFileOffset:lsdaAddr];
         
-        uint32_t length = (++ehFrameIter != lsdaInfo.end() 
+        uint64_t length = (++ehFrameIter != lsdaInfo.end()
                            ? [self RVAToFileOffset:ehFrameIter->first]
                            : imageOffset + section->offset + section->size) - location;
         
@@ -1538,9 +1538,9 @@ struct CompareSectionByName
         uint64_t lsdaAddr = ehFrameIter->first;
         uint64_t frameAddr = ehFrameIter->second;
         
-        uint32_t location = [self RVAToFileOffset:lsdaAddr];
+        uint64_t location = [self RVAToFileOffset:lsdaAddr];
         
-        uint32_t length = (++ehFrameIter != lsdaInfo.end() 
+        uint64_t length = (++ehFrameIter != lsdaInfo.end()
                            ? [self RVAToFileOffset:ehFrameIter->first]
                            : section_64->offset + section_64->size) - location;
         
@@ -2013,7 +2013,7 @@ struct CompareSectionByName
 //-----------------------------------------------------------------------------
 - (MVNode *)createMachONode:(MVNode *)parent
                     caption:(NSString *)caption
-                   location:(uint32_t)location
+                   location:(uint64_t)location
                 mach_header:(struct mach_header const *)mach_header
 {
   MVNodeSaver nodeSaver;
@@ -2147,7 +2147,7 @@ struct CompareSectionByName
 
 - (MVNode *)createMachO64Node:(MVNode *)parent
                       caption:(NSString *)caption
-                     location:(uint32_t)location
+                     location:(uint64_t)location
                mach_header_64:(struct mach_header_64 const *)mach_header_64
 {
   MVNodeSaver nodeSaver;
@@ -2329,7 +2329,7 @@ struct CompareSectionByName
   
   //=========== Load Commands =============
   {
-    uint32_t fileOffset = imageOffset + ([self is64bit] == NO 
+    uint64_t fileOffset = imageOffset + ([self is64bit] == NO
                                          ? sizeof(struct mach_header) 
                                          : sizeof(struct mach_header_64));
     
@@ -2451,17 +2451,17 @@ struct CompareSectionByName
 {
   NSBlockOperation * linkEditOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processLinkEdit]; else [self processLinkEdit64];
     }
     NSLog(@"%@: LinkEdit finished parsing. (%lu symbols found)", self, 
-    [self is64bit] == NO ? symbols.size() : symbols_64.size());
+    [self is64bit] == NO ? self->symbols.size() : self->symbols_64.size());
   }];
   
   NSBlockOperation * sectionRelocsOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processSectionRelocs]; else [self processSectionRelocs64];
     }
@@ -2470,7 +2470,7 @@ struct CompareSectionByName
   
   NSBlockOperation * dyldInfoOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       [self processDyldInfo];
     }
@@ -2479,7 +2479,7 @@ struct CompareSectionByName
   
   NSBlockOperation * sectionOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processSections]; else [self processSections64];
     }
@@ -2488,7 +2488,7 @@ struct CompareSectionByName
   
   NSBlockOperation * EHFramesOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processEHFrames]; else [self processEHFrames64];
     }
@@ -2497,16 +2497,16 @@ struct CompareSectionByName
   
   NSBlockOperation * LSDAsOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processLSDA]; else [self processLSDA64];
     }
-    NSLog(@"%@: Lang Spec Data Areas finished parsing. (%lu LSDAs found)", self, lsdaInfo.size());
+    NSLog(@"%@: Lang Spec Data Areas finished parsing. (%lu LSDAs found)", self, self->lsdaInfo.size());
   }];
   
   NSBlockOperation * objcSectionOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processObjcSections]; else [self processObjcSections64];
     }
@@ -2515,7 +2515,7 @@ struct CompareSectionByName
   
   NSBlockOperation * codeSectionsOperation = [NSBlockOperation blockOperationWithBlock:^
   {
-    if ([backgroundThread isCancelled]) return;
+    if ([self->backgroundThread isCancelled]) return;
     @autoreleasepool {
       if ([self is64bit] == NO) [self processCodeSections]; else [self processCodeSections64];
     }
@@ -2532,8 +2532,7 @@ struct CompareSectionByName
   [LSDAsOperation         addDependency:EHFramesOperation];
     
   // setup priorities
-  [codeSectionsOperation  setQueuePriority:NSOperationQueuePriorityVeryLow];
-  [codeSectionsOperation  setThreadPriority:0.0]; // this one will take the longest
+  [codeSectionsOperation  setQueuePriority:NSOperationQueuePriorityLow];
   
   // start operations
   NSOperationQueue * oq = [[NSOperationQueue alloc] init];

@@ -16,54 +16,54 @@ typedef std::vector<uint64_t> Pointer64Vector;
 
 - (MVNode *)createObjCCFStringsNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
-                             length:(uint32_t)length;
+                           location:(uint64_t)location
+                             length:(uint64_t)length;
 
 - (MVNode *)createObjCCFStrings64Node:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
+                             location:(uint64_t)location
                                length:(uint64_t)length;
 
 - (MVNode *)createObjCImageInfoNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
+                           location:(uint64_t)location
                              length:(uint64_t)length;
 
 - (MVNode *)createObjCModulesNode:(MVNode *)parent
                           caption:(NSString *)caption
-                         location:(uint32_t)location
-                           length:(uint32_t)length;
+                         location:(uint64_t)location
+                           length:(uint64_t)length;
 
 - (MVNode *)createObjCClassExtNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
-                            length:(uint32_t)length;
+                          location:(uint64_t)location
+                            length:(uint64_t)length;
 
 - (MVNode *)createObjCProtocolExtNode:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
-                               length:(uint32_t)length;
+                             location:(uint64_t)location
+                               length:(uint64_t)length;
 
 - (MVNode *)createObjC2PointerListNode:(MVNode *)parent
                                caption:(NSString *)caption
-                              location:(uint32_t)location
-                                length:(uint32_t)length
+                              location:(uint64_t)location
+                                length:(uint64_t)length
                               pointers:(PointerVector &)pointers;
 
 - (MVNode *)createObjC2Pointer64ListNode:(MVNode *)parent
                                  caption:(NSString *)caption
-                                location:(uint32_t)location
+                                location:(uint64_t)location
                                   length:(uint64_t)length
                                 pointers:(Pointer64Vector &)pointers;
 
 - (MVNode *)createObjC2MsgRefsNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
-                            length:(uint32_t)length;
+                          location:(uint64_t)location
+                            length:(uint64_t)length;
 
 - (MVNode *)createObjC2MsgRefs64Node:(MVNode *)parent
                              caption:(NSString *)caption
-                            location:(uint32_t)location
+                            location:(uint64_t)location
                               length:(uint64_t)length;
 
 -(void)parseObjC2ClassPointers:(PointerVector const *)classes

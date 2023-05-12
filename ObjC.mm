@@ -387,8 +387,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCCFStringsNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
-                             length:(uint32_t)length
+                           location:(uint64_t)location
+                             length:(uint64_t)length
 {
   struct cfstring_t
   {
@@ -446,7 +446,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCCFStrings64Node:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
+                             location:(uint64_t)location
                                length:(uint64_t)length
 {
   struct cfstring64_t
@@ -505,7 +505,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCImageInfoNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
+                           location:(uint64_t)location
                              length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
@@ -1291,8 +1291,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCModulesNode:(MVNode *)parent
                           caption:(NSString *)caption
-                         location:(uint32_t)location
-                           length:(uint32_t)length
+                         location:(uint64_t)location
+                           length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
@@ -1356,8 +1356,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCClassExtNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
-                            length:(uint32_t)length
+                          location:(uint64_t)location
+                            length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
@@ -1408,8 +1408,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjCProtocolExtNode:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
-                               length:(uint32_t)length
+                             location:(uint64_t)location
+                               length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
@@ -1466,8 +1466,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2PointerListNode:(MVNode *)parent
                                caption:(NSString *)caption
-                              location:(uint32_t)location
-                                length:(uint32_t)length
+                              location:(uint64_t)location
+                                length:(uint64_t)length
                               pointers:(PointerVector &)pointers
 {
   MVNodeSaver nodeSaver;
@@ -1498,7 +1498,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2Pointer64ListNode:(MVNode *)parent
                                  caption:(NSString *)caption
-                                location:(uint32_t)location
+                                location:(uint64_t)location
                                   length:(uint64_t)length
                                 pointers:(Pointer64Vector &)pointers
 {
@@ -1530,8 +1530,8 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2MsgRefsNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
-                            length:(uint32_t)length
+                          location:(uint64_t)location
+                            length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
@@ -1569,7 +1569,7 @@ struct message_ref64
 //------------------------------------------------------------------------------
 - (MVNode *)createObjC2MsgRefs64Node:(MVNode *)parent
                              caption:(NSString *)caption
-                            location:(uint32_t)location
+                            location:(uint64_t)location
                               length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;

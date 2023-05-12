@@ -91,7 +91,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSegmentNode:(MVNode *)parent
                       caption:(NSString *)caption
-                     location:(uint32_t)location
+                     location:(uint64_t)location
               segment_command:(struct segment_command const *)segment_command
 {
   MVNodeSaver nodeSaver;
@@ -202,7 +202,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createSectionNode:(MVNode *)parent
                     caption:(NSString *)caption
-                   location:(uint32_t)location
+                   location:(uint64_t)location
                     section:(struct section const *)section
 {
   MVNodeSaver nodeSaver;
@@ -323,7 +323,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSegment64Node:(MVNode *)parent
                         caption:(NSString *)caption
-                       location:(uint32_t)location
+                       location:(uint64_t)location
              segment_command_64:(struct segment_command_64 const *)segment_command_64
 {
   MVNodeSaver nodeSaver;
@@ -435,7 +435,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createSection64Node:(MVNode *)parent
                     caption:(NSString *)caption
-                   location:(uint32_t)location
+                   location:(uint64_t)location
                  section_64:(struct section_64 const *)section_64
 {
   MVNodeSaver nodeSaver;
@@ -562,7 +562,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSymtabNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
+                    location:(uint64_t)location
               symtab_command:(struct symtab_command const *)symtab_command
 {
   MVNodeSaver nodeSaver;
@@ -617,7 +617,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCDysymtabNode:(MVNode *)parent
                        caption:(NSString *)caption
-                      location:(uint32_t)location
+                      location:(uint64_t)location
               dysymtab_command:(struct dysymtab_command const *)dysymtab_command
 {
   MVNodeSaver nodeSaver;
@@ -756,7 +756,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCTwolevelHintsNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
+                           location:(uint64_t)location
              twolevel_hints_command:(struct twolevel_hints_command const *)twolevel_hints_command
 {
   MVNodeSaver nodeSaver;
@@ -799,7 +799,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCDylinkerNode:(MVNode *)parent
                        caption:(NSString *)caption
-                      location:(uint32_t)location
+                      location:(uint64_t)location
               dylinker_command:(struct dylinker_command const *)dylinker_command
 {
   MVNodeSaver nodeSaver;
@@ -845,7 +845,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCPrebindChksumNode:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
+                             location:(uint64_t)location
                 prebind_cksum_command:(struct prebind_cksum_command const *)prebind_cksum_command
 {
   MVNodeSaver nodeSaver;
@@ -883,7 +883,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCUUIDNode:(MVNode *)parent
                    caption:(NSString *)caption
-                  location:(uint32_t)location
+                  location:(uint64_t)location
               uuid_command:(struct uuid_command const *)uuid_command
 {
   MVNodeSaver nodeSaver;
@@ -925,7 +925,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCThreadNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
+                    location:(uint64_t)location
               thread_command:(struct thread_command const *)thread_command
 {
     MVNodeSaver nodeSaver;
@@ -1142,7 +1142,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCDylibNode:(MVNode *)parent
                     caption:(NSString *)caption
-                   location:(uint32_t)location
+                   location:(uint64_t)location
               dylib_command:(struct dylib_command const *)dylib_command
 {
   MVNodeSaver nodeSaver;
@@ -1213,7 +1213,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCLinkeditDataNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
+                          location:(uint64_t)location
              linkedit_data_command:(struct linkedit_data_command const *)linkedit_data_command
 {
   MVNodeSaver nodeSaver;
@@ -1256,7 +1256,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCRoutinesNode:(MVNode *)parent
                          caption:(NSString *)caption
-                        location:(uint32_t)location
+                        location:(uint64_t)location
                 routines_command:(struct routines_command const *)routines_command
 {
   MVNodeSaver nodeSaver;
@@ -1335,7 +1335,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCRoutines64Node:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
+                          location:(uint64_t)location
                routines_command_64:(struct routines_command_64 const *)routines_command_64
 {
   MVNodeSaver nodeSaver;
@@ -1414,7 +1414,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSubFrameworkNode:(MVNode *)parent
                              caption:(NSString *)caption
-                            location:(uint32_t)location
+                            location:(uint64_t)location
                sub_framework_command:(struct sub_framework_command const *)sub_framework_command
 {
   MVNodeSaver nodeSaver;
@@ -1460,7 +1460,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSubUmbrellaNode:(MVNode *)parent
                             caption:(NSString *)caption
-                           location:(uint32_t)location
+                           location:(uint64_t)location
                sub_umbrella_command:(struct sub_umbrella_command const *)sub_umbrella_command
 {
   MVNodeSaver nodeSaver;
@@ -1506,7 +1506,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSubClientNode:(MVNode *)parent
                           caption:(NSString *)caption
-                         location:(uint32_t)location
+                         location:(uint64_t)location
                sub_client_command:(struct sub_client_command const *)sub_client_command
 {
   MVNodeSaver nodeSaver;
@@ -1552,7 +1552,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSubLibraryNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
+                          location:(uint64_t)location
                sub_library_command:(struct sub_library_command const *)sub_library_command
 {
   MVNodeSaver nodeSaver;
@@ -1598,7 +1598,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCDyldInfoNode:(MVNode *)parent
                          caption:(NSString *)caption
-                        location:(uint32_t)location
+                        location:(uint64_t)location
                dyld_info_command:(struct dyld_info_command const *)dyld_info_command
 {
   MVNodeSaver nodeSaver;
@@ -1689,7 +1689,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCEncryptionInfoNode:(MVNode *)parent
                                caption:(NSString *)caption
-                              location:(uint32_t)location
+                              location:(uint64_t)location
                encryption_info_command:(struct encryption_info_command const *)encryption_info_command
 {
   MVNodeSaver nodeSaver;
@@ -1738,7 +1738,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCEncryptionInfo64Node:(MVNode *)parent
                                  caption:(NSString *)caption
-                                location:(uint32_t)location
+                                location:(uint64_t)location
               encryption_info_command_64:(struct encryption_info_command_64 const *)encryption_info_command_64
 {
   MVNodeSaver nodeSaver;
@@ -1794,7 +1794,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCRPathNode:(MVNode *)parent
                       caption:(NSString *)caption
-                     location:(uint32_t)location
+                     location:(uint64_t)location
                 rpath_command:(struct rpath_command const *)rpath_command
 {
   MVNodeSaver nodeSaver;
@@ -1840,7 +1840,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCVersionMinNode:(MVNode *)parent
                            caption:(NSString *)caption
-                          location:(uint32_t)location
+                          location:(uint64_t)location
                version_min_command:(struct version_min_command const *)version_min_command
 {
   MVNodeSaver nodeSaver;
@@ -1886,7 +1886,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCMainNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
+                    location:(uint64_t)location
           entrypoint_command:(struct entry_point_command const *)entry_point_command
 {
     MVNodeSaver nodeSaver;
@@ -1963,7 +1963,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCSourceVersionNode:(MVNode *)parent
                               caption:(NSString *)caption
-                             location:(uint32_t)location
+                             location:(uint64_t)location
                source_version_command:(struct source_version_command const *)source_version_command
 {
     MVNodeSaver nodeSaver;
@@ -2018,7 +2018,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCLinkerOptionNode:(MVNode *)parent
                              caption:(NSString *)caption
-                            location:(uint32_t)location
+                            location:(uint64_t)location
                linker_option_command:(struct linker_option_command const *)linker_option_command
 {
   MVNodeSaver nodeSaver;
@@ -2087,8 +2087,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 -(MVNode *)createLoadCommandNode:(MVNode *)parent
                          caption:(NSString *)caption
-                        location:(uint32_t)location
-                          length:(uint32_t)length
+                        location:(uint64_t)location
+                          length:(uint64_t)length
                          command:(uint32_t)command
 {
   MVNode * node = nil;
@@ -2113,7 +2113,7 @@ using namespace std;
       // Section Headers
       for (uint32_t nsect = 0; nsect < segment_command->nsects; ++nsect)
       {
-        uint32_t sectionloc = location + sizeof(struct segment_command) + nsect * sizeof(struct section);
+        uint64_t sectionloc = location + sizeof(struct segment_command) + nsect * sizeof(struct section);
         MATCH_STRUCT(section,sectionloc)
         [self createSectionNode:node 
                         caption:[NSString stringWithFormat:@"Section Header (%s)",
@@ -2149,7 +2149,7 @@ using namespace std;
       // Section Headers
       for (uint32_t nsect = 0; nsect < segment_command_64->nsects; ++nsect)
       {
-        uint32_t sectionloc = location + sizeof(struct segment_command_64) + nsect * sizeof(struct section_64);
+        uint64_t sectionloc = location + sizeof(struct segment_command_64) + nsect * sizeof(struct section_64);
         MATCH_STRUCT(section_64,sectionloc)
         [self createSection64Node:node 
                           caption:[NSString stringWithFormat:@"Section64 Header (%s)",
