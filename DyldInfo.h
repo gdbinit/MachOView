@@ -25,22 +25,22 @@ enum BindNodeType {NodeTypeBind, NodeTypeWeakBind, NodeTypeLazyBind};
 
 - (MVNode *)createRebaseNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
-                      length:(uint32_t)length
+                    location:(uint64_t)location
+                      length:(uint64_t)length
                  baseAddress:(uint64_t)baseAddress;
 
 - (MVNode *)createBindingNode:(MVNode *)parent
                       caption:(NSString *)caption
-                     location:(uint32_t)location
-                       length:(uint32_t)length
+                     location:(uint64_t)location
+                       length:(uint64_t)length
                   baseAddress:(uint64_t)baseAddress
                      nodeType:(BindNodeType)nodeType
                    dyldHelper:(DyldHelper *)helper;
 
 - (MVNode *)createExportNode:(MVNode *)parent
                      caption:(NSString *)caption
-                    location:(uint32_t)location
-                      length:(uint32_t)length
+                    location:(uint64_t)location
+                      length:(uint64_t)length
                  baseAddress:(uint64_t)baseAddress;
 
 @end
