@@ -96,7 +96,7 @@ using namespace std;
 -(MVNode *)createCStringsNode:(MVNode *)parent
                       caption:(NSString *)caption
                      location:(uint32_t)location
-                       length:(uint32_t)length
+                       length:(uint64_t)length
 {
   MVNodeSaver nodeSaver;
   MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver]; 
@@ -115,19 +115,10 @@ using namespace std;
     
     [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil];
     
-    // fill in lookup table with C Strings
-    if ([self is64bit] == NO)
-    {
-      uint32_t rva = [self fileOffsetToRVA:range.location];
-      [symbolNames setObject:[NSString stringWithFormat:@"0x%X:\"%@\"", rva, symbolName]
-                      forKey:[NSNumber numberWithUnsignedLong:rva]];
-    }
-    else
-    {
-      uint64_t rva64 = [self fileOffsetToRVA:range.location];
-      [symbolNames setObject:[NSString stringWithFormat:@"0x%qX:\"%@\"", rva64, symbolName]
-                      forKey:[NSNumber numberWithUnsignedLongLong:rva64]];
-    }
+      // fill in lookup table with C Strings
+      uint64_t rva = [self fileOffsetToRVA:range.location];
+      [symbolNames setObject:[NSString stringWithFormat:@"0x%qX:\"%@\"", rva, symbolName]
+                      forKey:[NSNumber numberWithUnsignedLongLong:rva]];
   }
   
   return node;
@@ -137,7 +128,7 @@ using namespace std;
 -(MVNode *)createLiteralsNode:(MVNode *)parent
                       caption:(NSString *)caption
                      location:(uint32_t)location
-                       length:(uint32_t)length
+                       length:(uint64_t)length
                        stride:(uint32_t)stride
 {
   MVNodeSaver nodeSaver;
@@ -182,19 +173,10 @@ using namespace std;
                            :@"Floating Point Number"
                            :literalStr];
     
-    // fill in lookup table with string literals
-    if ([self is64bit] == NO)
-    {
-      uint32_t rva = [self fileOffsetToRVA:range.location];
-      [symbolNames setObject:[NSString stringWithFormat:@"0x%X:%@f", rva, literalStr]
-                      forKey:[NSNumber numberWithUnsignedLong:rva]]; 
-    }
-    else
-    {
-      uint64_t rva64 = [self fileOffsetToRVA:range.location];
-      [symbolNames setObject:[NSString stringWithFormat:@"0x%qX:%@f", rva64, literalStr]
-                      forKey:[NSNumber numberWithUnsignedLongLong:rva64]]; 
-    }
+      // fill in lookup table with string literals
+      uint64_t rva = [self fileOffsetToRVA:range.location];
+      [symbolNames setObject:[NSString stringWithFormat:@"0x%qX:%@f", rva, literalStr]
+                      forKey:[NSNumber numberWithUnsignedLongLong:rva]];
   }
   return node;
   

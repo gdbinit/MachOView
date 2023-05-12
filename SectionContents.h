@@ -24,12 +24,12 @@
 -(MVNode *)createCStringsNode:(MVNode *)parent
                       caption:(NSString *)caption
                      location:(uint32_t)location
-                       length:(uint32_t)length;
+                       length:(uint64_t)length;
 
 -(MVNode *)createLiteralsNode:(MVNode *)parent
                       caption:(NSString *)caption
                      location:(uint32_t)location
-                       length:(uint32_t)length
+                       length:(uint64_t)length
                        stride:(uint32_t)stride;
 
 - (MVNode *)createIndPointersNode:(MVNode *)parent
