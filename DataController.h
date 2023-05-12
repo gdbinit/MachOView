@@ -63,7 +63,7 @@ struct MVNodeSaver;
 {
   MVColumns *          columns;
   NSDictionary *        attributes;
-  uint32_t              offset;             // for sorting if necessary
+  uint64_t              offset;             // for sorting if necessary
   off_t                 columnsOffset;      // offset of columns
   off_t                 attributesOffset;   // offset of attribues
   BOOL                  deleted;
@@ -72,7 +72,7 @@ struct MVNodeSaver;
 
 @property (nonatomic)   NSDictionary * attributes;
 @property (nonatomic)   MVColumns * columns;
-@property (nonatomic)   uint32_t offset;
+@property (nonatomic)   uint64_t offset;
 @property (nonatomic)   BOOL deleted;
 @property (nonatomic)   BOOL dirty;
 
@@ -99,7 +99,7 @@ struct MVNodeSaver;
 
 - (void)                popRow;
 - (void)                appendRow:(id)col0 :(id)col1 :(id)col2 :(id)col3;
-- (void)                insertRowWithOffset:(uint32_t)offset :(id)col0 :(id)col1 :(id)col2 :(id)col3;
+- (void)                insertRowWithOffset:(uint64_t)offset :(id)col0 :(id)col1 :(id)col2 :(id)col3;
 - (void)                updateCellContentTo:(id)object atRow:(NSUInteger)rowIndex andCol:(NSUInteger)colIndex;
 
 - (NSUInteger)          rowCount;
@@ -165,7 +165,7 @@ struct MVNodeSaver;
 -(NSString *)           getMachine:(cpu_type_t)cputype;
 -(NSString *)           getARMCpu:(cpu_subtype_t)cpusubtype;
 
-- (void)                createLayouts:(MVNode *)parent location:(uint32_t)location length:(uint64_t)length;
+- (void)                createLayouts:(MVNode *)parent location:(uint64_t)location length:(uint64_t)length;
 - (void)                updateTreeView: (MVNode *)node;
 - (void)                updateTableView;
 - (void)                updateStatus: (NSString *)status;

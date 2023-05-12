@@ -166,6 +166,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 {
     if (str) {
         fwrite(CSTRING(str), [str length] + 1, 1, pFile);
+    } else {
+        fputc('\0', pFile);
     }
 }
 
@@ -204,16 +206,15 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
                    : 0;
   
   putc(colorOrdinal, pFile);
-  if (colorOrdinal == 0)
-  {
-  CGFloat red, green, blue, alpha;
-  [color getRed:&red green:&green blue:&blue alpha:&alpha];
-  float fred = red, fgreen = green, fblue = blue, falpha = alpha;
-  fwrite(&fred, sizeof(float), 1, pFile);
-  fwrite(&fgreen, sizeof(float), 1, pFile);
-  fwrite(&fblue, sizeof(float), 1, pFile);
-  fwrite(&falpha, sizeof(float), 1, pFile);
-}
+  if (colorOrdinal == 0) {
+    CGFloat red, green, blue, alpha;
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
+    float fred = red, fgreen = green, fblue = blue, falpha = alpha;
+    fwrite(&fred, sizeof(float), 1, pFile);
+    fwrite(&fgreen, sizeof(float), 1, pFile);
+    fwrite(&fblue, sizeof(float), 1, pFile);
+    fwrite(&falpha, sizeof(float), 1, pFile);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -249,14 +250,15 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 - (void)saveAttributestoFile:(FILE *)pFile
 {
-  uint32_t numAttributes = [attributes count];
-  fwrite (&numAttributes, sizeof(uint32_t), 1, pFile);
+    uint64_t numAttributes = [attributes count];
+    if (fwrite (&numAttributes, sizeof(uint64_t), 1, pFile) < 1) {
+        NSLog(@"fwrite failed in saveAttributestoFile:");
+        return;
+    }
   
-  for (NSString * key in [attributes allKeys])
-  {
+  for (NSString * key in [attributes allKeys]) {
     id value = [attributes objectForKey:key];
-    if (value == nil)
-    {
+    if (value == nil) {
       continue;
     }
     
@@ -281,8 +283,8 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 - (void)loadAttributesFromFile:(FILE *)pFile
 {
-  uint32_t numAttributes;
-  fread (&numAttributes, sizeof(uint32_t), 1, pFile);
+  uint64_t numAttributes;
+  fread(&numAttributes, sizeof(uint64_t), 1, pFile);
   
   NSMutableDictionary * _attributes = [[NSMutableDictionary alloc] initWithCapacity:numAttributes];
   while (numAttributes-- > 0)
@@ -477,7 +479,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 }
 
 //----------------------------------------------------------------------------
-- (void)insertRowWithOffset:(uint32_t)offset :(id)col0 :(id)col1 :(id)col2 :(id)col3
+- (void)insertRowWithOffset:(uint64_t)offset :(id)col0 :(id)col1 :(id)col2 :(id)col3
 {
   MVRow * row = [[MVRow alloc] init];
   row.columns = [MVColumns columnsWithData:col0:col1:col2:col3];
@@ -666,23 +668,24 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 - (void)saveIndexes
 {
-  uint32_t rowCount = [rows count];
-  fwrite(&rowCount, sizeof(uint32_t), 1, swapFile);
+    uint64_t rowCount = [rows count];
+    if (fwrite(&rowCount, sizeof(uint64_t), 1, swapFile) < 1) {
+        NSLog(@"saveIndexes write error");
+        return;
+    }
 
-  for (MVRow * row in rows)
-  {
-    [row saveIndexToFile:swapFile];
-  }
+    for (MVRow * row in rows) {
+        [row saveIndexToFile:swapFile];
+    }
 }
 
 //----------------------------------------------------------------------------
 - (void)loadIndexes
 {
-  uint32_t rowCount;
-  fread(&rowCount, sizeof(uint32_t), 1, swapFile);
+  uint64_t rowCount;
+  fread(&rowCount, sizeof(uint64_t), 1, swapFile);
   
-  while (rowCount-- > 0)
-  {
+  while (rowCount-- > 0) {
     MVRow * row = [[MVRow alloc] init];
     [row loadIndexFromFile:swapFile];
     [rows addObject:row];
@@ -767,7 +770,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 
 //----------------------------------------------------------------------------
 - (MVNode *)insertChild:(NSString *)_caption
-            location:(uint64_t)location 
+            location:(uint64_t)location
               length:(uint64_t)length
 {
   MVNode * node = [[MVNode alloc] init];
@@ -887,7 +890,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
   
     [layout.dataController updateStatus:MVStatusTaskTerminated];
 }
-	
+
 //-----------------------------------------------------------------------------
 - (void)loadFromFile:(FILE *)pFile
 {
@@ -1110,7 +1113,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 //----------------------------------------------------------------------------
 // create Mach-O layouts based on file headers
 - (void)createLayouts:(MVNode *)parent
-             location:(uint32_t)location
+             location:(uint64_t)location
                length:(uint64_t)length
 {
   uint32_t magic = *(uint32_t*)((uint8_t *)[fileData bytes] + location);
