@@ -76,25 +76,28 @@ int64_t nrow_loaded; // number of loaded rows
  */
 - (IBAction)attach:(id)sender
 {
-  NSAlert *alert = [NSAlert alertWithMessageText:@"Insert PID to attach to:"
-                                   defaultButton:@"Attach"
-                                 alternateButton:@"Cancel"
-                                     otherButton:nil
-                       informativeTextWithFormat:@""];
-  
+  NSAlert *alert = [[NSAlert alloc] init];
+  alert.messageText = @"Insert PID to attach to:";
+  [alert addButtonWithTitle:@"Attach"];
+  [alert addButtonWithTitle:@"Cancel"];
+
   NSTextField *input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
   [input setStringValue:@""];
   [alert setAccessoryView:input];
   NSInteger button = [alert runModal];
-  if (button == NSAlertDefaultReturn)
+  if (button == NSAlertFirstButtonReturn)
   {
     [input validateEditing];
     pid_t targetPid = [input intValue];
-    NSLog(@"Attach to process %d", targetPid);
+    NSLog(@"Trying to attach to process %d", targetPid);
     mach_vm_address_t mainAddress = 0;
     if (find_main_binary(targetPid, &mainAddress))
     {
       NSLog(@"Failed to find main binary address!");
+      NSAlert *attachfail = [[NSAlert alloc] init];
+      attachfail.messageText = @"Failed to attach to process";
+      [attachfail addButtonWithTitle:@"Ok"];
+      [attachfail runModal];
       return;
     }
     uint64_t aslr_slide = 0;
@@ -154,7 +157,7 @@ int64_t nrow_loaded; // number of loaded rows
     free(dumpFilePath);
     free(readbuffer);
   }
-  else if (button == NSAlertAlternateReturn)
+  else if (button == NSAlertSecondButtonReturn)
   {
     /* nothing to do here */
   }
@@ -173,10 +176,10 @@ int64_t nrow_loaded; // number of loaded rows
   [openPanel setCanChooseDirectories:NO];
   [openPanel setCanChooseFiles:YES];
   [openPanel setDelegate:self]; // for filtering files in open panel with shouldShowFilename
-  [openPanel beginSheetModalForWindow:nil 
+  [openPanel beginSheetModalForWindow:NSApp.modalWindow
    completionHandler:^(NSInteger result) 
    {
-     if (result != NSOKButton) 
+     if (result != NSModalResponseOK)
      {
        return;
      }
@@ -189,10 +192,8 @@ int64_t nrow_loaded; // number of loaded rows
 }
 
 //----------------------------------------------------------------------------
-- (BOOL)panel:(id)sender shouldShowFilename:(NSString*)filename
+- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
 {
-  NSURL * url = [NSURL fileURLWithPath:filename];
-
   // can enter directories
   NSNumber * isDirectory = nil;
   [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
@@ -210,7 +211,7 @@ int64_t nrow_loaded; // number of loaded rows
   }
   
   // check for magic values at front
-  NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingAtPath:filename];
+  NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingFromURL:url error:NULL];
   NSData * magicData = [fileHandle readDataOfLength:8];
   [fileHandle closeFile];
   
@@ -294,7 +295,6 @@ int64_t nrow_loaded; // number of loaded rows
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"OpenAtLaunch"] == YES)
     {
       // if there is no document yet, then pop up an open file dialogue
-      // XXX: irrelevant check, no?
       if ([[[NSDocumentController sharedDocumentController] documents] count] == 0)
       {
         [self openDocument:nil];
