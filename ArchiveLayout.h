@@ -11,12 +11,12 @@
 @interface MVObjectInfo : NSObject
 {
   NSString *    name;
-  uint32_t      length;
+  uint64_t      length;
   MVLayout *    __weak layout;
 }
 
 @property (nonatomic)                   NSString *  name;
-@property (nonatomic)                   uint32_t    length;
+@property (nonatomic)                   uint64_t    length;
 @property (nonatomic,weak)  MVLayout *  layout;
 
 @end

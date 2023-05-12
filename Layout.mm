@@ -120,8 +120,8 @@
 //-----------------------------------------------------------------------------
 - (MVNode *)createDataNode:(MVNode *)parent
                    caption:(NSString *)caption
-                  location:(uint32_t)location
-                    length:(uint32_t)length
+                  location:(uint64_t)location
+                    length:(uint64_t)length
 {
   MVNode * node = [parent insertChild:caption location:location length:length];
   return node;
