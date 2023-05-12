@@ -187,7 +187,7 @@ using namespace std;
 }
 
 // ----------------------------------------------------------------------------
-- (void)addRelocAtFileOffset:(uint32_t)offset withLength:(uint32_t)length andValue:(uint64_t)value
+- (void)addRelocAtFileOffset:(uint64_t)offset withLength:(uint64_t)length andValue:(uint64_t)value
 {
   [dataController.realData replaceBytesInRange:NSMakeRange(offset,length) withBytes:&value];
 }

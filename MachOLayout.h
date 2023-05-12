@@ -83,7 +83,7 @@ typedef std::map<uint64_t,uint64_t>                             ExceptionFrameMa
 
 - (uint64_t)RVAToFileOffset:(uint64_t)rva;
 
-- (void)addRelocAtFileOffset:(uint32_t)offset withLength:(uint32_t)length andValue:(uint64_t)value;
+- (void)addRelocAtFileOffset:(uint64_t)offset withLength:(uint64_t)length andValue:(uint64_t)value;
 
 - (BOOL)isDylibStub;
 
