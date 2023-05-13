@@ -2085,28 +2085,39 @@ using namespace std;
 }
 
 - (NSString *)platformDescription:(uint32_t)platform {
-  switch (platform) {
-    case PLATFORM_MACOS: return @"macOS";
-    case PLATFORM_IOS: return @"iOS";
-    case PLATFORM_TVOS: return @"tvOS";
-    case PLATFORM_WATCHOS: return @"watchOS";
-    case PLATFORM_BRIDGEOS: return @"brigeOS";
-    case PLATFORM_MACCATALYST: return @"Mac Catalyst";
-    case PLATFORM_IOSSIMULATOR: return @"iOS Simulator";
-    case PLATFORM_TVOSSIMULATOR: return @"tvOS Simulator";
-    case PLATFORM_WATCHOSSIMULATOR: return @"watchOS Simulator";
-    case PLATFORM_DRIVERKIT: return @"DriverKit";
-    default: return @"Unknown";
-  }
+    switch (platform) {
+        case PLATFORM_MACOS: return @"macOS";
+        case PLATFORM_IOS: return @"iOS";
+        case PLATFORM_TVOS: return @"tvOS";
+        case PLATFORM_WATCHOS: return @"watchOS";
+        case PLATFORM_BRIDGEOS: return @"brigeOS";
+        case PLATFORM_MACCATALYST: return @"Mac Catalyst";
+        case PLATFORM_IOSSIMULATOR: return @"iOS Simulator";
+        case PLATFORM_TVOSSIMULATOR: return @"tvOS Simulator";
+        case PLATFORM_WATCHOSSIMULATOR: return @"watchOS Simulator";
+        case PLATFORM_DRIVERKIT: return @"DriverKit";
+        case PLATFORM_FIRMWARE: return @"Firmware";
+        case PLATFORM_SEPOS: return @"SEPOS";
+        case PLATFORM_ANY: return @"Any";
+        default: return @"Unknown";
+    }
 }
 
 - (NSString *)toolDescription:(uint32_t)tool {
-  switch (tool) {
-    case TOOL_CLANG: return @"clang";
-    case TOOL_SWIFT: return @"swiftc";
-    case TOOL_LD: return @"ld";
-    default: return @"unknown";
-  }
+    switch (tool) {
+        case TOOL_CLANG: return @"clang";
+        case TOOL_SWIFT: return @"swiftc";
+        case TOOL_LD: return @"ld";
+        case TOOL_LLD: return @"ldd";
+        case TOOL_METAL: return @"Metal";
+        case TOOL_AIRLLD: return @"Air lld";
+        case TOOL_AIRNT: return @"Air nt";
+        case TOOL_AIRNT_PLUGIN: return @"Air nt plugin";
+        case TOOL_AIRPACK: return @"Air pack";
+        case TOOL_GPUARCHIVER: return @"GPU Archiver";
+        case TOOL_METAL_FRAMEWORK: return @"Metal Framework";
+        default: return @"unknown";
+    }
 }
 
 //-----------------------------------------------------------------------------
