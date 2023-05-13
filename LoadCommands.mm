@@ -2184,7 +2184,7 @@ using namespace std;
   for (uint32_t i = 0; i < build_version_command->ntools; i++) {
     NSData *bytes = [dataController read_bytes:range length:sizeof(build_tool_version) lastReadHex:&lastReadHex];
     struct build_tool_version tool_version;
-    [bytes getBytes:&tool_version];
+    [bytes getBytes:&tool_version length:sizeof(build_tool_version)];
 
     NSString *tool = [self toolDescription:tool_version.tool];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
