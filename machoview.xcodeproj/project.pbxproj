@@ -6,6 +6,20 @@
 	objectVersion = 53;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		7BC7AFD12A0F2AF700D90CD1 /* Capstone */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7BC7AFD22A0F2AF700D90CD1 /* Build configuration list for PBXAggregateTarget "Capstone" */;
+			buildPhases = (
+				7BC7AFD52A0F2AFD00D90CD1 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Capstone;
+			productName = Capstone;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		256AC3DA0F4B6AC300CF3369 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppController.mm */; };
 		3C0ADEB0169CD42600DA428E /* README.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3CE90DFC11F6107600543402 /* README.md */; };
@@ -35,8 +49,19 @@
 		3CF978C611C7B34C004CD74C /* DataSources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF978C511C7B34C004CD74C /* DataSources.mm */; };
 		3CF97F0F11C91F93004CD74C /* MachOLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3CF97F0E11C91F93004CD74C /* MachOLayout.mm */; };
 		7B111E4717DC33F8008ED484 /* Attach.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B111E4617DC33F8008ED484 /* Attach.mm */; };
+		7BC7AFD92A0F2B5900D90CD1 /* libcapstone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BC7AFD82A0F2B5900D90CD1 /* libcapstone.a */; };
 		8D11072D0486CEB800E47090 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7BC7AFD62A0F2B1A00D90CD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BC7AFD12A0F2AF700D90CD1;
+			remoteInfo = Capstone;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		3CACF74A11CBCC69006BCD3F /* CopyFiles */ = {
@@ -109,6 +134,7 @@
 		7B4AD6342A0D29A8006AE04E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		7B4AD6352A0D29B2006AE04E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		7B4AD6362A0D29B2006AE04E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		7BC7AFD82A0F2B5900D90CD1 /* libcapstone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcapstone.a; path = capstone/libcapstone.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BC7AFD92A0F2B5900D90CD1 /* libcapstone.a in Frameworks */,
 				3CC0022211F64A45000F7A3D /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -236,6 +263,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7BC7AFD82A0F2B5900D90CD1 /* libcapstone.a */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -267,6 +295,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7BC7AFD72A0F2B1A00D90CD1 /* PBXTargetDependency */,
 			);
 			name = MachOView;
 			productInstallPath = "$(HOME)/Applications";
@@ -282,6 +311,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7BC7AFD12A0F2AF700D90CD1 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "machoview" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -299,6 +333,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* MachOView */,
+				7BC7AFD12A0F2AF700D90CD1 /* Capstone */,
 			);
 		};
 /* End PBXProject section */
@@ -336,6 +371,23 @@
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\n# Auto Increment Version Script\nbuildPlist=\"Info.plist\"\nCFBundleShortVersionString=$(/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" $buildPlist)\nCFBuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBuildNumber\" $buildPlist)\nCFBuildNumber=$(($CFBuildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBuildNumber $CFBuildNumber\" $buildPlist\nCFBuildDate=$(date)\n/usr/libexec/PlistBuddy -c \"Set :CFBuildDate $CFBuildDate\" $buildPlist\n# set Bundle version\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CFBuildNumber\" $buildPlist\necho \"New build: $CFBundleShortVersionString (build: $CFBuildNumber) $CFBuildDate\"\n";
 		};
+		7BC7AFD52A0F2AFD00D90CD1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd capstone\nCAPSTONE_ARCHS=\"arm aarch64 x86 powerpc\" CAPSTONE_USE_SYS_DYN_MEM=yes CAPSTONE_DIET=no CAPSTONE_X86_REDUCE=no CAPSTONE_STATIC=yes ./make.sh mac-universal\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -366,6 +418,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7BC7AFD72A0F2B1A00D90CD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BC7AFD12A0F2AF700D90CD1 /* Capstone */;
+			targetProxy = 7BC7AFD62A0F2B1A00D90CD1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3C0F957E11F6589D0070A2FE /* InfoPlist.strings */ = {
@@ -411,6 +471,22 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		7BC7AFD32A0F2AF700D90CD1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7BC7AFD42A0F2AF700D90CD1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -438,17 +514,15 @@
 				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/capstone",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
 					"-D__STDC_FORMAT_MACROS",
 					"-D__STDC_LIMIT_MACROS",
-					"-DCAPSTONE_HAS_POWERPC",
-					"-DCAPSTONE_HAS_ARM64",
-					"-DCAPSTONE_HAS_ARM",
-					"-DCAPSTONE_HAS_X86",
-					"-DCAPSTONE_USE_SYS_DYN_MEM",
 				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -496,17 +570,15 @@
 				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/capstone",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
 					"-D__STDC_FORMAT_MACROS",
 					"-D__STDC_LIMIT_MACROS",
-					"-DCAPSTONE_HAS_POWERPC",
-					"-DCAPSTONE_HAS_ARM64",
-					"-DCAPSTONE_HAS_ARM",
-					"-DCAPSTONE_HAS_X86",
-					"-DCAPSTONE_USE_SYS_DYN_MEM",
 				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -623,6 +695,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7BC7AFD22A0F2AF700D90CD1 /* Build configuration list for PBXAggregateTarget "Capstone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BC7AFD32A0F2AF700D90CD1 /* Debug */,
+				7BC7AFD42A0F2AF700D90CD1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MachOView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

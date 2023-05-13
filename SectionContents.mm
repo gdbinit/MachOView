@@ -16,7 +16,7 @@
 #import "CRTFootPrints.h"
 #import "ReadWrite.h"
 #import "DataController.h"
-#import "capstone.h"
+#import "capstone/include/capstone/capstone.h"
 #import <mach-o/loader.h>
 
 #define TAB_WIDTH 10
@@ -583,7 +583,7 @@ static AsmFootPrint const fastStubHelperHelperARM =
             break;
         case CPU_TYPE_ARM64:
             target_arch = CS_ARCH_ARM64;
-            target_mode = CS_MODE_ARM;
+            target_mode = CS_MODE_LITTLE_ENDIAN;
             break;
         default:
             NSLog(@"No CPU found to disassemble!");
