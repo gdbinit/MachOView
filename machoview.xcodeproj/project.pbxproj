@@ -66,13 +66,13 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		3CACF74A11CBCC69006BCD3F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
 				3C0ADEB0169CD42600DA428E /* README.md in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
