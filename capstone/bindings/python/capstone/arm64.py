@@ -12,6 +12,13 @@ class Arm64OpMem(ctypes.Structure):
         ('disp', ctypes.c_int32),
     )
 
+class Arm64OpSmeIndex(ctypes.Structure):
+    _fileds_ = (
+        ('reg', ctypes.c_uint),
+        ('base', ctypes.c_uint),
+        ('disp', ctypes.c_int32),
+    )
+
 class Arm64OpShift(ctypes.Structure):
     _fields_ = (
         ('type', ctypes.c_uint),
@@ -28,16 +35,17 @@ class Arm64OpValue(ctypes.Union):
         ('sys', ctypes.c_uint),
         ('prefetch', ctypes.c_int),
         ('barrier', ctypes.c_int),
+        ('sme_index', Arm64OpSmeIndex),
     )
 
 class Arm64Op(ctypes.Structure):
     _fields_ = (
         ('vector_index', ctypes.c_int),
         ('vas', ctypes.c_int),
-        ('vess', ctypes.c_int),
         ('shift', Arm64OpShift),
         ('ext', ctypes.c_uint),
         ('type', ctypes.c_uint),
+        ('svcr', ctypes.c_uint),
         ('value', Arm64OpValue),
         ('access', ctypes.c_uint8),
     )
@@ -73,6 +81,10 @@ class Arm64Op(ctypes.Structure):
     @property
     def barrier(self):
         return self.value.barrier
+    
+    @property
+    def sme_index(self):
+        return self.value.sme_index
 
 
 
@@ -81,10 +93,11 @@ class CsArm64(ctypes.Structure):
         ('cc', ctypes.c_uint),
         ('update_flags', ctypes.c_bool),
         ('writeback', ctypes.c_bool),
+        ('post_index', ctypes.c_bool),
         ('op_count', ctypes.c_uint8),
         ('operands', Arm64Op * 8),
     )
 
 def get_arch_info(a):
-    return (a.cc, a.update_flags, a.writeback, copy_ctypes_list(a.operands[:a.op_count]))
+    return (a.cc, a.update_flags, a.writeback, a.post_index, copy_ctypes_list(a.operands[:a.op_count]))
 

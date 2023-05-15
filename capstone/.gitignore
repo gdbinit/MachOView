@@ -62,12 +62,17 @@ tests/test_skipdata
 tests/test_sparc
 tests/test_systemz
 tests/test_xcore
+tests/test_tricore
 tests/*.static
 tests/test_customized_mnem
 tests/test_m68k
 tests/test_tms320c64x
 tests/test_m680x
 tests/test_evm
+tests/test_wasm
+tests/test_mos65xx
+tests/test_bpf
+tests/test_riscv
 
 # regress binaries
 suite/regress/invalid_read_in_print_operand
@@ -85,7 +90,6 @@ _*
 packages/freebsd/ports/devel/capstone/distinfo
 
 # VisualStudio
-**/.vs/
 ProjectUpgradeLog.log
 Debug/
 Release/
@@ -98,30 +102,30 @@ build*/
 *.backup
 *.VC.db
 *.VC.opendb
+.vscode/
 
 # CMake build directories
 build*/
+/build
+/out
 
 # Xcode
 xcode/Capstone.xcodeproj/xcuserdata
 xcode/Capstone.xcodeproj/project.xcworkspace/xcuserdata
 
 # suite/
+corpus-libFuzzer-capstone_fuzz_disasmnext-latest.zip
 test_arm_regression
 test_arm_regression.o
 fuzz_harness
 test_iter_benchmark
+test_file_benchmark
 fuzz_bindisasm
 fuzz_disasm
+fuzz_decode_platform
 capstone_get_setup
-
-suite/fuzz/fuzz_bindisasm2
-suite/fuzz/fuzz_decode_platform
-tests/test_bpf
-tests/test_mos65xx
-tests/test_riscv
-tests/test_wasm
-
+suite/fuzz/
+suite/cstest/cmocka/
 
 *.s
 

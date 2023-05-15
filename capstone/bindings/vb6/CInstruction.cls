@@ -16,7 +16,7 @@ Option Explicit
 'Capstone Disassembly Engine bindings for VB6
 'Contributed by FireEye FLARE Team
 'Author:  David Zimmer <david.zimmer@fireeye.com>, <dzzie@yahoo.com>
-'License: Apache
+'License: Apache 2.0
 'Copyright: FireEye 2017
 
 
@@ -31,7 +31,7 @@ Option Explicit
 '    align As Long             'not sure why it needs this..but it does..
 '    address As Currency       ' Address (EIP) of this instruction available even when CS_OPT_DETAIL = CS_OPT_OFF UNSIGNED
 '    size As Integer           ' Size of this instruction available even when CS_OPT_DETAIL = CS_OPT_OFF UNSIGNED
-'    bytes(0 To 15) As Byte    ' Machine bytes of this instruction, with number of bytes indicated by @size above available even when CS_OPT_DETAIL = CS_OPT_OFF
+'    bytes(0 To 23) As Byte    ' Machine bytes of this instruction, with number of bytes indicated by @size above available even when CS_OPT_DETAIL = CS_OPT_OFF
 '    mnemonic(0 To 31) As Byte ' Ascii text of instruction mnemonic available even when CS_OPT_DETAIL = CS_OPT_OFF
 '    op_str(0 To 159) As Byte  ' Ascii text of instruction operands available even when CS_OPT_DETAIL = CS_OPT_OFF
 '

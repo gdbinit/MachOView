@@ -53,11 +53,11 @@ public class Arm64 {
   public static class Operand extends Structure {
     public int vector_index;
     public int vas;
-    public int vess;
     public OpShift shift;
     public int ext;
     public int type;
     public OpValue value;
+    public byte access;
 
     public void read() {
       readField("type");
@@ -72,14 +72,14 @@ public class Arm64 {
       readField("value");
       readField("ext");
       readField("shift");
-      readField("vess");
       readField("vas");
       readField("vector_index");
+      readField("access");
     }
 
     @Override
     public List getFieldOrder() {
-      return Arrays.asList("vector_index", "vas", "vess", "shift", "ext", "type", "value");
+      return Arrays.asList("vector_index", "vas", "shift", "ext", "type", "value", "access");
     }
   }
 

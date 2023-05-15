@@ -28,9 +28,9 @@
 #include "../../MCRegisterInfo.h"
 
 #ifndef CAPSTONE_DIET
-static const char* s_spacing = " ";
+static const char s_spacing[] = " ";
 
-static const char* s_reg_names[] = {
+static const char* const s_reg_names[] = {
 	"invalid",
 	"d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",
 	"a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7",
@@ -43,7 +43,7 @@ static const char* s_reg_names[] = {
 	"fpcr", "fpsr", "fpiar",
 };
 
-static const char* s_instruction_names[] = {
+static const char* const s_instruction_names[] = {
 	"invalid",
 	"abcd", "add", "adda", "addi", "addq", "addx", "and", "andi", "asl", "asr", "bhs", "blo", "bhi", "bls", "bcc", "bcs", "bne", "beq", "bvc",
 	"bvs", "bpl", "bmi", "bge", "blt", "bgt", "ble", "bra", "bsr", "bchg", "bclr", "bset", "btst", "bfchg", "bfclr", "bfexts", "bfextu", "bfffo", "bfins",
@@ -190,7 +190,7 @@ static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst
 					SStream_concat(O, "$%x", op->mem.in_disp);
 			}
 
-			SStream_concat(O, "(");
+			SStream_concat0(O, "(");
 
 			if (op->address_mode == M68K_AM_PCI_INDEX_BASE_DISP) {
 			    SStream_concat(O, "pc,%s.%c", getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
@@ -203,7 +203,7 @@ static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst
 			if (op->mem.scale > 0)
 			    SStream_concat(O, "%s*%s%d)", s_spacing, s_spacing, op->mem.scale);
 			else
-			    SStream_concat(O, ")");
+			    SStream_concat0(O, ")");
 			break;
 			// It's ok to just use PCMI here as is as we set base_reg to PC in the disassembler. While this is not strictly correct it makes the code
 			// easier and that is what actually happens when the code is executed anyway.
@@ -212,7 +212,7 @@ static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst
 		case M68K_AM_PC_MEMI_PRE_INDEX:
 		case M68K_AM_MEMI_PRE_INDEX:
 		case M68K_AM_MEMI_POST_INDEX:
-			SStream_concat(O, "([");
+			SStream_concat0(O, "([");
 
 			if (op->address_mode == M68K_AM_PC_MEMI_POST_INDEX || op->address_mode == M68K_AM_PC_MEMI_PRE_INDEX) {
 				SStream_concat(O, "$%x", pc + 2 + op->mem.in_disp);
@@ -229,7 +229,7 @@ static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst
 			}
 
 			if (op->address_mode == M68K_AM_MEMI_POST_INDEX || op->address_mode == M68K_AM_PC_MEMI_POST_INDEX)
-			    SStream_concat(O, "]");
+			    SStream_concat0(O, "]");
 
 			if (op->mem.index_reg != M68K_REG_INVALID)
 			    SStream_concat(O, ",%s%s.%c", s_spacing, getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
@@ -238,12 +238,12 @@ static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst
 			    SStream_concat(O, "%s*%s%d", s_spacing, s_spacing, op->mem.scale);
 
 			if (op->address_mode == M68K_AM_MEMI_PRE_INDEX || op->address_mode == M68K_AM_PC_MEMI_PRE_INDEX)
-			    SStream_concat(O, "]");
+			    SStream_concat0(O, "]");
 
 			if (op->mem.out_disp > 0)
 			    SStream_concat(O, ",%s$%x", s_spacing, op->mem.out_disp);
 
-			SStream_concat(O, ")");
+			SStream_concat0(O, ")");
 			break;
 		case M68K_AM_BRANCH_DISPLACEMENT:
 			SStream_concat(O, "$%x", pc + 2 + op->br_disp.disp);
@@ -367,7 +367,7 @@ const char* M68K_insn_name(csh handle, unsigned int id)
 }
 
 #ifndef CAPSTONE_DIET
-static name_map group_name_maps[] = {
+static const name_map group_name_maps[] = {
 	{ M68K_GRP_INVALID , NULL },
 	{ M68K_GRP_JUMP, "jump" },
 	{ M68K_GRP_RET , "ret" },

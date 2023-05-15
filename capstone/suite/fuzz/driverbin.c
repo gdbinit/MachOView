@@ -4,8 +4,9 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#include "platform.h"
+
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size);
-const char * cs_fuzz_arch(uint8_t arch);
 
 int main(int argc, char** argv)
 {
@@ -37,10 +38,8 @@ int main(int argc, char** argv)
         if (dir->d_type != DT_REG) {
             continue;
         }
-
-        printf("Running %s\n", dir->d_name);
+        printf("Running file %s ", dir->d_name);
         fflush(stdout);
-
         fp = fopen(dir->d_name, "rb");
         if (fp == NULL) {
             r = 3;
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
             break;
         }
         if (Size > 0) {
-            printf("command cstool %s\n", cs_fuzz_arch(Data[0]));
+            printf("command cstool %s\n", get_platform_cstoolname(Data[0]));
         }
         for (i=0; i<Size; i++) {
             printf("%02x", Data[i]);

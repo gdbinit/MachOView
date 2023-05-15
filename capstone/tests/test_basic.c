@@ -78,6 +78,18 @@ static void test()
 #ifdef CAPSTONE_HAS_EVM
 #define EVM_CODE "\x60\x61"
 #endif
+#ifdef CAPSTONE_HAS_WASM
+#define WASM_CODE "\x20\x00\x20\x01\x41\x20\x10\xc9\x01\x45\x0b"
+#endif
+#ifdef CAPSTONE_HAS_MOS65XX
+#define MOS65XX_CODE "\x0d\x34\x12\x00\x81\x65\x6c\x01\x00\x85\xFF\x10\x00\x19\x42\x42\x00\x49\x42"
+#endif
+#define EBPF_CODE "\x97\x09\x00\x00\x37\x13\x03\x00\xdc\x02\x00\x00\x20\x00\x00\x00\x30\x00\x00\x00\x00\x00\x00\x00\xdb\x3a\x00\x01\x00\x00\x00\x00\x84\x02\x00\x00\x00\x00\x00\x00\x6d\x33\x17\x02\x00\x00\x00\x00"
+
+#ifdef CAPSTONE_HAS_RISCV
+#define RISCV_CODE32 "\x37\x34\x00\x00\x97\x82\x00\x00\xef\x00\x80\x00\xef\xf0\x1f\xff\xe7\x00\x45\x00\xe7\x00\xc0\xff\x63\x05\x41\x00\xe3\x9d\x61\xfe\x63\xca\x93\x00\x63\x53\xb5\x00\x63\x65\xd6\x00\x63\x76\xf7\x00\x03\x88\x18\x00\x03\x99\x49\x00\x03\xaa\x6a\x00\x03\xcb\x2b\x01\x03\xdc\x8c\x01\x23\x86\xad\x03\x23\x9a\xce\x03\x23\x8f\xef\x01\x93\x00\xe0\x00\x13\xa1\x01\x01\x13\xb2\x02\x7d\x13\xc3\x03\xdd\x13\xe4\xc4\x12\x13\xf5\x85\x0c\x13\x96\xe6\x01\x13\xd7\x97\x01\x13\xd8\xf8\x40\x33\x89\x49\x01\xb3\x0a\x7b\x41\x33\xac\xac\x01\xb3\x3d\xde\x01\x33\xd2\x62\x40\xb3\x43\x94\x00\x33\xe5\xc5\x00\xb3\x76\xf7\x00\xb3\x54\x39\x01\xb3\x50\x31\x00\x33\x9f\x0f\x00"
+#define RISCV_CODE64 "\x13\x04\xa8\x7a"  // aaa80413
+#endif
 
 	struct platform {
 		cs_arch arch;
@@ -90,16 +102,16 @@ static void test()
 	};
 	struct platform platforms[] = {
 #ifdef CAPSTONE_HAS_X86
-		{
+		{ 
 			CS_ARCH_X86,
-			(cs_mode)CS_MODE_16,
+			CS_MODE_16,
 			(unsigned char*)X86_CODE16,
 			sizeof(X86_CODE16) - 1,
 			"X86 16bit (Intel syntax)"
 		},
 		{
 			CS_ARCH_X86,
-			(cs_mode)CS_MODE_32,
+			CS_MODE_32,
 			(unsigned char*)X86_CODE32,
 			sizeof(X86_CODE32) - 1,
 			"X86 32bit (ATT syntax)",
@@ -108,14 +120,14 @@ static void test()
 		},
 		{
 			CS_ARCH_X86,
-			(cs_mode)CS_MODE_32,
+			CS_MODE_32,
 			(unsigned char*)X86_CODE32,
 			sizeof(X86_CODE32) - 1,
 			"X86 32 (Intel syntax)"
 		},
 		{
 			CS_ARCH_X86,
-			(cs_mode)CS_MODE_32,
+			CS_MODE_32,
 			(unsigned char*)X86_CODE32,
 			sizeof(X86_CODE32) - 1,
 			"X86 32 (MASM syntax)",
@@ -124,37 +136,37 @@ static void test()
 		},
 		{
 			CS_ARCH_X86,
-			(cs_mode)CS_MODE_64,
+			CS_MODE_64,
 			(unsigned char*)X86_CODE64,
 			sizeof(X86_CODE64) - 1,
 			"X86 64 (Intel syntax)"
 		},
 #endif
 #ifdef CAPSTONE_HAS_ARM
-		{
+		{ 
 			CS_ARCH_ARM,
-			(cs_mode)CS_MODE_ARM,
+			CS_MODE_ARM,
 			(unsigned char*)ARM_CODE,
 			sizeof(ARM_CODE) - 1,
 			"ARM"
 		},
 		{
 			CS_ARCH_ARM,
-			(cs_mode)CS_MODE_THUMB,
+			CS_MODE_THUMB,
 			(unsigned char*)THUMB_CODE2,
 			sizeof(THUMB_CODE2) - 1,
 			"THUMB-2"
 		},
-		{
+		{ 
 			CS_ARCH_ARM,
-			(cs_mode)CS_MODE_ARM,
+			CS_MODE_ARM,
 			(unsigned char*)ARM_CODE2,
 			sizeof(ARM_CODE2) - 1,
 			"ARM: Cortex-A15 + NEON"
 		},
 		{
 			CS_ARCH_ARM,
-			(cs_mode)CS_MODE_THUMB,
+			CS_MODE_THUMB,
 			(unsigned char*)THUMB_CODE,
 			sizeof(THUMB_CODE) - 1,
 			"THUMB"
@@ -207,7 +219,7 @@ static void test()
 #ifdef CAPSTONE_HAS_ARM64
 		{
 			CS_ARCH_ARM64,
-			(cs_mode)CS_MODE_ARM,
+			CS_MODE_ARM,
 			(unsigned char*)ARM64_CODE,
 			sizeof(ARM64_CODE) - 1,
 			"ARM-64"
@@ -216,14 +228,14 @@ static void test()
 #ifdef CAPSTONE_HAS_POWERPC
 		{
 			CS_ARCH_PPC,
-			(cs_mode)CS_MODE_BIG_ENDIAN,
+			CS_MODE_BIG_ENDIAN,
 			(unsigned char*)PPC_CODE,
 			sizeof(PPC_CODE) - 1,
 			"PPC-64"
 		},
 		{
 			CS_ARCH_PPC,
-			(cs_mode)CS_MODE_BIG_ENDIAN,
+			CS_MODE_BIG_ENDIAN,
 			(unsigned char*)PPC_CODE,
 			sizeof(PPC_CODE) - 1,
 			"PPC-64, print register with number only",
@@ -232,7 +244,7 @@ static void test()
 		},
 		{
 			CS_ARCH_PPC,
-			(cs_mode)(CS_MODE_BIG_ENDIAN + CS_MODE_QPX),
+			CS_MODE_BIG_ENDIAN + CS_MODE_QPX,
 			(unsigned char*)PPC_CODE2,
 			sizeof(PPC_CODE2) - 1,
 			"PPC-64 + QPX",
@@ -241,7 +253,7 @@ static void test()
 #ifdef CAPSTONE_HAS_SPARC
 		{
 			CS_ARCH_SPARC,
-			(cs_mode)CS_MODE_BIG_ENDIAN,
+			CS_MODE_BIG_ENDIAN,
 			(unsigned char*)SPARC_CODE,
 			sizeof(SPARC_CODE) - 1,
 			"Sparc"
@@ -284,7 +296,7 @@ static void test()
 #ifdef CAPSTONE_HAS_TMS320C64X
 		{
 			CS_ARCH_TMS320C64X,
-			(cs_mode)0,
+			0,
 			(unsigned char*)TMS320C64X_CODE,
 			sizeof(TMS320C64X_CODE) - 1,
 			"TMS320C64x",
@@ -293,7 +305,7 @@ static void test()
 #ifdef CAPSTONE_HAS_M680X
 		{
 			CS_ARCH_M680X,
-			(cs_mode)CS_MODE_M680X_6809,
+			(cs_mode)(CS_MODE_M680X_6809),
 			(unsigned char*)M680X_CODE,
 			sizeof(M680X_CODE) - 1,
 			"M680X_M6809",
@@ -302,10 +314,53 @@ static void test()
 #ifdef CAPSTONE_HAS_EVM
 		{
 			CS_ARCH_EVM,
-			(cs_mode)0,
+			0,
 			(unsigned char*)EVM_CODE,
 			sizeof(EVM_CODE) - 1,
 			"EVM",
+		},
+#endif
+#ifdef CAPSTONE_HAS_WASM
+		{
+			CS_ARCH_WASM,
+			0,
+			(unsigned char*)WASM_CODE,
+			sizeof(WASM_CODE) - 1,
+			"WASM",
+		},
+#endif
+#ifdef CAPSTONE_HAS_MOS65XX
+		{
+			CS_ARCH_MOS65XX,
+			0,
+			(unsigned char *)MOS65XX_CODE,
+			sizeof(MOS65XX_CODE) - 1,
+			"MOS65XX"
+		},
+#endif
+#ifdef CAPSTONE_HAS_BPF
+		{
+			CS_ARCH_BPF,
+			CS_MODE_LITTLE_ENDIAN | CS_MODE_BPF_EXTENDED,
+			(unsigned char*) EBPF_CODE,
+			sizeof(EBPF_CODE) - 1,
+			"eBPF"
+		},
+#endif
+#ifdef CAPSTONE_HAS_RISCV
+		{
+			CS_ARCH_RISCV,
+			CS_MODE_RISCV32,
+			(unsigned char *)RISCV_CODE32,
+			sizeof(RISCV_CODE32) - 1,
+			"RISCV32"
+		},
+		{
+			CS_ARCH_RISCV,
+			CS_MODE_RISCV64,
+			(unsigned char *)RISCV_CODE64,
+			sizeof(RISCV_CODE64) - 1,
+			"RISCV64"
 		},
 #endif
 	};

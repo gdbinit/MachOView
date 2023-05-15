@@ -55,7 +55,7 @@ public class Capstone {
     public _cs_detail.ByReference cs_detail;
 
     public _cs_insn() {
-      bytes = new byte[16];
+      bytes = new byte[24];
       mnemonic = new byte[32];
       op_str = new byte[160];
       java.util.Arrays.fill(mnemonic, (byte) 0);
@@ -78,7 +78,7 @@ public class Capstone {
     public static class ByReference extends _cs_detail implements Structure.ByReference {};
 
     // list of all implicit registers being read.
-    public short[] regs_read = new short[12];
+    public short[] regs_read = new short[16];
     public byte regs_read_count;
     // list of all implicit registers being written.
     public short[] regs_write = new short[20];
@@ -354,6 +354,9 @@ public class Capstone {
   public static final int CS_MODE_MIPS32 = CS_MODE_32; // Mips32 ISA
   public static final int CS_MODE_MIPS64 = CS_MODE_64; // Mips64 ISA
   public static final int CS_MODE_QPX = 1 << 4; // Quad Processing eXtensions mode (PPC)
+  public static final int CS_MODE_SPE = 1 << 5; // Signal Processing Engine mode (PPC)
+  public static final int CS_MODE_BOOKE = 1 << 6; // Book-E mode (PPC)
+  public static final int CS_MODE_PS = 1 << 7; // Paired-singles mode (PPC)
   public static final int CS_MODE_M680X_6301 = 1 << 1; // M680X Hitachi 6301,6303 mode
   public static final int CS_MODE_M680X_6309 = 1 << 2; // M680X Hitachi 6309 mode
   public static final int CS_MODE_M680X_6800 = 1 << 3; // M680X Motorola 6800,6802 mode

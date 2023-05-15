@@ -1,5 +1,5 @@
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2019 */
 
 #ifndef CS_PRIV_H
 #define CS_PRIV_H
@@ -68,6 +68,7 @@ struct cs_struct {
 	cs_opt_value detail, imm_unsigned;
 	int syntax;	// asm syntax for simple printer such as ARM, Mips & PPC
 	bool doing_mem;	// handling memory operand in InstPrinter code
+	bool doing_SME_Index; // handling a SME instruction that has index
 	unsigned short *insn_cache;	// index caching for mapping.c
 	GetRegisterName_t get_regname;
 	bool skipdata;	// set this to True if we skip data when disassembling
@@ -83,11 +84,22 @@ struct cs_struct {
 // Returns a bool (0 or 1) whether big endian is enabled for a mode
 #define MODE_IS_BIG_ENDIAN(mode) (((mode) & CS_MODE_BIG_ENDIAN) != 0)
 
-extern cs_malloc_t cs_mem_malloc;
-extern cs_calloc_t cs_mem_calloc;
-extern cs_realloc_t cs_mem_realloc;
-extern cs_free_t cs_mem_free;
-extern cs_vsnprintf_t cs_vsnprintf;
+
+#ifndef thread_local
+#if defined (__GNUC__) || defined (__clang__)
+#define thread_local __thread // prior to C11
+#elif _MSC_VER
+#define thread_local __declspec( thread ) // early msvc
+#else
+#define thread_local // failsafe
+#endif
+#endif
+
+extern thread_local cs_malloc_t cs_mem_malloc;
+extern thread_local cs_calloc_t cs_mem_calloc;
+extern thread_local cs_realloc_t cs_mem_realloc;
+extern thread_local cs_free_t cs_mem_free;
+extern thread_local cs_vsnprintf_t cs_vsnprintf;
 
 // By defining CAPSTONE_DEBUG assertions can be used.
 // For any release build CAPSTONE_DEBUG has to be undefined.

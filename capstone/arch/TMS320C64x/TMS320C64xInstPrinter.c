@@ -27,7 +27,7 @@
 
 #include "capstone/tms320c64x.h"
 
-static char *getRegisterName(unsigned RegNo);
+static const char *getRegisterName(unsigned RegNo);
 static void printOperand(MCInst *MI, unsigned OpNo, SStream *O);
 static void printMemOperand(MCInst *MI, unsigned OpNo, SStream *O);
 static void printMemOperand2(MCInst *MI, unsigned OpNo, SStream *O);
@@ -111,7 +111,7 @@ void TMS320C64x_post_printer(csh ud, cs_insn *insn, char *insn_asm, MCInst *mci)
 			SStream_concat(&ss, "\t%s", p);
 
 		if (tms320c64x->parallel != 0)
-			SStream_concat(&ss, "\t||");
+			SStream_concat0(&ss, "\t||");
 
 		/* insn_asm is a buffer from an SStream, so there should be enough space */
 		strcpy(insn_asm, ss.buffer);

@@ -59,6 +59,20 @@ def print_insn_detail(insn):
                 print("\t\toperands[%u].type: PREFETCH = 0x%x" % (c, i.prefetch))
             if i.type == ARM64_OP_BARRIER:
                 print("\t\toperands[%u].type: BARRIER = 0x%x" % (c, i.barrier))
+            if i.type == ARM64_OP_SVCR:
+                print("\t\toperands[%u].type: SYS = 0x%x" % (c, i.sys))
+                if i.svcr == ARM64_SVCR_SVCRSM:
+                	print("\t\t\toperands[%u].svcr: BIT = SM" % (c))
+                if i.svcr == ARM64_SVCR_SVCRZA:
+                	print("\t\t\toperands[%u].svcr: BIT = ZA" % (c))
+                if i.svcr == ARM64_SVCR_SVCRSMZA:
+                	print("\t\t\toperands[%u].svcr: BIT = SM & ZA" % (c))
+            if i.type == ARM64_OP_SME_INDEX:
+                print("\t\toperands[%u].type: REG = %s" % (c, insn.reg_name(i.reg)))
+                if i.sme_index.base != ARM64_REG_INVALID:
+                    print("\t\t\toperands[%u].index.base: REG = %s" % (c, insn.reg_name(i.reg)))
+                if i.sme_index.disp != 0 :
+                    print("\t\t\toperands[%u].index.disp: 0x%x" %(c, i.sme_index.disp))
 
             if i.shift.type != ARM64_SFT_INVALID and i.shift.value:
                 print("\t\t\tShift: type = %u, value = %u" % (i.shift.type, i.shift.value))
@@ -68,9 +82,6 @@ def print_insn_detail(insn):
 
             if i.vas != ARM64_VAS_INVALID:
                 print("\t\t\tVector Arrangement Specifier: 0x%x" % i.vas)
-
-            if i.vess != ARM64_VESS_INVALID:
-                print("\t\t\tVector Element Size Specifier: %u" % i.vess)
 
             if i.vector_index != -1:
                 print("\t\t\tVector Index: %u" % i.vector_index)
@@ -84,7 +95,11 @@ def print_insn_detail(insn):
 
 
     if insn.writeback:
-        print("\tWrite-back: True")
+        if insn.post_index:
+            print("\tWrite-back: Post")
+        else:
+            print("\tWrite-back: Pre")
+            
     if not insn.cc in [ARM64_CC_AL, ARM64_CC_INVALID]:
         print("\tCode-condition: %u" % insn.cc)
     if insn.update_flags:

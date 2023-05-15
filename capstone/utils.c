@@ -1,5 +1,5 @@
 /* Capstone Disassembly Engine */
-/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2015 */
+/* By Nguyen Anh Quynh <aquynh@gmail.com>, 2013-2019 */
 
 #if defined(CAPSTONE_HAS_OSXKERNEL)
 #include <Availability.h>
@@ -91,7 +91,7 @@ unsigned int count_positive8(const unsigned char *list)
 
 char *cs_strdup(const char *str)
 {
-	size_t len = strlen(str)+ 1;
+	size_t len = strlen(str) + 1;
 	void *new = cs_mem_malloc(len);
 
 	if (new == NULL)
@@ -137,3 +137,33 @@ bool arr_exist(uint16_t *arr, unsigned char max, unsigned int id)
 	return false;
 }
 
+// binary search for encoding in IndexType array
+// return -1 if not found, or index if found
+unsigned int binsearch_IndexTypeEncoding(const struct IndexType *index, size_t size, uint16_t encoding)
+{
+	// binary searching since the index is sorted in encoding order
+	size_t left, right, m;
+
+	right = size - 1;
+
+	if (encoding < index[0].encoding || encoding > index[right].encoding)
+		// not found
+		return -1;
+
+	left = 0;
+
+	while(left <= right) {
+		m = (left + right) / 2;
+		if (encoding == index[m].encoding) {
+			return m;
+		}
+
+		if (encoding < index[m].encoding)
+			right = m - 1;
+		else
+			left = m + 1;
+	}
+
+	// not found
+	return -1;
+}

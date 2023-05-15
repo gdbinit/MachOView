@@ -3,14 +3,13 @@
 
 #include <stdio.h>
 #include <capstone/capstone.h>
-
-void print_string_hex(char *comment, unsigned char *str, size_t len);
+#include "cstool.h"
 
 static const char *s_access[] = {
 	"UNCHANGED", "READ", "WRITE", "READ | WRITE",
 };
 
-void print_read_write_regs(csh handle, cs_detail *detail)
+static void print_read_write_regs(csh handle, cs_detail *detail)
 {
 	int i;
 

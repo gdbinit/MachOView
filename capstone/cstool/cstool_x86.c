@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <capstone/capstone.h>
+#include "cstool.h"
 
 void print_string_hex(const char *comment, unsigned char *str, size_t len);
 

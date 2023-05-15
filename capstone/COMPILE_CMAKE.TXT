@@ -24,13 +24,19 @@ Get CMake for free from http://www.cmake.org.
   - CAPSTONE_M680X_SUPPORT: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
   - CAPSTONE_M68K_SUPPORT: support M68K. Run cmake with -DCAPSTONE_M68K_SUPPORT=0 to remove M68K.
   - CAPSTONE_MIPS_SUPPORT: support Mips. Run cmake with -DCAPSTONE_MIPS_SUPPORT=0 to remove Mips.
+  - CAPSTONE_MOS65XX_SUPPORT: support MOS65XX. Run cmake with -DCAPSTONE_MOS65XX_SUPPORT=0 to remove MOS65XX.
   - CAPSTONE_PPC_SUPPORT: support PPC. Run cmake with -DCAPSTONE_PPC_SUPPORT=0 to remove PPC.
   - CAPSTONE_SPARC_SUPPORT: support Sparc. Run cmake with -DCAPSTONE_SPARC_SUPPORT=0 to remove Sparc.
   - CAPSTONE_SYSZ_SUPPORT: support SystemZ. Run cmake with -DCAPSTONE_SYSZ_SUPPORT=0 to remove SystemZ.
   - CAPSTONE_XCORE_SUPPORT: support XCore. Run cmake with -DCAPSTONE_XCORE_SUPPORT=0 to remove XCore.
+  - CAPSTONE_TRICORE_SUPPORT: support TriCore. Run cmake with -DCAPSTONE_TRICORE_SUPPORT=0 to remove TriCore.
   - CAPSTONE_X86_SUPPORT: support X86. Run cmake with -DCAPSTONE_X86_SUPPORT=0 to remove X86.
-  - CAPSTONE_TMS320C64X_SUPPORT: support TMS320C64X. Run cmake with -DCAPSTONE_TMS320C64X_SUPPORT=0 to remove TMS320C64X.
-  - CAPSTONE_EVM_SUPPORT: support EVM. Run cmake with -DCAPSTONE_EVM_SUPPORT=0 to remove EVM.
+  - CAPSTONE_X86_TMS320C64X: support TMS320C64X. Run cmake with -DCAPSTONE_TMS320C64X_SUPPORT=0 to remove TMS320C64X.
+  - CAPSTONE_X86_M680X: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
+  - CAPSTONE_X86_EVM: support EVM. Run cmake with -DCAPSTONE_EVM_SUPPORT=0 to remove EVM.
+  - CAPSTONE_X86_WASM: support Web Assembly. Run cmake with -DCAPSTONE_WASM_SUPPORT=0 to remove WASM.
+  - CAPSTONE_BPF_SUPPORT: support BPF. Run cmake with -DCAPSTONE_BPF_SUPPORT=0 to remove BPF.
+  - CAPSTONE_RISCV_SUPPORT: support RISCV. Run cmake with -DCAPSTONE_RISCV_SUPPORT=0 to remove RISCV.
   - CAPSTONE_ARCHITECUTRE_DEFAULT: Whether architectures are enabled by default.
       Set this of OFF with -DCAPSTONE_ARCHITECUTRE_DEFAULT=OFF to dissable all architectures by default.
       You can then enable them again with one of the CAPSTONE_<ARCH>_SUPPORT options.
@@ -44,6 +50,7 @@ Get CMake for free from http://www.cmake.org.
   - CAPSTONE_BUILD_DIET: change this to ON to make the binaries more compact.
   - CAPSTONE_X86_REDUCE: change this to ON to make X86 binary smaller.
   - CAPSTONE_X86_ATT_DISABLE: change this to ON to disable AT&T syntax on x86.
+  - CAPSTONE_DEBUG: change this to ON to enable extra debug assertions.
 
   By default, Capstone use system dynamic memory management, and both DIET and X86_REDUCE
   modes are disabled. To use your own memory allocations, turn ON both DIET &
@@ -58,16 +65,20 @@ Get CMake for free from http://www.cmake.org.
     some examples on how to build Capstone on Windows with CMake.
 
   (*) You can let CMake select a generator for you. Do:
-
+  
       mkdir build
       cd build
       cmake ..
-
+      
     This last command is also where you can pass additional CMake configuration flags
-    using `-D<key>=<value>`. Then to build use:
-
-      cmake --build . --config Release
-
+    using `-D<key>=<value>`.
+    For a debug build add `-DCMAKE_BUILD_TYPE=Debug`.
+    To export `compile_commands.json` add `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`.
+    
+    Then to build use:
+    
+      cmake --build . --config [Release/Debug]
+      
 
   (*) To build Capstone using Nmake of Windows SDK, do:
 
@@ -97,12 +108,13 @@ Get CMake for free from http://www.cmake.org.
 
 (3) You can also enable just one specific architecture by passing the architecture name
   to either the cmake.sh or nmake.bat scripts. e.g.:
-
+  
     ../cmake.sh x86
 
   Will just target the x86 architecture. The list of available architectures is: ARM,
-  ARM64, M68K, MIPS, PowerPC, Sparc, SystemZ, XCore, x86, TMS320C64x, M680x, EVM, MOS65XX.
-
+  ARM64, M68K, MIPS, PowerPC, Sparc, SystemZ, XCore, x86, TMS320C64x, M680x, EVM, MOS65XX,
+  WASM, BPF, RISCV.
+  
 (4) You can also create an installation image with cmake, by using the 'install' target.
   Use:
 

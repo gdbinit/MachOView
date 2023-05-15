@@ -8,8 +8,7 @@
 
 #include <stdio.h>
 #include <capstone/capstone.h>
-
-void print_string_hex(char *comment, unsigned char *str, size_t len);
+#include "cstool.h"
 
 static const char* s_addressing_modes[] = {
 	"<invalid mode>",
