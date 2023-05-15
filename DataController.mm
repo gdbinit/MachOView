@@ -63,7 +63,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 @synthesize offsetStr, dataStr, descriptionStr, valueStr; 
 
 //-----------------------------------------------------------------------------
-- (id)init 
+- (instancetype)init
 {
   self = [super init];
   if (self)
@@ -115,7 +115,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 @synthesize columns, attributes, offset, deleted, dirty;
 
 //-----------------------------------------------------------------------------
-- (id)init 
+- (instancetype)init
 {
   self = [super init];
   if (self)
@@ -423,14 +423,14 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 @synthesize swapFile;
 
 //-----------------------------------------------------------------------------
-- (id)init
+- (instancetype)init
 {
   NSAssert(NO, @"plain init is not allowed");
   return nil;
 }
 
 //-----------------------------------------------------------------------------
-- (id)initWithArchiver:(MVArchiver *)_archiver
+- (instancetype)initWithArchiver:(MVArchiver *)_archiver
 {
   if (self = [super init])
   {
@@ -701,7 +701,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 @synthesize caption, parent, dataRange, details, userInfo, detailsOffset;
 
 //-----------------------------------------------------------------------------
--(id)init
+- (instancetype)init
 {
   if (self = [super init]) 
   {
@@ -935,7 +935,7 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 */
 
 //-----------------------------------------------------------------------------
--(id)init
+- (instancetype)init
 {
   if (self = [super init]) 
   {
@@ -1239,14 +1239,14 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
 @synthesize swapPath;
 
 //-----------------------------------------------------------------------------
-- (id)init
+- (instancetype)init
 {
   NSAssert(NO, @"plain init is not allowed");
   return nil;
 }
 
 //-----------------------------------------------------------------------------
--(id) initWithPath:(NSString *)path
+- (instancetype)initWithPath:(NSString *)path
 {  
   if (self = [super init]) 
   {

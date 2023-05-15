@@ -24,14 +24,7 @@
 */
 
 //-----------------------------------------------------------------------------
-- (id)init
-{
-  NSAssert(NO, @"plain init is not allowed");
-  return nil;
-}
-
-//-----------------------------------------------------------------------------
-- (id)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
+- (instancetype)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
 {
     if (self = [super init]) {
         dataController = dc;

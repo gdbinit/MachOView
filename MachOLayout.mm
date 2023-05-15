@@ -26,15 +26,8 @@ using namespace std;
 //============================================================================
 @implementation MachOLayout
 
-// ----------------------------------------------------------------------------
-- (id)init
-{
-  NSAssert(NO, @"plain init is not allowed");
-  return nil;
-}
-
 //-----------------------------------------------------------------------------
-- (id)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node 
+- (instancetype)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
 {
   if (self = [super initWithDataController:dc rootNode:node])
   {

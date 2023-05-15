@@ -137,14 +137,14 @@
 @implementation MVRightFormatter
 
 //----------------------------------------------------------------------------
-- (id)init
+- (instancetype)init
 {
   NSAssert(NO, @"plain init is not allowed");
   return nil;
 }
 
 //-----------------------------------------------------------------------------
-- (id)initPlainWithLength:(NSUInteger)len
+- (instancetype)initPlainWithLength:(NSUInteger)len
 {
   if (self = [super init])
   {
@@ -156,7 +156,7 @@
 }
 
 //----------------------------------------------------------------------------
-- (id)initLeftAlignedWithLength:(NSUInteger)len
+- (instancetype)initLeftAlignedWithLength:(NSUInteger)len
 {
   if (self = [super init])
   {
@@ -168,7 +168,7 @@
 }
 
 //----------------------------------------------------------------------------
-- (id)initCompoundWithLength:(NSUInteger)len
+- (instancetype)initCompoundWithLength:(NSUInteger)len
 {
   if (self = [super init])
   {
@@ -329,7 +329,7 @@ enum ViewType
 }
 
 //-----------------------------------------------------------------------------
-- (id)init
+- (instancetype)init
 {
   self = [super init];
   if (self) 

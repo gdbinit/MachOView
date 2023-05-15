@@ -30,8 +30,9 @@
 @property(nonatomic,readonly) NSThread * backgroundThread;
 @property(nonatomic,readonly) MVArchiver * archiver;
 
-- (id)                  initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node;
-- (void const *)        imageAt:(uint64_t)location;
+- (instancetype)        init NS_UNAVAILABLE;
+- (instancetype)        initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node NS_DESIGNATED_INITIALIZER;
+- (void const *)        imageAt:(uint64_t)location NS_RETURNS_INNER_POINTER;
 - (void)                printException:(NSException *)exception caption:(NSString *)caption;
 - (BOOL)                is64bit;
 - (void)                doMainTasks;

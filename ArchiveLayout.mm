@@ -25,7 +25,7 @@
 @synthesize name, length, layout;
 
 //-----------------------------------------------------------------------------
--(id)initWithName:(NSString *)_name Length:(uint32_t)_length
+- (instancetype)initWithName:(NSString *)_name Length:(uint32_t)_length
 {
   if (self = [super init])
   {
@@ -46,7 +46,7 @@
 //============================================================================
 @implementation ArchiveLayout
 
-- (id)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
+- (instancetype)initWithDataController:(MVDataController *)dc rootNode:(MVNode *)node
 {
   if (self = [super initWithDataController:dc rootNode:node])
   {

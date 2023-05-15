@@ -24,7 +24,7 @@ using namespace std;
 @implementation DyldHelper
 
 //-----------------------------------------------------------------------------
--(id) initWithSymbols:(NSDictionary *)symbolNames is64Bit:(bool)is64Bit
+- (instancetype) initWithSymbols:(NSDictionary *)symbolNames is64Bit:(bool)is64Bit
 {
   if (self = [super init])
   {

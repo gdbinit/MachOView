@@ -10,7 +10,7 @@
 
 @implementation MVPreferenceController
 
--(id)init
+- (instancetype)init
 {
   self = [super initWithWindowNibName:@"Preferences"];
   return self;

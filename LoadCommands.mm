@@ -2549,10 +2549,6 @@ using namespace std;
       {
           break;
       }
-      case LC_BUILD_VERSION:
-      {
-          break;
-      }
       case LC_DYLD_EXPORTS_TRIE:
       {
           break;
