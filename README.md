@@ -7,6 +7,31 @@
         \/     \/     \/     \/         \/                 \/        
 ```
 
+## Update - 16/05/2023
+
+This code has return from the dead and updated to version 3.0. 
+
+Version 3.0 is now a x86_64/arm64 universal binary, with 10.13+ as the minimum version.
+
+Building has been tested with Xcode 13 or higher. The best option is to build with latest available Xcode (14.3) and SDK since I stopped including local copies of latest headers and using the system ones as much as possible. It's annoying to have to use latest version to have all features, but also annoying to keep those headers in sync. This time opting for latest version way.
+
+Besides the universal binary, some bug fixes and small updates were merged, warnings were fixed (and then I found psaghelyi had also done this modernization effort 4 years ago), and Capstone has been updated to next branch to benefit from aarch64 updates. I haven't merged the modern Objective-C syntax since I find it a bit meh. Something I'm thinking of changing is the indent since I'm not a fan of 2 spaces.
+
+What's the future for this fork and project?
+
+Over the last years I have been puzzled how people kept forking and staring this project on my GitHub despite being dead. I'm using Apple Silicon more often and missed this tool so decided to give it some love again.
+
+There is still a lot of work ahead to make it better, mostly adding parsing for new and old commands that doesn't exist, and more important for me, making the mach-o parsing way more robust than it is.
+
+I'm still divided on the latter. Blacktop has a nice Go based mach-o parser called [go-macho](https://github.com/blacktop/go-macho) and some months ago I was working on my own fork of it, where I changed the API a bit according to personal taste and more important made the parser a lot more robust (most of the time I'm dealing with potentially hostile binaries so parser security is very important to me). I'm thinking about the possibility of using a sandboxed Go backend and remove all the parsing code from the current codebase. This would be a more secure design and avoid the tedious and error-prone work of fixing the current code. Plus it has the benefit of using a modern codebase that can parse a lot more than the engine being used here right now. 
+
+I also have to think about providing binary builds or not since I don't own right now a developer certificate and not counting on getting one and pay Apple's developer tax. 
+
+Have fun,  
+fG!
+
+---
+
 A fork from MachOView to update and fix some bugs, mostly Mountain Lion & iOS 6 related.  
 Also some small changes to the original behaviour.
 
