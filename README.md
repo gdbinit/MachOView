@@ -17,7 +17,7 @@ Building has been tested with Xcode 13 or higher. The best option is to build wi
 
 Besides the universal binary, some bug fixes and small updates were merged, warnings were fixed (and then I found psaghelyi had also done this modernization effort 4 years ago), and Capstone has been updated to next branch to benefit from aarch64 updates. I haven't merged the modern Objective-C syntax since I find it a bit meh. Something I'm thinking of changing is the indent since I'm not a fan of 2 spaces.
 
-What's the future for this fork and project?
+### What's the future for this fork and project?
 
 Over the last years I have been puzzled how people kept forking and staring this project on my GitHub despite being dead. I'm using Apple Silicon more often and missed this tool so decided to give it some love again.
 
