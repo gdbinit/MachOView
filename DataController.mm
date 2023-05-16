@@ -1035,10 +1035,12 @@ NSString * const MVStatusTaskTerminated           = @"MVStatusTaskTerminated";
             return @"Kernel Extension";
         case MH_FILESET:
             return @"File Set";
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
         case MH_GPU_EXECUTE:
             return @"GPU Program";
         case MH_GPU_DYLIB:
             return @"GPU Support Functions";
+#endif
         default:
             return @"?????";
     }

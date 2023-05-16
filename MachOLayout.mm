@@ -2099,8 +2099,11 @@ struct CompareSectionByName
                           mach_header->filetype == MH_DSYM ? @"MH_DSYM" : 
                           mach_header->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" :
                           mach_header->filetype == MH_FILESET ? @"MH_FILESET" :
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
                           mach_header->filetype == MH_GPU_EXECUTE ? @"MH_GPU_EXECUTE" :
-                          mach_header->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" : @"???"];
+                          mach_header->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" :
+#endif
+                          @"???"];
 
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -2223,8 +2226,11 @@ struct CompareSectionByName
                           mach_header_64->filetype == MH_DSYM ? @"MH_DSYM" : 
                           mach_header_64->filetype == MH_KEXT_BUNDLE ? @"MH_KEXT_BUNDLE" :
                           mach_header_64->filetype == MH_FILESET ? @"MH_FILESET" :
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
                           mach_header_64->filetype == MH_GPU_EXECUTE ? @"MH_GPU_EXECUTE" :
-                          mach_header_64->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" : @"???"];
+                          mach_header_64->filetype == MH_GPU_DYLIB ? @"MH_GPU_DYLIB" :
+#endif
+                          @"???"];
   
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]

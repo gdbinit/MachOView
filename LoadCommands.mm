@@ -2096,9 +2096,15 @@ using namespace std;
         case PLATFORM_TVOSSIMULATOR: return @"tvOS Simulator";
         case PLATFORM_WATCHOSSIMULATOR: return @"watchOS Simulator";
         case PLATFORM_DRIVERKIT: return @"DriverKit";
+        // available in Xcode 13.3 or higher with SDK 12.3+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 120300
         case PLATFORM_FIRMWARE: return @"Firmware";
         case PLATFORM_SEPOS: return @"SEPOS";
+#endif
+        // available in Xcode 14.1 or higher with SDK 13.0+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
         case PLATFORM_ANY: return @"Any";
+#endif
         default: return @"Unknown";
     }
 }
@@ -2108,7 +2114,12 @@ using namespace std;
         case TOOL_CLANG: return @"clang";
         case TOOL_SWIFT: return @"swiftc";
         case TOOL_LD: return @"ld";
+        // available in Xcode 13.3 or higher with SDK 12.3+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 120300
         case TOOL_LLD: return @"ldd";
+#endif
+        // available in Xcode 14.1 or higher with SDK 13.0+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
         case TOOL_METAL: return @"Metal";
         case TOOL_AIRLLD: return @"Air lld";
         case TOOL_AIRNT: return @"Air nt";
@@ -2116,6 +2127,7 @@ using namespace std;
         case TOOL_AIRPACK: return @"Air pack";
         case TOOL_GPUARCHIVER: return @"GPU Archiver";
         case TOOL_METAL_FRAMEWORK: return @"Metal Framework";
+#endif
         default: return @"unknown";
     }
 }
