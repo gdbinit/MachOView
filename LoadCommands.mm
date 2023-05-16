@@ -1924,27 +1924,21 @@ using namespace std;
                            :@"Stacksize"
                            :[NSString stringWithFormat:@"%qu", entry_point_command->stacksize]];
     // add an entry with entry point address
-    // this is the non-aslr value since we don't its value here
+    // this is the non-aslr value since we don't know its value here
     uint64_t text_vmaddr = 0;
-    if ([self is64bit] == YES)
-    {
-        for (Segment64Vector::const_iterator cmdIter = segments_64.begin(); cmdIter != segments_64.end(); ++cmdIter)
-        {
+    if ([self is64bit] == YES) {
+        for (Segment64Vector::const_iterator cmdIter = segments_64.begin(); cmdIter != segments_64.end(); ++cmdIter) {
             struct segment_command_64 const *sg = (struct segment_command_64 const *)(*cmdIter);
-            if (strncmp(sg->segname, "__TEXT", 16) == 0)
-            {
+            if (strncmp(sg->segname, "__TEXT", 16) == 0) {
                 text_vmaddr = sg->vmaddr;
                 break;
             }
         }
     }
-    else
-    {
-        for (SegmentVector::const_iterator cmdIter = segments.begin(); cmdIter != segments.end(); ++cmdIter)
-        {
+    else {
+        for (SegmentVector::const_iterator cmdIter = segments.begin(); cmdIter != segments.end(); ++cmdIter) {
             struct segment_command const *sg = (struct segment_command const *)(*cmdIter);
-            if (strncmp(sg->segname, "__TEXT", 16) == 0)
-            {
+            if (strncmp(sg->segname, "__TEXT", 16) == 0) {
                 text_vmaddr = sg->vmaddr;
                 break;
             }
@@ -1952,9 +1946,9 @@ using namespace std;
     }
         
     [node.details appendRow:[NSString stringWithFormat:@"%.8x", 0]
-                           :[NSString stringWithFormat:@"0x%qx", text_vmaddr + entry_point_command->entryoff]
+                           :[NSString stringWithFormat:@"%.16qX", text_vmaddr + entry_point_command->entryoff]
                            :@"Entry Point"
-                           :[NSString stringWithFormat:@"0x%qx", text_vmaddr + entry_point_command->entryoff]];
+                           :[NSString stringWithFormat:@"0x%qX", text_vmaddr + entry_point_command->entryoff]];
 
     return node;
 }
