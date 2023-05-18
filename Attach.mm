@@ -183,6 +183,8 @@ dump_binary(mach_vm_address_t address, pid_t pid, uint8_t *buffer, uint64_t aslr
   if (readmem((mach_vm_offset_t*)loadcmds, address+mach_header_size, header.sizeofcmds, pid, &region_info))
   {
     NSLog(@"Can't read load commands");
+    free(loadcmds);
+    loadcmds = NULL;
     return KERN_FAILURE;
   }
   
@@ -223,6 +225,7 @@ dump_binary(mach_vm_address_t address, pid_t pid, uint8_t *buffer, uint64_t aslr
     loadCmdAddress += loadCommand->cmdsize;
   }
   free(loadcmds);
+  loadcmds = NULL;
   return KERN_SUCCESS;
 }
 
