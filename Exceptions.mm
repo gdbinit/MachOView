@@ -202,7 +202,7 @@ using namespace std;
     value += [self fileOffsetToRVA:offset];
   }
    
-  NSString * symbolName = [self findSymbolAtRVA64:value];
+  NSString * symbolName = [self findSymbolAtRVA:value];
   
   //NSLog(@"guessed at %qX [%qX]: %@", [self fileOffsetToRVA64:offset], value, symbolName);
   
@@ -426,9 +426,7 @@ using namespace std;
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"CIE Pointer"
-                           :[self is64bit] == NO
-                              ? [self findSymbolAtRVA:(uint32_t)FDE_CIEpointer]
-                              : [self findSymbolAtRVA64:FDE_CIEpointer]];
+                           :[self findSymbolAtRVA:FDE_CIEpointer]];
     
     //PC Begin	(Required)
     // An encoded constant that indicates the address of the initial location associated with this FDE.
@@ -756,9 +754,7 @@ using namespace std;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Common Enc Array Sect Offset"
-                         :[self is64bit] == NO 
-                            ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]];
+                         :[self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + commonEncodingsArraySectionOffset]];
   
   uint32_t commonEncodingsArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -770,9 +766,7 @@ using namespace std;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Personality Array Sect Offset"
-                         :[self is64bit] == NO 
-                            ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]];
+                         :[self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + personalityArraySectionOffset]];
 
   uint32_t personalityArrayCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -784,9 +778,7 @@ using namespace std;
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Index Section Offset"
-                         :[self is64bit] == NO 
-                            ? [self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + indexSectionOffset]
-                            : [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location] + indexSectionOffset]];
+                         :[self findSymbolAtRVA:[self fileOffsetToRVA:range.location] + indexSectionOffset]];
 
   uint32_t indexCount = [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]

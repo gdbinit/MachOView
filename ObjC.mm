@@ -475,19 +475,19 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"CFString Ptr"
-                           :[self findSymbolAtRVA64:cfstring64_t->ptr]];
+                           :[self findSymbolAtRVA:cfstring64_t->ptr]];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@""
-                           :[self findSymbolAtRVA64:cfstring64_t->data]];
+                           :[self findSymbolAtRVA:cfstring64_t->data]];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"String"
-                           :(symbolName = [self findSymbolAtRVA64:cfstring64_t->cstr])];
+                           :(symbolName = [self findSymbolAtRVA:cfstring64_t->cstr])];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -1517,7 +1517,7 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Pointer"
-                           :(symbolName = [self findSymbolAtRVA64:rva64])];
+                           :(symbolName = [self findSymbolAtRVA:rva64])];
     
     [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil];
     
@@ -1590,13 +1590,13 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"IMP"
-                           :[self findSymbolAtRVA64:message_ref64->imp]];
+                           :[self findSymbolAtRVA:message_ref64->imp]];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"SEL"
-                           :(symbolName = [self findSymbolAtRVA64:message_ref64->sel])];
+                           :(symbolName = [self findSymbolAtRVA:message_ref64->sel])];
     
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
@@ -1740,19 +1740,19 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Name"
-                           :(symbolName = [self findSymbolAtRVA64:method64_t->name])];
+                           :(symbolName = [self findSymbolAtRVA:method64_t->name])];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Types"
-                           :[self findSymbolAtRVA64:method64_t->types]];
+                           :[self findSymbolAtRVA:method64_t->types]];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Implementation"
-                           :[self findSymbolAtRVA64:method64_t->imp]];
+                           :[self findSymbolAtRVA:method64_t->imp]];
     
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
@@ -1890,13 +1890,13 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Name"
-                           :(symbolName = [self findSymbolAtRVA64:objc_property64->name])];
+                           :(symbolName = [self findSymbolAtRVA:objc_property64->name])];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Attributes"
-                           :[self findSymbolAtRVA64:objc_property64->attributes]];
+                           :[self findSymbolAtRVA:objc_property64->attributes]];
 
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,nil];
     [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
@@ -2090,49 +2090,49 @@ struct message_ref64
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"ISA"
-                         :[self findSymbolAtRVA64:protocol64_t->isa]];
+                         :[self findSymbolAtRVA:protocol64_t->isa]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Name"
-                         :[self findSymbolAtRVA64:protocol64_t->name]];
+                         :[self findSymbolAtRVA:protocol64_t->name]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Protocols"
-                         :[self findSymbolAtRVA64:protocol64_t->protocols]];
+                         :[self findSymbolAtRVA:protocol64_t->protocols]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Methods"
-                         :[self findSymbolAtRVA64:protocol64_t->instanceMethods]];
+                         :[self findSymbolAtRVA:protocol64_t->instanceMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Class Methods"
-                         :[self findSymbolAtRVA64:protocol64_t->classMethods]];
+                         :[self findSymbolAtRVA:protocol64_t->classMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Optional Inst Methods"
-                         :[self findSymbolAtRVA64:protocol64_t->optionalInstanceMethods]];
+                         :[self findSymbolAtRVA:protocol64_t->optionalInstanceMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Optional Class Methods"
-                         :[self findSymbolAtRVA64:protocol64_t->optionalClassMethods]];
+                         :[self findSymbolAtRVA:protocol64_t->optionalClassMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Properties"
-                         :[self findSymbolAtRVA64:protocol64_t->instanceProperties]];
+                         :[self findSymbolAtRVA:protocol64_t->instanceProperties]];
   
   MVNode * childNode = nil;
   
@@ -2140,7 +2140,7 @@ struct message_ref64
   if (protocol64_t->protocols && (childNode = [self sectionNodeContainsRVA:protocol64_t->protocols]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->protocols];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->protocols];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->protocols];
     MATCH_STRUCT(protocol64_list_t,location)
     [self createObjC2Protocol64ListNode:childNode
                                 caption:caption
@@ -2152,7 +2152,7 @@ struct message_ref64
   if (protocol64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->instanceMethods]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->instanceMethods];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->instanceMethods];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->instanceMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -2164,7 +2164,7 @@ struct message_ref64
   if (protocol64_t->classMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->classMethods]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->classMethods];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->classMethods];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->classMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -2176,7 +2176,7 @@ struct message_ref64
   if (protocol64_t->optionalInstanceMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->optionalInstanceMethods]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->optionalInstanceMethods];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->optionalInstanceMethods];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->optionalInstanceMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -2188,7 +2188,7 @@ struct message_ref64
   if (protocol64_t->optionalClassMethods && (childNode = [self sectionNodeContainsRVA:protocol64_t->optionalClassMethods]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->optionalClassMethods];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->optionalClassMethods];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->optionalClassMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -2200,7 +2200,7 @@ struct message_ref64
   if (protocol64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA:protocol64_t->instanceProperties]))
   {
     uint64_t location = [self RVAToFileOffset:protocol64_t->instanceProperties];
-    NSString * caption = [self findSymbolAtRVA64:protocol64_t->instanceProperties];
+    NSString * caption = [self findSymbolAtRVA:protocol64_t->instanceProperties];
     MATCH_STRUCT(objc_property64_list,location)
     [self createObjC2Property64ListNode:childNode
                                 caption:caption
@@ -2315,13 +2315,13 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :[NSString stringWithFormat:@"list[%qu]",nprot]
-                           :[self findSymbolAtRVA64:protocolAddr]];
+                           :[self findSymbolAtRVA:protocolAddr]];
     
     MVNode * childNode = [self sectionNodeContainsRVA:protocolAddr];
     if (childNode)
     {
       uint64_t location = [self RVAToFileOffset:protocolAddr];
-      NSString * caption = [self findSymbolAtRVA64:protocolAddr];
+      NSString * caption = [self findSymbolAtRVA:protocolAddr];
       MATCH_STRUCT(protocol64_t,location)
       [self createObjC2Protocol64Node:childNode
                               caption:caption
@@ -2480,19 +2480,19 @@ struct message_ref64
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Offset"
-                           :[self findSymbolAtRVA64:ivar64_t->offset]];
+                           :[self findSymbolAtRVA:ivar64_t->offset]];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Name"
-                           :(symbolName = [self findSymbolAtRVA64:ivar64_t->name])];
+                           :(symbolName = [self findSymbolAtRVA:ivar64_t->name])];
     
     [dataController read_uint64:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Type"
-                           :[self findSymbolAtRVA64:ivar64_t->type]];
+                           :[self findSymbolAtRVA:ivar64_t->type]];
     
     [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
@@ -2718,43 +2718,43 @@ struct message_ref64
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Var Layout"
-                         :[self findSymbolAtRVA64:class64_ro_t->ivarLayout]];
+                         :[self findSymbolAtRVA:class64_ro_t->ivarLayout]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Name"
-                         :[self findSymbolAtRVA64:class64_ro_t->name]];
+                         :[self findSymbolAtRVA:class64_ro_t->name]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Base Methods"
-                         :[self findSymbolAtRVA64:class64_ro_t->baseMethods]];
+                         :[self findSymbolAtRVA:class64_ro_t->baseMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Base Protocols"
-                         :[self findSymbolAtRVA64:class64_ro_t->baseProtocols]];
+                         :[self findSymbolAtRVA:class64_ro_t->baseProtocols]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Variables"
-                         :[self findSymbolAtRVA64:class64_ro_t->ivars]];
+                         :[self findSymbolAtRVA:class64_ro_t->ivars]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Weak Instance Var Layout"
-                         :[self findSymbolAtRVA64:class64_ro_t->weakIvarLayout]];
+                         :[self findSymbolAtRVA:class64_ro_t->weakIvarLayout]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Base Properties"
-                         :[self findSymbolAtRVA64:class64_ro_t->baseProperties]];
+                         :[self findSymbolAtRVA:class64_ro_t->baseProperties]];
   
   MVNode * childNode = nil;
   
@@ -2762,7 +2762,7 @@ struct message_ref64
   if (class64_ro_t->baseMethods && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseMethods]))
   {
     uint64_t location = [self RVAToFileOffset:class64_ro_t->baseMethods];
-    NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseMethods];
+    NSString * caption = [self findSymbolAtRVA:class64_ro_t->baseMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -2774,7 +2774,7 @@ struct message_ref64
   if (class64_ro_t->baseProtocols && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseProtocols]))
   {
     uint64_t location = [self RVAToFileOffset:class64_ro_t->baseProtocols];
-    NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseProtocols];
+    NSString * caption = [self findSymbolAtRVA:class64_ro_t->baseProtocols];
     MATCH_STRUCT(protocol64_list_t,location)
     [self createObjC2Protocol64ListNode:childNode
                                 caption:caption
@@ -2786,7 +2786,7 @@ struct message_ref64
   if (class64_ro_t->ivars && (childNode = [self sectionNodeContainsRVA:class64_ro_t->ivars]))
   {
     uint64_t location = [self RVAToFileOffset:class64_ro_t->ivars];
-    NSString * caption = [self findSymbolAtRVA64:class64_ro_t->ivars];
+    NSString * caption = [self findSymbolAtRVA:class64_ro_t->ivars];
     MATCH_STRUCT(ivar64_list_t,location)
     [self createObjC2Variable64ListNode:childNode
                                 caption:caption
@@ -2798,7 +2798,7 @@ struct message_ref64
   if (class64_ro_t->baseProperties && (childNode = [self sectionNodeContainsRVA:class64_ro_t->baseProperties]))
   {
     uint64_t location = [self RVAToFileOffset:class64_ro_t->baseProperties];
-    NSString * caption = [self findSymbolAtRVA64:class64_ro_t->baseProperties];
+    NSString * caption = [self findSymbolAtRVA:class64_ro_t->baseProperties];
     MATCH_STRUCT(objc_property64_list,location)
     [self createObjC2Property64ListNode:childNode
                                 caption:caption
@@ -2916,31 +2916,31 @@ struct message_ref64
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"ISA"
-                         :[self findSymbolAtRVA64:class64_t->isa]];
+                         :[self findSymbolAtRVA:class64_t->isa]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Super Class"
-                         :[self findSymbolAtRVA64:class64_t->superclass]];
+                         :[self findSymbolAtRVA:class64_t->superclass]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Cache"
-                         :[self findSymbolAtRVA64:class64_t->cache]];
+                         :[self findSymbolAtRVA:class64_t->cache]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"VTable"
-                         :[self findSymbolAtRVA64:class64_t->vtable]];
+                         :[self findSymbolAtRVA:class64_t->vtable]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Data"
-                         :[self findSymbolAtRVA64:class64_t->data]];
+                         :[self findSymbolAtRVA:class64_t->data]];
   
   MVNode * childNode = nil;
   
@@ -2948,7 +2948,7 @@ struct message_ref64
   if (class64_t->data && (childNode = [self sectionNodeContainsRVA:class64_t->data]))
   {
     uint64_t location = [self RVAToFileOffset:class64_t->data];
-    NSString * caption = [self findSymbolAtRVA64:class64_t->data];
+    NSString * caption = [self findSymbolAtRVA:class64_t->data];
     MATCH_STRUCT(class64_ro_t,location)
     [self createObjC2Class64RONode:childNode
                            caption:caption
@@ -3120,37 +3120,37 @@ struct message_ref64
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Name"
-                         :[self findSymbolAtRVA64:category64_t->name]];
+                         :[self findSymbolAtRVA:category64_t->name]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"CLS"
-                         :[self findSymbolAtRVA64:category64_t->cls]];
+                         :[self findSymbolAtRVA:category64_t->cls]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Methods"
-                         :[self findSymbolAtRVA64:category64_t->instanceMethods]];
+                         :[self findSymbolAtRVA:category64_t->instanceMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Class Methods"
-                         :[self findSymbolAtRVA64:category64_t->classMethods]];
+                         :[self findSymbolAtRVA:category64_t->classMethods]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Protocols"
-                         :[self findSymbolAtRVA64:category64_t->protocols]];
+                         :[self findSymbolAtRVA:category64_t->protocols]];
   
   [dataController read_uint64:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                          :lastReadHex
                          :@"Instance Properties"
-                         :[self findSymbolAtRVA64:category64_t->instanceProperties]];
+                         :[self findSymbolAtRVA:category64_t->instanceProperties]];
   
   MVNode * childNode = nil;
   
@@ -3158,7 +3158,7 @@ struct message_ref64
   if (category64_t->cls && (childNode = [self sectionNodeContainsRVA:category64_t->cls]))
   {
     uint64_t location = [self RVAToFileOffset:category64_t->cls];
-    NSString * caption = [self findSymbolAtRVA64:category64_t->cls];
+    NSString * caption = [self findSymbolAtRVA:category64_t->cls];
     MATCH_STRUCT(class64_t,location)
     [self createObjC2Class64Node:childNode
                          caption:caption
@@ -3170,7 +3170,7 @@ struct message_ref64
   if (category64_t->instanceMethods && (childNode = [self sectionNodeContainsRVA:category64_t->instanceMethods]))
   {
     uint64_t location = [self RVAToFileOffset:category64_t->instanceMethods];
-    NSString * caption = [self findSymbolAtRVA64:category64_t->instanceMethods];
+    NSString * caption = [self findSymbolAtRVA:category64_t->instanceMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -3182,7 +3182,7 @@ struct message_ref64
   if (category64_t->classMethods && (childNode = [self sectionNodeContainsRVA:category64_t->classMethods]))
   {
     uint64_t location = [self RVAToFileOffset:category64_t->classMethods];
-    NSString * caption = [self findSymbolAtRVA64:category64_t->classMethods];
+    NSString * caption = [self findSymbolAtRVA:category64_t->classMethods];
     MATCH_STRUCT(method64_list_t,location)
     [self createObjC2Method64ListNode:childNode
                               caption:caption
@@ -3194,7 +3194,7 @@ struct message_ref64
   if (category64_t->protocols && (childNode = [self sectionNodeContainsRVA:category64_t->protocols]))
   {
     uint64_t location = [self RVAToFileOffset:category64_t->protocols];
-    NSString * caption = [self findSymbolAtRVA64:category64_t->protocols];
+    NSString * caption = [self findSymbolAtRVA:category64_t->protocols];
     MATCH_STRUCT(protocol64_list_t,location)
     [self createObjC2Protocol64ListNode:childNode
                                 caption:caption
@@ -3206,7 +3206,7 @@ struct message_ref64
   if (category64_t->instanceProperties && (childNode = [self sectionNodeContainsRVA:category64_t->instanceProperties]))
   {
     uint64_t location = [self RVAToFileOffset:category64_t->instanceProperties];
-    NSString * caption = [self findSymbolAtRVA64:category64_t->instanceProperties];
+    NSString * caption = [self findSymbolAtRVA:category64_t->instanceProperties];
     MATCH_STRUCT(objc_property64_list,location)
     [self createObjC2Property64ListNode:childNode
                                 caption:caption
@@ -3284,7 +3284,7 @@ struct message_ref64
     if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint64_t location = [self RVAToFileOffset:rva64];
-      NSString * caption = [self findSymbolAtRVA64:rva64];
+      NSString * caption = [self findSymbolAtRVA:rva64];
       MATCH_STRUCT(class64_t,location)
       [self createObjC2Class64Node:node
                            caption:caption
@@ -3299,7 +3299,7 @@ struct message_ref64
     if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint64_t location = [self RVAToFileOffset:rva64];
-      NSString * caption = [self findSymbolAtRVA64:rva64];
+      NSString * caption = [self findSymbolAtRVA:rva64];
       MATCH_STRUCT(category64_t,location)
       [self createObjC2Category64Node:node
                               caption:caption
@@ -3314,7 +3314,7 @@ struct message_ref64
     if (rva64 && (node = [self sectionNodeContainsRVA:rva64]))
     {
       uint64_t location = [self RVAToFileOffset:rva64];
-      NSString * caption = [self findSymbolAtRVA64:rva64];
+      NSString * caption = [self findSymbolAtRVA:rva64];
       MATCH_STRUCT(protocol64_t,location)
       [self createObjC2Protocol64Node:node
                               caption:caption

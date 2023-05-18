@@ -363,7 +363,7 @@ using namespace std;
                                 : symbolName];
       
       [symbolNames setObject:[NSString stringWithFormat:@"%@->%@",
-                              [self findSymbolAtRVA64:[self fileOffsetToRVA:relocLocation]],symbolName]
+                              [self findSymbolAtRVA:[self fileOffsetToRVA:relocLocation]],symbolName]
                       forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA:relocLocation]]];
 
       // For the x86_64 architecure on Mac OS X it is possible to
@@ -628,13 +628,13 @@ using namespace std;
           NSAssert(NO, @"Unsupported 64bit reloc");
         }
         
-        [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA64:relocValue])];
+        [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA:relocValue])];
         
         // update real data
         [self addRelocAtFileOffset:relocLocation withLength:relocLength andValue:relocValue];
         
         [symbolNames setObject:[NSString stringWithFormat:@"%@->%@",
-                                [self findSymbolAtRVA64:[self fileOffsetToRVA:relocLocation]],symbolName]
+                                [self findSymbolAtRVA:[self fileOffsetToRVA:relocLocation]],symbolName]
                         forKey:[NSNumber numberWithUnsignedLongLong:[self fileOffsetToRVA:relocLocation]]];
 
         //NSLog(@"%@ %.16qX --> (%u) %@",[self findSectionContainsRVA64:[self fileOffsetToRVA64:relocLocation]],[self fileOffsetToRVA64:relocLocation],relocLength,[self findSymbolAtRVA64:relocValue]);
@@ -1270,7 +1270,7 @@ using namespace std;
         
         // fill in lookup table with indirect sybols
         [symbolNames setObject:[NSString stringWithFormat:@"[%@->%@]",
-                                [self findSymbolAtRVA64:indirectAddress],symbolName]
+                                [self findSymbolAtRVA:indirectAddress],symbolName]
                         forKey:[NSNumber numberWithUnsignedLongLong:indirectAddress]];
       }
       else
@@ -1290,9 +1290,9 @@ using namespace std;
             // follow indirection for pointers only
             NSRange range = NSMakeRange(indirectAddress - section_64->addr + section_64->offset + imageOffset, 0);
             uint64_t targetAddress = [dataController read_uint64:range lastReadHex:&lastReadHex];
-            [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA64:targetAddress])];
+            [node.details appendRow:@"":@"":@"Target":(symbolName = [self findSymbolAtRVA:targetAddress])];
             symbolName = [NSString stringWithFormat:@"[%@->%@]",
-                          [self findSymbolAtRVA64:indirectAddress],symbolName];
+                          [self findSymbolAtRVA:indirectAddress],symbolName];
           } break;
             
           case INDIRECT_SYMBOL_ABS:
@@ -1772,7 +1772,7 @@ using namespace std;
                              :@"uleb128"
                              :[NSString stringWithFormat:@"%@ %@",
                                [self findSectionContainsRVA:address],
-                               (symbolName = [self is64bit] == NO ? [self findSymbolAtRVA:(uint32_t)address] : [self findSymbolAtRVA64:address])]];
+                               [self findSymbolAtRVA:address]]];
       
       [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil]; 
       
@@ -1808,9 +1808,7 @@ using namespace std;
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"uleb128"
-                           :(symbolName = [self is64bit] == NO ? 
-                              [self findSymbolAtRVA:(uint32_t)address] :
-                              [self findSymbolAtRVA64:address])];
+                           :[self findSymbolAtRVA:address]];
 
     [node.details setAttributes:MVMetaDataAttributeName,symbolName,nil]; 
   }

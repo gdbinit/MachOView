@@ -94,22 +94,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 - (NSString *)findSymbolAtRVA:(uint64_t)rva
 {
-  NSParameterAssert([self is64bit] == NO);
   NSString * symbolName = [symbolNames objectForKey:[NSNumber numberWithUnsignedLongLong:rva]];
   return (symbolName != nil ? symbolName : [NSString stringWithFormat:@"0x%qX",rva]);
-}
-
-//-----------------------------------------------------------------------------
-- (NSString *)findSymbolAtRVA64:(uint64_t)rva64
-{
-  NSParameterAssert([self is64bit] == YES);
-  // extend external symbols represented in 32bit to 64bit
-  if ((int32_t)rva64 < 0)
-  {
-    rva64 |= 0xffffffff00000000LL;
-  }
-  NSString * symbolName = [symbolNames objectForKey:[NSNumber numberWithUnsignedLongLong:rva64]];
-  return (symbolName != nil ? symbolName : [NSString stringWithFormat:@"0x%qX",rva64]);
 }
 
 //-----------------------------------------------------------------------------
@@ -1429,7 +1415,7 @@ struct CompareSectionByName
         {
           uint64_t CIE_addr = [self fileOffsetToRVA:location];
           [self createCFINode:sectionNode
-                      caption:(lastNodeCaption = [NSString stringWithFormat:@"Call Frame %@", [self findSymbolAtRVA64:CIE_addr]])
+                      caption:(lastNodeCaption = [NSString stringWithFormat:@"Call Frame %@", [self findSymbolAtRVA:CIE_addr]])
                      location:location
                        length:section_64->offset + imageOffset + section_64->size - location]; // upper bound
         }
@@ -1532,7 +1518,7 @@ struct CompareSectionByName
                            : section_64->offset + section_64->size) - location;
         
         [self createLSDANode:sectionNode 
-                     caption:(lastNodeCaption = [NSString stringWithFormat:@"LSDA %@",[self findSymbolAtRVA64:lsdaAddr]])
+                     caption:(lastNodeCaption = [NSString stringWithFormat:@"LSDA %@",[self findSymbolAtRVA:lsdaAddr]])
                     location:location
                       length:length
               eh_frame_begin:frameAddr];

@@ -75,8 +75,8 @@ using namespace std;
   {
     uint64_t ptr = [dataController read_uint64:range lastReadHex:&lastReadHex];
     NSString * symbolName = [NSString stringWithFormat:@"%@->%@",
-                             [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location]],
-                             [self findSymbolAtRVA64:ptr]];
+                             [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]],
+                             [self findSymbolAtRVA:ptr]];
     
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
@@ -224,7 +224,7 @@ using namespace std;
   while (NSMaxRange(range) < location + length)
   {
     [dataController read_uint64:range lastReadHex:&lastReadHex];
-    NSString * symbolName = [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location]];
+    NSString * symbolName = [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Indirect Pointer"
@@ -280,7 +280,7 @@ using namespace std;
   while (NSMaxRange(range) < location + length)
   {
     [dataController read_bytes:range length:stride lastReadHex:&lastReadHex];
-    NSString * symbolName = [self findSymbolAtRVA64:[self fileOffsetToRVA:range.location]];
+    NSString * symbolName = [self findSymbolAtRVA:[self fileOffsetToRVA:range.location]];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                            :lastReadHex
                            :@"Indirect Stub"
