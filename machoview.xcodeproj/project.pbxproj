@@ -31,7 +31,7 @@
 		3C1163F113D5B88D007B4A6E /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C1163F013D5B88D007B4A6E /* stop.png */; };
 		3C34A82B14892FF1005B53F6 /* FatLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C34A82A14892FF1005B53F6 /* FatLayout.mm */; };
 		3C3EC88F13B66E8900ECCDB2 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C3EC88D13B66E8900ECCDB2 /* Preferences.xib */; };
-		3C46C7D91687C6ED00212190 /* PreferenceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C46C7D81687C6ED00212190 /* PreferenceController.mm */; };
+		3C46C7D91687C6ED00212190 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C46C7D81687C6ED00212190 /* PreferenceController.m */; };
 		3C46C84B1687DEE600212190 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3C46C8491687DEE600212190 /* Credits.rtf */; };
 		3C61A87C1240B0B400BDF3D0 /* SectionContents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C61A87B1240B0B400BDF3D0 /* SectionContents.mm */; };
 		3C73525A11DE122900DF1950 /* Document.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C73525911DE122900DF1950 /* Document.mm */; };
@@ -77,6 +77,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0303F91F2A289A1D00A22816 /* MachOView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MachOView; sourceTree = "<group>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		256AC3D80F4B6AC300CF3369 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
@@ -91,7 +92,7 @@
 		3C34A82914892FF1005B53F6 /* FatLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatLayout.h; sourceTree = "<group>"; };
 		3C34A82A14892FF1005B53F6 /* FatLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FatLayout.mm; sourceTree = "<group>"; };
 		3C46C7D71687C5CB00212190 /* PreferenceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
-		3C46C7D81687C6ED00212190 /* PreferenceController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceController.mm; sourceTree = "<group>"; };
+		3C46C7D81687C6ED00212190 /* PreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController.m; sourceTree = "<group>"; };
 		3C61A87B1240B0B400BDF3D0 /* SectionContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SectionContents.mm; sourceTree = "<group>"; };
 		3C61A87D1240B0C100BDF3D0 /* SectionContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SectionContents.h; sourceTree = "<group>"; };
 		3C73525811DE122900DF1950 /* Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
@@ -150,6 +151,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0303F91E2A289A1D00A22816 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				0303F91F2A289A1D00A22816 /* MachOView */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		080E96DDFE201D6D7F000001 /* machoview */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +166,7 @@
 				256AC3D80F4B6AC300CF3369 /* AppController.h */,
 				256AC3D90F4B6AC300CF3369 /* AppController.mm */,
 				3C46C7D71687C5CB00212190 /* PreferenceController.h */,
-				3C46C7D81687C6ED00212190 /* PreferenceController.mm */,
+				3C46C7D81687C6ED00212190 /* PreferenceController.m */,
 				3C73525811DE122900DF1950 /* Document.h */,
 				3C73525911DE122900DF1950 /* Document.mm */,
 				3CF978C411C7B34C004CD74C /* DataSources.h */,
@@ -223,6 +232,7 @@
 		29B97314FDCFA39411CA2CEA /* Mach-O Browser */ = {
 			isa = PBXGroup;
 			children = (
+				0303F91E2A289A1D00A22816 /* Packages */,
 				3CE90DFC11F6107600543402 /* README.md */,
 				3C30845A11FDAF6F008A270F /* createdmg */,
 				080E96DDFE201D6D7F000001 /* machoview */,
@@ -359,7 +369,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		3C2656DF11F8E35C002D8A1C /* Run Script Versioning */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -413,7 +423,7 @@
 				3CE7199F1333A4EF0005C4DA /* Layout.mm in Sources */,
 				3CF22E92144C8FC600380071 /* ObjC.mm in Sources */,
 				3C34A82B14892FF1005B53F6 /* FatLayout.mm in Sources */,
-				3C46C7D91687C6ED00212190 /* PreferenceController.mm in Sources */,
+				3C46C7D91687C6ED00212190 /* PreferenceController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +502,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -499,6 +510,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "";
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -545,6 +557,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -552,6 +565,7 @@
 				CURRENT_PROJECT_VERSION = "";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
