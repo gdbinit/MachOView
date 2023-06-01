@@ -8,7 +8,7 @@
 import Foundation
 import AppKit
 
-enum MVColorOrdinal: Int {
+enum MVColorOrdinal: UInt8 {
     case black = 1
     case darkGray
     case lightGray
@@ -56,39 +56,38 @@ enum MVColorOrdinal: Int {
         }
     }
     
-    static func colorOrdinal(color: NSColor) -> Int {
-        if color == .black {
-            return MVColorOrdinal.black.rawValue
-        } else if color == .darkGray {
-            return MVColorOrdinal.darkGray.rawValue
-        } else if color == .lightGray {
-            return MVColorOrdinal.lightGray.rawValue
-        } else if color == .white {
-            return MVColorOrdinal.white.rawValue
-        } else if color == .gray {
-            return MVColorOrdinal.gray.rawValue
-        } else if color == .red {
-            return MVColorOrdinal.red.rawValue
-        } else if color == .green {
-            return MVColorOrdinal.green.rawValue
-        } else if color == .blue {
-            return MVColorOrdinal.blue.rawValue
-        } else if color == .cyan {
-            return MVColorOrdinal.cyan.rawValue
-        } else if color == .yellow {
-            return MVColorOrdinal.yellow.rawValue
-        } else if color == .magenta {
-            return MVColorOrdinal.magenta.rawValue
-        } else if color == .orange {
-            return MVColorOrdinal.orange.rawValue
-        } else if color == .purple {
-            return MVColorOrdinal.purple.rawValue
-        } else if color == .brown {
-            return MVColorOrdinal.brown.rawValue
+    var color: NSColor? {
+        switch self {
+        case .black:
+            return .black
+        case .darkGray:
+            return .darkGray
+        case .lightGray:
+            return .lightGray
+        case .white:
+            return .white
+        case .gray:
+            return .gray
+        case .red:
+            return .red
+        case .green:
+            return .green
+        case .blue:
+            return .blue
+        case .cyan:
+            return .cyan
+        case .yellow:
+            return .yellow
+        case .magenta:
+            return .magenta
+        case .orange:
+            return .orange
+        case .purple:
+            return .purple
+        case .brown:
+            return .brown
         }
-        return 0
     }
-    
 }
 
 public final class MVRow: NSObject {
@@ -180,80 +179,47 @@ extension MVRow {
         return String(data: data, encoding: .utf8)
     }
     
-    func write(_ color: NSColor, to fileHandle: FileHandle) {
+    func writeColor(_ color: NSColor, to fileHandle: FileHandle) {
         let colorOrdinal = MVColorOrdinal(color: color)?.rawValue ?? 0
-        fileHandle.write(Data([colorOrdinal]))
+        fileHandle.writeByte(colorOrdinal)
         if colorOrdinal == 0 {
-            var fred: Float = 0, fgreen: Float = 0, fblue: Float = 0, falpha: Float = 0
-            color.getRed(&fred, green: &fgreen, blue: &fblue, alpha: &falpha)
-            fileHandle.write(Data(bytes: &fred, count: MemoryLayout<Float>.size))
-            fileHandle.write(Data(bytes: &fgreen, count: MemoryLayout<Float>.size))
-            fileHandle.write(Data(bytes: &fblue, count: MemoryLayout<Float>.size))
-            fileHandle.write(Data(bytes: &falpha, count: MemoryLayout<Float>.size))
+            fileHandle.writeColor(color)
         }
     }
     
-}
-
-//-----------------------------------------------------------------------------
-- (void)writeColor:(NSColor *)color toFile:(FILE *)pFile
-{
-  int colorOrdinal = [color isEqualTo:[NSColor blackColor]]     ? MVBlackColorOrdinal
-                   : [color isEqualTo:[NSColor darkGrayColor]]  ? MVDarkGrayColorOrdinal
-                   : [color isEqualTo:[NSColor lightGrayColor]] ? MVLightGrayColorOrdinal
-                   : [color isEqualTo:[NSColor whiteColor]]     ? MVWhiteColorOrdinal
-                   : [color isEqualTo:[NSColor grayColor]]      ? MVGrayColorOrdinal
-                   : [color isEqualTo:[NSColor redColor]]       ? MVRedColorOrdinal
-                   : [color isEqualTo:[NSColor greenColor]]     ? MVGreenColorOrdinal
-                   : [color isEqualTo:[NSColor blueColor]]      ? MVBlueColorOrdinal
-                   : [color isEqualTo:[NSColor cyanColor]]      ? MVCyanColorOrdinal
-                   : [color isEqualTo:[NSColor yellowColor]]    ? MVYellowColorOrdinal
-                   : [color isEqualTo:[NSColor magentaColor]]   ? MVMagentaColorOrdinal
-                   : [color isEqualTo:[NSColor orangeColor]]    ? MVOrangeColorOrdinal
-                   : [color isEqualTo:[NSColor purpleColor]]    ? MVPurpleColorOrdinal
-                   : [color isEqualTo:[NSColor brownColor]]     ? MVBrownColorOrdinal
-                   : 0;
-  
-  putc(colorOrdinal, pFile);
-  if (colorOrdinal == 0) {
-    CGFloat red, green, blue, alpha;
-    [color getRed:&red green:&green blue:&blue alpha:&alpha];
-    float fred = red, fgreen = green, fblue = blue, falpha = alpha;
-    fwrite(&fred, sizeof(float), 1, pFile);
-    fwrite(&fgreen, sizeof(float), 1, pFile);
-    fwrite(&fblue, sizeof(float), 1, pFile);
-    fwrite(&falpha, sizeof(float), 1, pFile);
-  }
-}
-
-//-----------------------------------------------------------------------------
-- (NSColor *)readColorFromFile:(FILE *)pFile
-{
-  int colorOrdinal = getc(pFile);
-  switch (colorOrdinal)
-  {
-    case MVBlackColorOrdinal:     return [NSColor blackColor];
-    case MVDarkGrayColorOrdinal:  return [NSColor darkGrayColor];
-    case MVLightGrayColorOrdinal: return [NSColor lightGrayColor];
-    case MVWhiteColorOrdinal:     return [NSColor whiteColor];
-    case MVGrayColorOrdinal:      return [NSColor grayColor];
-    case MVRedColorOrdinal:       return [NSColor redColor];
-    case MVGreenColorOrdinal:     return [NSColor greenColor];
-    case MVBlueColorOrdinal:      return [NSColor blueColor];
-    case MVCyanColorOrdinal:      return [NSColor cyanColor];
-    case MVYellowColorOrdinal:    return [NSColor yellowColor];
-    case MVMagentaColorOrdinal:   return [NSColor magentaColor];
-    case MVOrangeColorOrdinal:    return [NSColor orangeColor];
-    case MVPurpleColorOrdinal:    return [NSColor purpleColor];
-    case MVBrownColorOrdinal:     return [NSColor brownColor];
-  }
-
-  float fred, fgreen, fblue, falpha;
-  fread(&fred, sizeof(float), 1, pFile);
-  fread(&fgreen, sizeof(float), 1, pFile);
-  fread(&fblue, sizeof(float), 1, pFile);
-  fread(&falpha, sizeof(float), 1, pFile);
-  return [NSColor colorWithDeviceRed:fred green:fgreen blue:fblue alpha:falpha];
+    func readColor(from fileHandle: FileHandle) -> NSColor? {
+        let colorOrdinal = fileHandle.readByte() ?? 0
+        if let ordinal = MVColorOrdinal(rawValue: colorOrdinal) {
+            return ordinal.color
+        }
+        return fileHandle.readColor()
+    }
+    
+    func saveAttributestoFile(_ fileHandle: FileHandle) {
+        let numAttributes = UInt64(attributes.count)
+        fileHandle.writeUInt64(numAttributes)
+        for (key, value) in attributes {
+            let keyOrdinal = key == MVUnderlineAttributeName ? MVUnderlineAttributeOrdinal
+                : key == MVCellColorAttributeName ? MVCellColorAttributeOrdinal
+                : key == MVTextColorAttributeName ? MVTextColorAttributeOrdinal
+                : key == MVMetaDataAttributeName ? MVMetaDataAttributeOrdinal
+                : 0
+            fileHandle.writeByte(keyOrdinal)
+            switch keyOrdinal {
+            case MVUnderlineAttributeOrdinal:
+                write(value, to: fileHandle)
+            case MVCellColorAttributeOrdinal:
+                writeColor(NSColor(hexString: value) ?? .clear, to: fileHandle)
+            case MVTextColorAttributeOrdinal:
+                writeColor(NSColor(hexString: value) ?? .clear, to: fileHandle)
+            case MVMetaDataAttributeOrdinal:
+                write(value, to: fileHandle)
+            default:
+                break
+            }
+        }
+    }
+    
 }
 
 //----------------------------------------------------------------------------
