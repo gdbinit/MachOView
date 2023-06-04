@@ -29,17 +29,17 @@ extension FileHandle {
   
   // MARK: UInt64
   
-  func writeUInt64(_ byte: UInt64) {
-    write(Data([byte]))
+  func writeUInt64(_ value: UInt64) {
+    write(value.data)
   }
 
   func readUInt64() -> UInt64? {
     do {
       if let data = try read(upToCount: 8) {
-        return data.byte
+        return data.uint64
       }
     } catch {
-      fatalError("read UInt8 error: \(error)")
+      fatalError("read uint64 error: \(error)")
     }
     return nil
   }
@@ -101,5 +101,18 @@ extension Data {
     withUnsafeBytes { unsafeRawBufferPointer in
       unsafeRawBufferPointer.load(as: Float.self)
     }
+  }
+  
+  var uint64: UInt64 {
+    withUnsafeBytes { unsafeRawBufferPointer in
+      unsafeRawBufferPointer.load(as: UInt64.self)
+    }
+  }
+}
+
+extension UInt64 {
+  var data: Data {
+    var value = self
+    return Data(bytes: &value, count: MemoryLayout<UInt64>.size)
   }
 }
