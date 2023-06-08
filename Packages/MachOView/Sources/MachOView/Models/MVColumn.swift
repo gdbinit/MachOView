@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ColumnProperty: Int {
+public enum ColumnProperty: Int {
   case offset = 0
   case data = 1
   case description = 2

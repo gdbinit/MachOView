@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		03B343E12A3229E1000D6897 /* MachOView in Frameworks */ = {isa = PBXBuildFile; productRef = 03B343E02A3229E1000D6897 /* MachOView */; };
+		03B343E42A322C62000D6897 /* MachOView in Frameworks */ = {isa = PBXBuildFile; productRef = 03B343E32A322C62000D6897 /* MachOView */; };
 		256AC3DA0F4B6AC300CF3369 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppController.mm */; };
 		3C0ADEB0169CD42600DA428E /* README.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3CE90DFC11F6107600543402 /* README.md */; };
 		3C0F958411F6589D0070A2FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F957E11F6589D0070A2FE /* InfoPlist.strings */; };
@@ -77,7 +79,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0303F91F2A289A1D00A22816 /* MachOView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MachOView; sourceTree = "<group>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		256AC3D80F4B6AC300CF3369 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
@@ -143,22 +144,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03B343E12A3229E1000D6897 /* MachOView in Frameworks */,
 				7BC7AFD92A0F2B5900D90CD1 /* libcapstone.a in Frameworks */,
 				3CC0022211F64A45000F7A3D /* Cocoa.framework in Frameworks */,
+				03B343E42A322C62000D6897 /* MachOView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0303F91E2A289A1D00A22816 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				0303F91F2A289A1D00A22816 /* MachOView */,
-			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
 		080E96DDFE201D6D7F000001 /* machoview */ = {
 			isa = PBXGroup;
 			children = (
@@ -232,7 +227,6 @@
 		29B97314FDCFA39411CA2CEA /* Mach-O Browser */ = {
 			isa = PBXGroup;
 			children = (
-				0303F91E2A289A1D00A22816 /* Packages */,
 				3CE90DFC11F6107600543402 /* README.md */,
 				3C30845A11FDAF6F008A270F /* createdmg */,
 				080E96DDFE201D6D7F000001 /* machoview */,
@@ -309,6 +303,10 @@
 				7BC7AFD72A0F2B1A00D90CD1 /* PBXTargetDependency */,
 			);
 			name = MachOView;
+			packageProductDependencies = (
+				03B343E02A3229E1000D6897 /* MachOView */,
+				03B343E32A322C62000D6897 /* MachOView */,
+			);
 			productInstallPath = "$(HOME)/Applications";
 			productName = "Mach-O Browser";
 			productReference = 3CA2331811F6445700684D15 /* MachOView.app */;
@@ -340,6 +338,9 @@
 				fr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Mach-O Browser */;
+			packageReferences = (
+				03B343E22A322C62000D6897 /* XCLocalSwiftPackageReference "Packages/MachOView" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -549,7 +550,7 @@
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/capstone",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
 					"-D__STDC_FORMAT_MACROS",
@@ -607,7 +608,7 @@
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/capstone",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_CFLAGS = (
 					"-D__STDC_CONSTANT_MACROS",
 					"-D__STDC_FORMAT_MACROS",
@@ -756,6 +757,24 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		03B343E22A322C62000D6897 /* XCLocalSwiftPackageReference "Packages/MachOView" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MachOView;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		03B343E02A3229E1000D6897 /* MachOView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachOView;
+		};
+		03B343E32A322C62000D6897 /* MachOView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachOView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
 }
