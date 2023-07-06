@@ -32,19 +32,3 @@ public final class MVLayout: NSObject {
     self.archiver = archiver
   }
 }
-
-
-//- (void const *)        imageAt:(uint64_t)location NS_RETURNS_INNER_POINTER;
-//- (void)                printException:(NSException *)exception caption:(NSString *)caption;
-//- (BOOL)                is64bit;
-//- (void)                doMainTasks;
-//- (void)                doBackgroundTasks;
-//- (NSString *)          convertToRVA: (NSString *)offsetStr;
-//- (MVNode *)            findNodeByUserInfo:(NSDictionary *)userInfo;
-//
-//- (MVNode *)            createDataNode:(MVNode *)parent
-//                               caption:(NSString *)caption
-//                              location:(uint64_t)location
-//                                length:(uint64_t)length;
-//
-//@end
