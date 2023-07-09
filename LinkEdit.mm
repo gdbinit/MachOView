@@ -15,6 +15,7 @@
 #import "LinkEdit.h"
 #import "ReadWrite.h"
 #import "DataController.h"
+#import "CodeSignature.h"
 #import <mach-o/loader.h>
 #import <mach-o/reloc.h>
 #import <mach-o/arm/reloc.h>
@@ -1861,4 +1862,215 @@ using namespace std;
   return node;
 }
 
+- (MVNode *) createSig64Node:parent
+                         caption:(NSString *)caption
+                        location:(uint64_t)location
+                    length:(uint64_t)length
+//             segment_command:(CS_SuperBlob const *)segment_command
+
+{
+    MVNodeSaver nodeSaver;
+    MVNode * node = [parent insertChildWithDetails:caption location:location length:length saver:nodeSaver];
+    NSRange range = NSMakeRange(location,0);
+    NSString * lastReadHex;
+    while (NSMaxRange(range) < location + length)
+    {
+        /**
+        * typedef struct __SC_SuperBlob {
+         *    uint32_t magic;
+          *   uint32_t length;
+           *  uint32_t count;
+          *   CS_BlobIndex index[];
+         * } CS_SuperBlob;
+         **/
+        uint32_t magic = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                               :lastReadHex
+                               :@"Magic"
+                               :parse_magic(magic)
+        ];
+        uint32_t length = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                               :lastReadHex
+                               :@"Length"
+                               :[NSString stringWithFormat:@"%u", length]
+        ];
+        uint32_t count = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                               :lastReadHex
+                               :@"Count"
+                               :[NSString stringWithFormat:@"%d", count]
+        ];
+        [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+        // CS_BlobIndex
+        std::vector<CS_BlobIndex> cs_blob_vector;
+        for(uint32_t i =0; i < count; i++){
+            uint32_t type = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                   :lastReadHex
+                                   :@"BlobIndex type"
+                                   :parse_type(type)];
+            [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+            uint32_t offset = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                   :lastReadHex
+                                   :@"BlobIndex offset"
+                                   :[NSString stringWithFormat:@"%d", offset]];
+            CS_BlobIndex  blob = {
+                .type = type,
+                .offset = offset
+            };
+            cs_blob_vector.push_back(blob);
+            [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+        }
+        for(uint32_t i=0; i<cs_blob_vector.size(); i++){
+            uint32_t type = cs_blob_vector.at(i).type;
+            
+            if(cs_blob_vector.at(i).offset > length){
+                break;
+            }
+            range = NSMakeRange(location,cs_blob_vector.at(i).offset);
+            [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+            switch (type) {
+                case CSSLOT_CODEDIRECTORY:{
+                    [node.details appendRow:@"CSSLOT_CODEDIRECTORY" :@"" :@"" :@""];
+                    [node.details setAttributes:MVCellColorAttributeName,[NSColor redColor],nil];
+                    uint32_t magic = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                           :lastReadHex
+                                           :@"CodeDirectory Magic"
+                                           :[NSString stringWithFormat:@"0x%.8lX", magic]];
+                    if (magic == CSMAGIC_CODEDIRECTORY) {
+                        uint32_t length = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory Length"
+                                               :[NSString stringWithFormat:@"%u", length]];
+                        uint32_t version = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory Version"
+                                               :[NSString stringWithFormat:@"%u", version]];
+                        uint32_t flags = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory Flags"
+                                               :[NSString stringWithFormat:@"%u", flags]];
+                        uint32_t hashOffset = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory hashOffset"
+                                               :[NSString stringWithFormat:@"%u", hashOffset]];
+                        uint32_t identOffset = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory IdentityOffset"
+                                               :[NSString stringWithFormat:@"%u", identOffset]];
+                        NSRange tmpRange = NSMakeRange(location + cs_blob_vector.at(i).offset, identOffset);
+                        NSString* bundle_id = [dataController read_string:tmpRange  lastReadHex:&lastReadHex];
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", tmpRange.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory Bundle Id"
+                                               :[NSString stringWithFormat:@"%@", bundle_id]];
+                        [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+                        
+                        uint32_t nSpecialSlots = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory nSpecialSlots"
+                                               :[NSString stringWithFormat:@"%u", nSpecialSlots]];
+                        uint32_t nCodeSlots = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory nCodeSlots"
+                                               :[NSString stringWithFormat:@"%u", nCodeSlots]];
+                        uint32_t codeLimit = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory codeLimit"
+                                               :[NSString stringWithFormat:@"%u", codeLimit]];
+                        uint8_t hashSize =[dataController read_uint8:range lastReadHex:&lastReadHex];
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory hashSize"
+                                               :[NSString stringWithFormat:@"0x%x", hashSize]];
+                        uint8_t hashType =[dataController read_uint8:range lastReadHex:&lastReadHex];
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory hashType"
+                                               :[NSString stringWithFormat:@"0x%x", hashType]];
+                        uint8_t platform =[dataController read_uint8:range lastReadHex:&lastReadHex];
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory platform"
+                                               :[NSString stringWithFormat:@"0x%x", platform]];
+                        uint8_t pageSize =[dataController read_uint8:range lastReadHex:&lastReadHex];
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory pageSize"
+                                               :[NSString stringWithFormat:@"0x%x", pageSize]];
+                        uint32_t spare2 =swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                               :lastReadHex
+                                               :@"CodeDirectory spare2"
+                                               :[NSString stringWithFormat:@"0x%x", spare2]];
+                        // SctterOffset
+                        if(version > 0x20100){
+                            uint32_t scatterOffset = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                                   :lastReadHex
+                                                   :@"CodeDirectory ScatterOffset"
+                                                   :[NSString stringWithFormat:@"0x%x", scatterOffset]];
+                        }
+                        if(version > 0x20200){
+                            uint32_t teamOffset = swap32([dataController read_uint32:range lastReadHex:&lastReadHex]);
+                            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                                                   :lastReadHex
+                                                   :@"CodeDirectory teamOffset"
+                                                   :[NSString stringWithFormat:@"0x%x", teamOffset]];
+                            NSRange tmpRange = NSMakeRange(location + cs_blob_vector.at(i).offset, teamOffset);
+                            NSString* team_id = [dataController read_string:tmpRange  lastReadHex:&lastReadHex];
+                            [node.details appendRow:[NSString stringWithFormat:@"%.8lX", tmpRange.location]
+                                                   :lastReadHex
+                                                   :@"CodeDirectory Team Id"
+                                                   :[NSString stringWithFormat:@"%@", team_id]];
+                            [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+
+                        }
+                    }
+                    break;
+                }
+                case CSSLOT_INFOSLOT:
+                    break;
+                case CSSLOT_REQUIREMENTS:
+                    break;
+                case CSSLOT_RESOURCEDIR:
+
+                    break;
+                case CSSLOT_APPLICATION:
+
+                    break;
+                case CSSLOT_ENTITLEMENTS:
+
+                    break;
+                case CSSLOT_ENTITLEMENTS_DER:
+
+                    break;
+                case CSSLOT_ALTERNATE_CODEDIRECTORIES:
+                    break;
+                case CSSLOT_SIGNATURESLOT:
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        break;
+//      [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+    }
+    
+    
+    
+    return node;
+}
 @end

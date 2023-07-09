@@ -734,7 +734,7 @@ long hexdec(const char *hex) {
 
   if (code_signature)
   {
-    [self createDataNode:rootNode 
+    [self createSig64Node:rootNode
                  caption:@"Code Signature"
                 location:code_signature->dataoff + imageOffset
                   length:code_signature->datasize];

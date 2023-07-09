@@ -13,7 +13,7 @@
 #include <cxxabi.h>
 
 #import "Layout.h"
-
+#import "CodeSignature.h"
 typedef std::vector<struct load_command const *>          CommandVector;
 typedef std::vector<struct segment_command const *>       SegmentVector;
 typedef std::vector<struct segment_command_64 const *>    Segment64Vector;
