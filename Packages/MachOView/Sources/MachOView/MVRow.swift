@@ -10,7 +10,7 @@ import AppKit
 import FileHandleExt
 
 public final class MVRow: NSObject {
-    let column: MVColumn
+    let column: MVColumns
     let attributes: [String: String]
     let offset: UInt64
     var columnsOffset: UInt64
@@ -18,7 +18,7 @@ public final class MVRow: NSObject {
     let deleted: Bool
     let dirty: Bool
     
-    init(column: MVColumn,
+    init(column: MVColumns,
          attributes: [String : String],
          offset: UInt64,
          columnsOffset: UInt64,
