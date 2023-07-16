@@ -8,5 +8,11 @@
 import Foundation
 
 public final class MVTable: NSObject {
-    
+  
+  let archiver: MVArchiver
+  
+  init(archiver: MVArchiver) {
+    self.archiver = archiver
+  }
+
 }

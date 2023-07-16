@@ -18,4 +18,8 @@ class MVDataController: NSObject {
     self.realData = realData
     self.treeLock = NSLock()
   }
+  
+  func updateTreeView(node: MVNode) {
+    
+  }
 }

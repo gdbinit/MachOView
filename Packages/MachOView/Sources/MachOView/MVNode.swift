@@ -9,12 +9,12 @@ import Foundation
 
 @objc
 public class MVNode: NSObject {
-    let caption: String
-    weak var parent: MVNode?
-    var children: [MVNode]
-    var dataRange: Range<Int>
+  var caption: String?
+  weak var parent: MVNode?
+  var children: [MVNode]
+  var dataRange: Range<Int>
   var details: MVTable
-  var userInfo: [String: Any]
+  var userInfo: MVNodeUserInfo
   var detailsOffset: UInt64
     
   override init() {
@@ -22,7 +22,7 @@ public class MVNode: NSObject {
     parent = nil
     children = [MVNode]()
     dataRange = 3..<5
-    userInfo = [String: Any]()
+    userInfo = MVNodeUserInfo()
     detailsOffset = 0
   }
   
@@ -35,95 +35,58 @@ public class MVNode: NSObject {
   }
 
   func insert(node: MVNode) {
-    let layout = userInfo["MVLayoutUserInfoKey"]
+    guard let layout = userInfo.layout else { return }
+    layout.dataController?.treeLock.lock()
     
-    [layout.dataController.treeLock lock];
-    
-    NSUInteger index = [children indexOfObjectPassingTest:
-                        ^(id obj, NSUInteger idx, BOOL *stop)
-                        {
-                          if (node.dataRange.location < [obj dataRange].location)
-                          {
-                            *stop = YES;
-                            return YES;
-                          }
-                          return NO;
-                        }];
-    
-    NSNotificationCenter * nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName:MVDataTreeWillChangeNotification
-                      object:layout.dataController];
-
-    if (index == NSNotFound)
-    {
-      [children addObject:node];
+    let insertIndex = children.firstIndex { node.dataRange.lowerBound < $0.dataRange.lowerBound }
+//    
+//    NotificationCenter.default.post(name: NSNotification.Name.dataTreeWillChange,
+//                                    object: layout.dataController)
+    if let insertIndex {
+      children.insert(node, at: insertIndex)
+    } else {
+      children.append(node)
     }
-    else
-    {
-      [children insertObject:node atIndex:index];
+//    NotificationCenter.default.post(name: NSNotification.Name.dataTreeDidChanged,
+//                                    object: layout.dataController)
+
+    layout.dataController?.updateTreeView(self)
+    layout.dataController?.treeLock.unlock()
+  }
+  
+  func insert(_ caption: String, location: Int, length: Int) -> MVNode {
+    let node = MVNode()
+    node.caption = caption
+    node.dataRange = location..<(location + length)
+    node.parent = self
+    node.userInfo.merge(userInfo)
+    insert(node: node)
+    return node
+  }
+  
+  func insertChildWithDetails(_ caption: String, location: Int, length: Int, server: inout MVNodeSaver) -> MVNode? {
+    guard let layout = userInfo.layout else { return nil }
+
+    let node = insert(caption, location: location, length: length)
+    node.details = MVTable(archiver: layout.archiver)
+    server.node = node
+    return node
+  }
+  
+  func findNode(by aUserInfo: MVNodeUserInfo) -> MVNode? {
+    if self.userInfo == aUserInfo {
+      return self
     }
+    for n in children where n.findNode(by: aUserInfo) {
+      return n
+    }
+    return nil
+  }
+  
+  func openDetails() {
+    guard let layout = userInfo.layout else { return nil }
 
-    [nc postNotificationName:MVDataTreeDidChangeNotification
-                      object:layout.dataController];
-
-    [layout.dataController updateTreeView:self];
     
-    [layout.dataController.treeLock unlock];
-  }
-
-  //----------------------------------------------------------------------------
-  - (MVNode *)insertChild:(NSString *)_caption
-              location:(uint64_t)location
-                length:(uint64_t)length
-  {
-    MVNode * node = [[MVNode alloc] init];
-    node.caption = _caption;
-    node.dataRange = NSMakeRange(location,length);
-    node.parent = self;
-    [node.userInfo addEntriesFromDictionary:userInfo];
-    [self insertNode:node];
-    return node;
-  }
-
-  //----------------------------------------------------------------------------
-  - (MVNode *)insertChildWithDetails:(NSString *)_caption
-                         location:(uint64_t)location
-                           length:(uint64_t)length
-                            saver:(MVNodeSaver &)saver
-  {
-    MVNode * node = [self insertChild:_caption location:location length:length];
-    MVLayout * layout = [userInfo objectForKey:MVLayoutUserInfoKey];
-    node.details = [MVTable tableWithArchiver:layout.archiver];
-    saver.setNode(node);
-    return node;
-  }
-
-  //----------------------------------------------------------------------------
-  - (MVNode *)findNodeByUserInfo:(NSDictionary *)uinfo
-  {
-    // act node
-    if ([userInfo isEqualToDictionary:uinfo] == YES)
-    {
-      return self;
-    }
-
-    // recursively on childrens
-    for (MVNode * node in children)
-    {
-      MVNode * found = [node findNodeByUserInfo:uinfo];
-      if (found != nil)
-      {
-        return found;
-      }
-    }
-    
-    // give up
-    return nil;
-  }
-
-  //-----------------------------------------------------------------------------
-  - (void)openDetails
-  {
     MVLayout * layout = [userInfo objectForKey:MVLayoutUserInfoKey];
     FILE * pFile = fopen(CSTRING(layout.archiver.swapPath), "r");
     if (pFile != NULL)
@@ -235,6 +198,6 @@ extension MVNode: MVSerializing {
 
 extension MVNode {
   public override var description: String {
-    "\(super.description) [\(caption)]"
+    "\(super.description) [\(String(describing: caption))]"
   }
 }
