@@ -205,5 +205,3 @@ private:
   
   MVNode * __weak m_node;
 };
-
-
