@@ -3290,6 +3290,20 @@ struct message_ref64
                            caption:caption
                           location:location
                              class:class64_t];
+        // access metaclass information via the isa pointer
+        uint64_t isaPointer = class64_t->isa;
+        MVNode * isaNode = nil;
+                if (isaPointer && (isaNode = [self sectionNodeContainsRVA:isaPointer]))
+                {
+                    uint64_t isaLocation = [self RVAToFileOffset:isaPointer];
+                    NSString * isaCaption = [self findSymbolAtRVA:isaPointer];
+                    MATCH_STRUCT(isaClass64_t,isaLocation)
+                    [self createObjC2Class64Node:isaNode
+                                         caption:isaCaption
+                                        location:isaLocation
+                                           class:(struct class64_t const *)isaClass64_t];
+                }
+        
     }
   }
   
